@@ -1,13 +1,10 @@
 h1. OVERVIEW
 
-UnityREPL is a REPL (Read, Eval, Print, Loop) tool based on "Miguel's 
-CSharpRepl":http://www.mono-project.com/CsharpRepl but for Unity3D.
+UnityREPL is a REPL (Read, Eval, Print, Loop) tool based on "Miguel's CSharpRepl":http://www.mono-project.com/CsharpRepl but for Unity3D.
 
-Clone this repository into *Assets/Editor*, then go to Window -> REPL -> Shell 
-to open a dockable panel.
+Clone this repository into *Assets/Editor*, then go to Window -> REPL -> Shell to open a dockable panel.
 
-From this window you can enter C# code and run it.  You should have access to 
-all classes you've defined in C#, JavaScript, or Boo in your project.
+From this window you can enter C# code and run it.  You should have access to all classes you've defined in C#, JavaScript, or Boo in your project.
 
 
 h1. COMPATIBILITY
@@ -20,9 +17,7 @@ h1. COMPATIBILITY
 
 h1. LANGUAGE VERSION
 
-This tool implements a newer version of the C# language than Unity itself 
-supports.  You get a couple nifty features for code entered into the interactive
-editor:
+This tool implements a newer version of the C# language than Unity itself supports.  You get a couple nifty features for code entered into the interactive editor:
 
 * Support for "var" keyword:
 ** *var i = 3;*
@@ -33,8 +28,7 @@ editor:
 **		*where fi.LastWriteTime > DateTime.Now - TimeSpan.FromDays(7)*
 **		*select f;*
 
-Bear in mind that when going between source files in your project and this tool
-that the new language features will NOT be accessible from .cs files!
+Bear in mind that when going between source files in your project and this tool that the new language features will NOT be accessible from .cs files!
 
 
 h1. EDITING CODE
