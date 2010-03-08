@@ -24,9 +24,9 @@ This tool implements a newer version of the C# language than Unity itself suppor
 * Linq syntax:
 ** *using System.IO;*
 ** *from f in Directory.GetFiles("/etc")*
-** 		*let fi = new FileInfo(f)*
-**		*where fi.LastWriteTime > DateTime.Now - TimeSpan.FromDays(7)*
-**		*select f;*
+**   *let fi = new FileInfo(f)*
+**   *where fi.LastWriteTime > DateTime.Now - TimeSpan.FromDays(7)*
+**   *select f;*
 
 Bear in mind that when going between source files in your project and this tool that the new language features will NOT be accessible from .cs files!
 
