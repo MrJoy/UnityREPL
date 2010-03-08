@@ -20,6 +20,7 @@ using UnityEngine;
 using Mono.CSharp;
 
 public class Watcher : EditorWindow {
+#if !UNITY_IPHONE
   [MenuItem("Window/REPL/Watcher")]
   static void Init() {
     Watcher window = (Watcher)EditorWindow.GetWindow(typeof(Watcher));
@@ -38,4 +39,5 @@ public class Watcher : EditorWindow {
       EditorGUILayout.EndScrollView();
     EditorGUILayout.EndVertical();
   }
+#endif
 }

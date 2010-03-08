@@ -154,9 +154,11 @@ class EvaluationHelper {
   }
 
   public bool Init(ref bool isInitialized) {
+#if !UNITY_IPHONE
     // Don't be executing code when we're about to reload it.  Not sure this is
     // actually needed but seems prudent to be wary of it.
     if(EditorApplication.isCompiling) return false;
+#endif
 
     StringBuilder buffer = FluffReporter();
     buffer.Length = 0;
@@ -227,7 +229,9 @@ class EvaluationHelper {
   }
 
   public bool Eval(string code, out bool hasOutput, out object output) {
+#if !UNITY_IPHONE
     EditorApplication.LockReloadAssemblies();
+#endif
     bool status = false;
     try {
       status = Evaluator.Evaluate(code, out output, out hasOutput) == null;
@@ -240,7 +244,9 @@ class EvaluationHelper {
     messageBuffer.Append(buffer.ToString());
     buffer.Length = 0;
 
+#if !UNITY_IPHONE
     EditorApplication.UnlockReloadAssemblies();
+#endif
     return status;
   }
 }
@@ -290,6 +296,10 @@ public class Shell : EditorWindow {
   // WARNING: Undocumented spookiness from deep within the bowels of Unity!
   public TextEditor editorState = null;
 
+#if UNITY_IPHONE
+  private static EditorWindow focusedWindow = null;
+#endif
+
   // Need to use menu items because otherwise we don't receive events for cmd-]
   // and cmd-[.
   [MenuItem("Edit/Indent %]", false, 256)]
@@ -330,6 +340,9 @@ public class Shell : EditorWindow {
   public void OnDestroy() { editorState = null; }
 
   public string Indent(TextEditor editor) {
+#if UNITY_IPHONE
+    return codeToProcess;
+#else
     if(editor.hasSelection) {
       string codeToIndent = editor.SelectedText;
       string[] rawLines = codeToIndent.Split('\n');
@@ -341,9 +354,13 @@ public class Shell : EditorWindow {
       // TODO: Handle current line.
       return codeToProcess;
     }
+#endif
   }
 
   public string Unindent(TextEditor editor) {
+#if UNITY_IPHONE
+    return codeToProcess;
+#else
     if(editor.hasSelection) {
       string codeToIndent = editor.SelectedText;
       string[] rawLines = codeToIndent.Split('\n');
@@ -356,9 +373,13 @@ public class Shell : EditorWindow {
       // TODO: Handle current line.
       return codeToProcess;
     }
+#endif
   }
 
   public string Paste(TextEditor editor, string textToPaste, bool continueSelection) {
+#if UNITY_IPHONE
+    return codeToProcess;
+#else
     // The user can select from right-to-left and Unity gives us data that's
     // different than if they selected left-to-right.  That can be handy, but
     // here we just want to know substring indexes to slice out.
@@ -380,9 +401,13 @@ public class Shell : EditorWindow {
     } else
       editor.pos = editor.selectPos = prefix.Length + textToPaste.Length;
     return newCorpus;
+#endif
   }
 
   public string Cut(TextEditor editor) {
+#if UNITY_IPHONE
+    return codeToProcess;
+#else
     EditorGUIUtility.systemCopyBuffer = editor.SelectedText;
 
     // The user can select from right-to-left and Unity gives us data that's
@@ -400,6 +425,7 @@ public class Shell : EditorWindow {
     editor.content.text = newCorpus;
     editor.pos = editor.selectPos = prefix.Length;
     return newCorpus;
+#endif
   }
 
   // Handy-dandy method to deal with keyboard inputs which we get as actual 
@@ -418,6 +444,7 @@ public class Shell : EditorWindow {
     }
 
     if(doProcess) {
+Debug.Log("BUSY!");
       // If we're waiting for a command to run, don't muck with the text!
       evt.Use();
       return;
@@ -450,7 +477,7 @@ public class Shell : EditorWindow {
           // TODO: the middle of peoples' input...)
           
           // TODO: Do we want to ignore it if there's a modifier present?
-          
+Debug.Log("PING!");
           // For now, just try to execute it...
           doProcess = true;
           useContinuationPrompt = true; // In case we fail.
@@ -461,6 +488,7 @@ public class Shell : EditorWindow {
           codeToProcess = Paste(editorState, "\t", false);
         }
       }
+#if !UNITY_IPHONE
     } else if(evt.type == EventType.ValidateCommand) {
       switch(evt.commandName) {
         case "SelectAll":
@@ -496,10 +524,12 @@ public class Shell : EditorWindow {
           evt.Use();
           break;
       }
+#endif
     }
   }
 
   private void ForceFocus(string selectedControl, string desiredControl) {
+#if !UNITY_IPHONE
     // Now here's how we deal with tabbing and hitting enter and whatnot.
     // Basically, if we're the current editor window we assume that we always
     // want the editor to have focus.  BUT there's a gotcha!  If we just blindly
@@ -526,13 +556,16 @@ public class Shell : EditorWindow {
         }
       }
     }
+#endif
   }
 
   private void HandleInputFocusAndStateForEditor() {
+#if !UNITY_IPHONE
     string selectedControl = GUI.GetNameOfFocusedControl();
     ForceFocus(selectedControl, editorControlName);
-    if(selectedControl == editorControlName) FilterEditorInputs();
-
+    if(selectedControl == editorControlName)
+#endif
+      FilterEditorInputs();
     if(resetCommand) {
       resetCommand = false;
       useContinuationPrompt = false;
@@ -545,7 +578,11 @@ public class Shell : EditorWindow {
     // TODO: Suss out scrolling and the like.
     GUILayout.BeginHorizontal();
       EditorGUILayout.BeginVertical(GUILayout.Width(35));
+#if UNITY_IPHONE
+        GUILayout.Label(useContinuationPrompt ? "cont>" : "---->", GUILayout.Width(35));
+#else
         GUILayout.Label(useContinuationPrompt ? "cont>" : "---->", EditorStyles.wordWrappedLabel, GUILayout.Width(35));
+#endif
         if(GUILayout.Button("Clr")) {
           history.Clear();
         }
@@ -573,20 +610,28 @@ public class Shell : EditorWindow {
   }
 
   private void ShowHistory() {
-    EditorGUILayout.BeginVertical(GUI.skin.box, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-      scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+    EditorGUILayout.BeginVertical(GUIContent.none, GUI.skin.box, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+      scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
         GUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
           foreach(HistoryItem i in history) {
             if((i.children != null) || (i.remainder != "")) {
               if(i.isExpanded) {
+#if UNITY_IPHONE
+                GUILayout.Label(i.content, HistoryStyles.CodeFoldout);
+#else
                 i.isExpanded = EditorGUILayout.Foldout(i.isExpanded, i.content, HistoryStyles.CodeFoldout);
+#endif
                 if(i.remainder != "")
                   GUILayout.Label(i.remainder, HistoryStyles.CodePseudoFoldout);
               } else {
+#if UNITY_IPHONE
+                GUILayout.Label(i.content, HistoryStyles.CodeFoldout);
+#else
                 if(i.remainder != "")
                   i.isExpanded = EditorGUILayout.Foldout(i.isExpanded, i.content + "...", HistoryStyles.CodeFoldout);
                 else
                   i.isExpanded = EditorGUILayout.Foldout(i.isExpanded, i.content, HistoryStyles.CodeFoldout);
+#endif
               }
             } else
               GUILayout.Label(i.content, HistoryStyles.CodePseudoFoldout);
@@ -602,7 +647,7 @@ public class Shell : EditorWindow {
           }
           GUILayout.FlexibleSpace();
         GUILayout.EndVertical();
-      EditorGUILayout.EndScrollView();
+      GUILayout.EndScrollView();
     EditorGUILayout.EndVertical();
   }
   //----------------------------------------------------------------------------
@@ -612,6 +657,10 @@ public class Shell : EditorWindow {
   // Tying It All Together...
   //----------------------------------------------------------------------------
   void OnGUI() {
+#if UNITY_IPHONE
+    EditorGUIUtility.UseControlStyles();
+//    EditorGUIUtility.LookLikeInspector();
+#endif
     // TODO: Turn history and editor components into more general, reusable GUI 
     // TODO: widgets.
     HandleInputFocusAndStateForEditor();
@@ -621,9 +670,34 @@ public class Shell : EditorWindow {
     ShowEditor();
   }
 
+#if UNITY_IPHONE
+  private static Shell window = null;
+
+  public void OnCloseWindow() { 
+    window = null;
+    DestroyImmediate(this);
+    Debug.Log("REPL.OnCloseWindow");
+  }
+
+  public void OnEnable() {
+    if(window == null)
+      window = this;
+    Show(true);
+    focusedWindow = this;
+  }
+#endif
+
+
   [MenuItem("Window/REPL/Shell")]
   static void Init() {
+#if UNITY_IPHONE
+    if(window == null)
+      window = new Shell();
+
+    window.Show(true);
+#else
     Shell window = (Shell)EditorWindow.GetWindow(typeof(Shell));
     window.Show();
+#endif
   }
 }
