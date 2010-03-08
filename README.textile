@@ -1,0 +1,70 @@
+h1. OVERVIEW
+
+UnityREPL is a REPL (Read, Eval, Print, Loop) tool based on "Miguel's 
+CSharpRepl":http://www.mono-project.com/CsharpRepl but for Unity3D.
+
+Clone this repository into *Assets/Editor*, then go to Window -> REPL -> Shell 
+to open a dockable panel.
+
+From this window you can enter C# code and run it.  You should have access to 
+all classes you've defined in C#, JavaScript, or Boo in your project.
+
+
+h1. COMPATIBILITY
+
+* Unity 2.5.x: Probably will not work.
+* Unity 2.6.0: Untested, should work.
+* Unity 2.6.1: Works.
+* Unity/iPhone: Will not work.  Might be possible to make it work, but haven't had time to deal with it.
+
+
+h1. LANGUAGE VERSION
+
+This tool implements a newer version of the C# language than Unity itself 
+supports.  You get a couple nifty features for code entered into the interactive
+editor:
+
+* Support for "var" keyword:
+** *var i = 3;*
+* Linq syntax:
+** *using System.IO;*
+** *from f in Directory.GetFiles("/etc")*
+** 		*let fi = new FileInfo(f)*
+**		*where fi.LastWriteTime > DateTime.Now - TimeSpan.FromDays(7)*
+**		*select f;*
+
+Bear in mind that when going between source files in your project and this tool
+that the new language features will NOT be accessible from .cs files!
+
+
+h1. EDITING CODE
+
+UnityREPL uses a GUILayout.TextArea, but with some added functionality:
+
+* Support for cut, copy, paste, and select-all.
+* Ability to enter tabs in the source editor.
+* Block indent/unindent using COMMAND-] and COMMAND-[ (just like XCode and TextMate)
+** One caveat: At the moment it only works if you actually have a selection.
+
+
+h1. LICENSE
+
+Dual licensed under the terms of the MIT X11 or GNU GPL, as per the original code.
+
+The included Mono.CSharp.dll is a completely unmodified copy from "Mono 2.4.":http://www.mono-project.com
+
+
+h1. TODO
+
+* Undo functionality.
+* Editing history support (Bash style).
+* Smooth out some hiccups with assembly reloads.
+** History log gets sort-of blown away.
+** Local vars getting fully blown away.
+** Make sure we're not leaking references to things.
+* Capture System.Console and Debug console output.
+* Incorporate the very slick output formatting code from CSharpRepl.
+* Replace InteractiveBase.
+** Make things like 'quit' aren't accessible.
+** Add things to help with Unity workflows.
+* Lots of other little things; see the source code for more info.
