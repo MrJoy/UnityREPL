@@ -12,7 +12,8 @@ h1. COMPATIBILITY
 * Unity 2.5.x: Probably will not work.
 * Unity 2.6.0: Untested, should work.
 * Unity 2.6.1: Works.
-* Unity/iPhone: Will not work.  Might be possible to make it work, but haven't had time to deal with it.
+* Unity/iPhone 1.5.x or below: Will not work.
+* Unity/iPhone 1.6.0: Very preliminary support.  Painful to use.
 
 
 h1. LANGUAGE VERSION
