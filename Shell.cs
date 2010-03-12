@@ -270,7 +270,11 @@ public class Shell : EditorWindow {
             command.Add(HistoryItem.Messages(messages));
           }
 
-          if(hasOutput) command.Add(HistoryItem.Output(output));
+          if(hasOutput) {
+            StringBuilder sb = new StringBuilder();
+            PrettyPrint.PP(sb, output);
+            command.Add(HistoryItem.Output(sb.ToString()));
+          }
         }
       } else {
         // For some reason, we weren't ready to run.
