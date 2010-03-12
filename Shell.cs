@@ -1,28 +1,7 @@
 //-----------------------------------------------------------------
-//  Editor v0.4 (2010-03-08)
+//  Editor v0.4
 //  Copyright 2009-2010 MrJoy, Inc.
 //  All rights reserved
-//
-//  2010-03-08 - jdf - Overhaul history view to look somewhat usable, 
-//                     auto-scroll, and have expandable sections per command.
-//  2010-03-08 - jdf - Overhaul editing to use GUILayout.TextArea instead of
-//                     EditorGUILayout.TextArea, which solves most of our 
-//                     problems wrt state management.  Yay!  Only have to use
-//                     an undocumented class (as opposed to undocumented and 
-//                     flagged internal) to take care of the rest!
-//  2010-02-17 - jdf - Rename to "Editor".
-//  2010-02-16 - jdf - Revamp to use Mono.CSharp.  W00t.  Giving up ANY pretense 
-//                     of working on Unity/iPhone for a while tho.
-//  2009-12-16 - jdf - Work around some Unity editor lifecycle weirdness.  
-//                     Doesn't like doing eval's from OnGUI for some reason.  
-//                     Throws an exception that's effectively spurious but 
-//                     damned annoying.
-//  2009-10-12 - jdf - Compile clean on Unity/iPhone.  Not terribly USEFUL...
-//  2009-10-08 - jdf - Added line numbering.
-//                   - Made history mechanism optional.
-//                   - Made history mechanism persistent.
-//  2009-10-07 - jdf - Initial version.
-//
 //-----------------------------------------------------------------
 // C#-based REPL tool.
 //
@@ -339,7 +318,13 @@ public class Shell : EditorWindow {
   // Make our state object go away if we do, or if we lose focus, or whatnot
   // to ensure menu items disable properly regardless of possible dangling 
   // references, etc.
-  public void OnDisable() { editorState = null; }
+  public void OnDisable() {
+    editorState = null;
+#if UNITY_IPHONE
+    window = null;
+    focusedWindow = null;
+#endif
+  }
   public void OnLostFocus() { editorState = null; }
   public void OnDestroy() { editorState = null; }
 
@@ -448,7 +433,6 @@ public class Shell : EditorWindow {
     }
 
     if(doProcess) {
-Debug.Log("BUSY!");
       // If we're waiting for a command to run, don't muck with the text!
       evt.Use();
       return;
@@ -481,7 +465,6 @@ Debug.Log("BUSY!");
           // TODO: the middle of peoples' input...)
           
           // TODO: Do we want to ignore it if there's a modifier present?
-Debug.Log("PING!");
           // For now, just try to execute it...
           doProcess = true;
           useContinuationPrompt = true; // In case we fail.
@@ -593,7 +576,11 @@ Debug.Log("PING!");
       EditorGUILayout.EndVertical();
       
       GUI.SetNextControlName(editorControlName);
+#if UNITY_IPHONE
+      codeToProcess = GUILayout.TextArea(codeToProcess, "Box", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true), GUILayout.Height(5 * GUI.skin.label.lineHeight));
+#else
       codeToProcess = GUILayout.TextArea(codeToProcess, GUILayout.ExpandWidth(true), GUILayout.Height(5 * GUI.skin.label.lineHeight));
+#endif
     GUILayout.EndHorizontal();
   }
 
@@ -621,15 +608,17 @@ Debug.Log("PING!");
             if((i.children != null) || (i.remainder != "")) {
               if(i.isExpanded) {
 #if UNITY_IPHONE
-                GUILayout.Label(i.content, HistoryStyles.CodeFoldout);
+                GUILayout.Label((i.content != null) ? i.content : "");
+                if(i.remainder != "")
+                  GUILayout.Label(i.remainder);
 #else
                 i.isExpanded = EditorGUILayout.Foldout(i.isExpanded, i.content, HistoryStyles.CodeFoldout);
-#endif
                 if(i.remainder != "")
                   GUILayout.Label(i.remainder, HistoryStyles.CodePseudoFoldout);
+#endif
               } else {
 #if UNITY_IPHONE
-                GUILayout.Label(i.content, HistoryStyles.CodeFoldout);
+                GUILayout.Label(i.content);
 #else
                 if(i.remainder != "")
                   i.isExpanded = EditorGUILayout.Foldout(i.isExpanded, i.content + "...", HistoryStyles.CodeFoldout);
@@ -637,16 +626,25 @@ Debug.Log("PING!");
                   i.isExpanded = EditorGUILayout.Foldout(i.isExpanded, i.content, HistoryStyles.CodeFoldout);
 #endif
               }
-            } else
+            } else {
+#if UNITY_IPHONE
+              GUILayout.Label(i.content);
+#else
               GUILayout.Label(i.content, HistoryStyles.CodePseudoFoldout);
+#endif
+            }
             if((i.children != null) && i.isExpanded) {
+#if !UNITY_IPHONE
               GUILayout.BeginVertical(HistoryStyles.PseudoFoldout);
+#endif
               foreach(HistoryItem ic in i.children) {
                 GUILayout.Label(ic.content);
                 if(ic.remainder != "")
                   GUILayout.Label(ic.remainder);
               }
+#if !UNITY_IPHONE
               GUILayout.EndVertical();
+#endif
             }
           }
           GUILayout.FlexibleSpace();
@@ -679,8 +677,8 @@ Debug.Log("PING!");
 
   public void OnCloseWindow() { 
     window = null;
+    focusedWindow = null;
     DestroyImmediate(this);
-    Debug.Log("REPL.OnCloseWindow");
   }
 
   public void OnEnable() {
@@ -697,8 +695,8 @@ Debug.Log("PING!");
 #if UNITY_IPHONE
     if(window == null)
       window = new Shell();
-
     window.Show(true);
+    focusedWindow = window;
 #else
     Shell window = (Shell)EditorWindow.GetWindow(typeof(Shell));
     window.Show();

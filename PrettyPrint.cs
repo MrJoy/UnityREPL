@@ -1,10 +1,7 @@
 //-----------------------------------------------------------------
-//  PrettyPrint v0.1 (2010-03-11)
+//  PrettyPrint v0.1
 //  Copyright 2009-2010 MrJoy, Inc.
 //  All rights reserved
-//
-//  2010-03-11 - jdf - Initial version.
-//
 //-----------------------------------------------------------------
 // Adapted from repl.cs:
 // http://anonsvn.mono-project.com/viewvc/trunk/mcs/tools/csharp/

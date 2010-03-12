@@ -1,11 +1,7 @@
 //-----------------------------------------------------------------
-//  Watcher v0.11 (2010-03-08)
+//  Watcher v0.11
 //  Copyright 2009-2010 MrJoy, Inc.
 //  All rights reserved
-//
-//  2010-03-08 - jdf - Remove unneeded 'using' statements.
-//  2010-02-16 - jdf - Initial version.
-//
 //-----------------------------------------------------------------
 // Handy viewer to keep track of using/vars/etc.
 //
