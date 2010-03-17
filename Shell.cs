@@ -601,7 +601,11 @@ public class Shell : EditorWindow {
   }
 
   private void ShowHistory() {
+#if UNITY_IPHONE
     EditorGUILayout.BeginVertical(GUIContent.none, GUI.skin.box, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+#else
+    EditorGUILayout.BeginVertical(GUI.skin.box, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+#endif
       scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
         GUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
           foreach(HistoryItem i in history) {
