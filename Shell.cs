@@ -568,6 +568,8 @@ public class Shell : EditorWindow {
     }
   }
 
+//  private LineEditor editor = new LineEditor("UnityREPL", 100);
+//  private IEnumerator editorLoop = null;
   private void ShowEditor() {
     // TODO: Suss out scrolling and the like.
     GUILayout.BeginHorizontal();
@@ -578,6 +580,12 @@ public class Shell : EditorWindow {
         }
       EditorGUILayout.EndVertical();
       
+//      if(editorLoop == null)
+//        editorLoop = editor.Edit(">", "");
+//      editorLoop.MoveNext();
+//      object editTmp = editorLoop.Current;
+//      if(editTmp != null)
+//        editTmp.SetKey(...);
       GUI.SetNextControlName(editorControlName);
       codeToProcess = GUILayout.TextArea(codeToProcess, GUILayout.ExpandWidth(true), GUILayout.Height(5 * GUI.skin.label.lineHeight));
     GUILayout.EndHorizontal();
