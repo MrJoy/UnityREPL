@@ -15,6 +15,7 @@
 using System;
 using System.Collections;
 using System.Text;
+using Mono.CSharp;
 
 public class PrettyPrint {
   static string EscapeString(string s) { return s.Replace ("\"", "\\\""); }
@@ -92,6 +93,8 @@ public class PrettyPrint {
         CloseInline(output);
       } else if(result is char) {
         EscapeChar(output, (char)result);
+      } else if(result is Type) {
+        output.Append(InteractiveBase.Describe(result));
       } else {
         output.Append(result.ToString());
       }
