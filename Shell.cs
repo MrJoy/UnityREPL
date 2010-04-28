@@ -449,12 +449,8 @@ public class Shell : EditorWindow {
 //            Debug.Log("{OTHER:" + evt.keyCode + "}");
           }
         } else if(evt.keyCode == KeyCode.Return) {
-          // TODO: Do we only want to do this only when the cursor is at the 
-          // TODO: end of the input?  (Avoids unexpectedly putting newlines in 
-          // TODO: the middle of peoples' input...)
-          
-          // TODO: Do we want to ignore it if there's a modifier present?
-          
+          // TODO: Only insert the return IF executing the code fails.
+
           // For now, just try to execute it...
           doProcess = true;
           useContinuationPrompt = true; // In case we fail.
