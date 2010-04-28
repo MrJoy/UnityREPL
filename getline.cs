@@ -875,7 +875,8 @@ namespace Mono.Terminal {
 			return result;
 		}
 
-		public bool TabAtStartCompletes { get; set; }
+		private bool _TabAtStartCompletes;
+		public bool TabAtStartCompletes { get { return _TabAtStartCompletes; } set { _TabAtStartCompletes = value; } }
 			
 		//
 		// Emulates the bash-like behavior, where edits done to the
