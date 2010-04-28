@@ -57,6 +57,7 @@ using System.Reflection;
 using System.Text;
 using System.IO;
 using Mono.CSharp;
+using Mono.Terminal;
 
 [System.Serializable]
 enum HistoryItemType : int {
@@ -342,7 +343,19 @@ public class Shell : EditorWindow {
       }
       return Paste(editor, String.Join("\n", rawLines), true);
     } else {
-      // TODO: Handle current line.
+      string[] rawLines = codeToProcess.Split('\n');
+      int counter = -1, curLine = 0;
+      while((counter < editor.pos) && (curLine < rawLines.Length))
+        counter += rawLines[curLine++].Length + 1; // The +1 is for the \n.
+
+      if(counter >= editor.pos) {
+        curLine--;
+        rawLines[curLine] = '\t' + rawLines[curLine];
+        editor.pos++;
+        editor.selectPos++;
+        codeToProcess = String.Join("\n", rawLines);
+      }
+
       return codeToProcess;
     }
   }
@@ -357,7 +370,21 @@ public class Shell : EditorWindow {
       }
       return Paste(editor, String.Join("\n", rawLines), true);
     } else {
-      // TODO: Handle current line.
+      string[] rawLines = codeToProcess.Split('\n');
+      int counter = 0, curLine = 0;
+      while((counter < editor.pos) && (curLine < rawLines.Length))
+        counter += rawLines[curLine++].Length + 1; // The +1 is for the \n.
+
+      if(counter >= editor.pos) {
+        curLine--;
+        if(rawLines[curLine].StartsWith("\t")) {
+          rawLines[curLine] = rawLines[curLine].Substring(1);
+          editor.pos--;
+          editor.selectPos--;
+          codeToProcess = String.Join("\n", rawLines);
+        }
+      }
+
       return codeToProcess;
     }
   }
