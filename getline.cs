@@ -30,12 +30,15 @@
 // Only compile this code in the 2.0 profile, but not in the Moonlight one
 #if (IN_MCS_BUILD && NET_2_0 && !SMCS_SOURCE) || !IN_MCS_BUILD
 using System;
+using System.Collections;
 using System.Text;
 using System.IO;
 using System.Threading;
 using System.Reflection;
 
 namespace Mono.Terminal {
+
+	public enum EditorState { WaitingForKeystroke };
 
 	public class LineEditor {
 
@@ -761,16 +764,25 @@ namespace Mono.Terminal {
 				InsertChar (c);
 		}
 
-		void EditLoop ()
+		private ConsoleKeyInfo key;
+		public void SetKey(ConsoleKeyInfo cki) {
+			key = cki;
+		}
+    
+		IEnumerator EditLoop ()
 		{
 			ConsoleKeyInfo cki;
 
 			while (!done){
 				ConsoleModifiers mod;
 				
-				cki = Console.ReadKey (true);
+				yield return EditorState.WaitingForKeystroke;
+				cki = key;
+//				cki = Console.ReadKey (true);
 				if (cki.Key == ConsoleKey.Escape){
-					cki = Console.ReadKey (true);
+					yield return EditorState.WaitingForKeystroke;
+					cki = key;
+//					cki = Console.ReadKey (true);
 
 					mod = ConsoleModifiers.Alt;
 				} else
@@ -819,23 +831,25 @@ namespace Mono.Terminal {
 
 		void SetText (string newtext)
 		{
-			Console.SetCursorPosition (0, home_row);
+//			Console.SetCursorPosition (0, home_row);
 			InitText (newtext);
 		}
 
 		void SetPrompt (string newprompt)
 		{
 			shown_prompt = newprompt;
-			Console.SetCursorPosition (0, home_row);
+//			Console.SetCursorPosition (0, home_row);
 			Render ();
 			ForceCursor (cursor);
 		}
 		
-		public string Edit (string prompt, string initial)
+		private string result;
+		public string Result { get { return result; } }
+		public IEnumerator Edit (string prompt, string initial)
 		{
 			edit_thread = Thread.CurrentThread;
 			searching = 0;
-			Console.CancelKeyPress += InterruptEdit;
+//			Console.CancelKeyPress += InterruptEdit;
 			
 			done = false;
 			history.CursorToEnd ();
@@ -847,32 +861,32 @@ namespace Mono.Terminal {
 			history.Append (initial);
 
 			do {
-				try {
-					EditLoop ();
-				} catch (ThreadAbortException){
+//				try {
+					yield return EditLoop ();
+/*				} catch (ThreadAbortException){
 					searching = 0;
 					Thread.ResetAbort ();
 					Console.WriteLine ();
 					SetPrompt (prompt);
 					SetText ("");
-				}
+				} */
 			} while (!done);
-			Console.WriteLine ();
+//			Console.WriteLine ();
 			
-			Console.CancelKeyPress -= InterruptEdit;
+//			Console.CancelKeyPress -= InterruptEdit;
 
 			if (text == null){
 				history.Close ();
-				return null;
+				yield return null;
 			}
 
-			string result = text.ToString ();
+			result = text.ToString ();
 			if (result != "")
 				history.Accept (result);
 			else
 				history.RemoveLast ();
 
-			return result;
+//			return result;
 		}
 
 		private bool _TabAtStartCompletes;
