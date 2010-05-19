@@ -515,8 +515,8 @@ public class Shell : EditorWindow {
     }
   }
 
-  private void ForceFocus(string selectedControl, string desiredControl) {
 #if !UNITY_IPHONE
+  private void ForceFocus(string selectedControl, string desiredControl) {
     // Now here's how we deal with tabbing and hitting enter and whatnot.
     // Basically, if we're the current editor window we assume that we always
     // want the editor to have focus.  BUT there's a gotcha!  If we just blindly
@@ -543,8 +543,8 @@ public class Shell : EditorWindow {
         }
       }
     }
-#endif
   }
+#endif
 
   private void HandleInputFocusAndStateForEditor() {
 #if !UNITY_IPHONE
