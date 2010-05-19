@@ -239,7 +239,7 @@ public class Shell : EditorWindow {
   [System.NonSerialized]
   private bool isInitialized = false;
   
-  void Update() {
+  public void Update() {
     if(doProcess) {
       if(helper.Init(ref isInitialized)) {
         doProcess = false;
@@ -662,7 +662,7 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   // Tying It All Together...
   //----------------------------------------------------------------------------
-  void OnGUI() {
+  public void OnGUI() {
 #if UNITY_IPHONE
     EditorGUIUtility.UseControlStyles();
 //    EditorGUIUtility.LookLikeInspector();
@@ -695,7 +695,7 @@ public class Shell : EditorWindow {
 
 
   [MenuItem("Window/REPL/Shell")]
-  static void Init() {
+  public static void Init() {
 #if UNITY_IPHONE
     if(window == null)
       window = new Shell();
