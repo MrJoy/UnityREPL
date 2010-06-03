@@ -1,27 +1,7 @@
 //-----------------------------------------------------------------
-//  Editor v0.4 (2010-03-08)
+//  Editor v0.4
 //  Copyright 2009-2010 MrJoy, Inc.
 //  All rights reserved
-//
-//  2010-03-08 - jdf - Overhaul history view to look somewhat usable, 
-//                     auto-scroll, and have expandable sections per command.
-//  2010-03-08 - jdf - Overhaul editing to use GUILayout.TextArea instead of
-//                     EditorGUILayout.TextArea, which solves most of our 
-//                     problems wrt state management.  Yay!  Only have to use
-//                     an undocumented class (as opposed to undocumented and 
-//                     flagged internal) to take care of the rest!
-//  2010-02-17 - jdf - Rename to "Editor".
-//  2010-02-16 - jdf - Revamp to use Mono.CSharp.  W00t.  Giving up ANY pretense 
-//                     of working on Unity/iPhone for a while tho.
-//  2009-12-16 - jdf - Work around some Unity editor lifecycle weirdness.  
-//                     Doesn't like doing eval's from OnGUI for some reason.  
-//                     Throws an exception that's effectively spurious but 
-//                     damned annoying.
-//  2009-10-12 - jdf - Compile clean on Unity/iPhone.  Not terribly USEFUL...
-//  2009-10-08 - jdf - Added line numbering.
-//                   - Made history mechanism optional.
-//                   - Made history mechanism persistent.
-//  2009-10-07 - jdf - Initial version.
 //
 //-----------------------------------------------------------------
 // C#-based REPL tool.
