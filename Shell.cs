@@ -37,6 +37,7 @@ using System.Reflection;
 using System.Text;
 using System.IO;
 using Mono.CSharp;
+using Mono.Terminal;
 
 [System.Serializable]
 enum HistoryItemType : int {
@@ -322,7 +323,19 @@ public class Shell : EditorWindow {
       }
       return Paste(editor, String.Join("\n", rawLines), true);
     } else {
-      // TODO: Handle current line.
+      string[] rawLines = codeToProcess.Split('\n');
+      int counter = -1, curLine = 0;
+      while((counter < editor.pos) && (curLine < rawLines.Length))
+        counter += rawLines[curLine++].Length + 1; // The +1 is for the \n.
+
+      if(counter >= editor.pos) {
+        curLine--;
+        rawLines[curLine] = '\t' + rawLines[curLine];
+        editor.pos++;
+        editor.selectPos++;
+        codeToProcess = String.Join("\n", rawLines);
+      }
+
       return codeToProcess;
     }
   }
@@ -337,7 +350,21 @@ public class Shell : EditorWindow {
       }
       return Paste(editor, String.Join("\n", rawLines), true);
     } else {
-      // TODO: Handle current line.
+      string[] rawLines = codeToProcess.Split('\n');
+      int counter = 0, curLine = 0;
+      while((counter < editor.pos) && (curLine < rawLines.Length))
+        counter += rawLines[curLine++].Length + 1; // The +1 is for the \n.
+
+      if(counter >= editor.pos) {
+        curLine--;
+        if(rawLines[curLine].StartsWith("\t")) {
+          rawLines[curLine] = rawLines[curLine].Substring(1);
+          editor.pos--;
+          editor.selectPos--;
+          codeToProcess = String.Join("\n", rawLines);
+        }
+      }
+
       return codeToProcess;
     }
   }
@@ -429,12 +456,8 @@ public class Shell : EditorWindow {
 //            Debug.Log("{OTHER:" + evt.keyCode + "}");
           }
         } else if(evt.keyCode == KeyCode.Return) {
-          // TODO: Do we only want to do this only when the cursor is at the 
-          // TODO: end of the input?  (Avoids unexpectedly putting newlines in 
-          // TODO: the middle of peoples' input...)
-          
-          // TODO: Do we want to ignore it if there's a modifier present?
-          
+          // TODO: Only insert the return IF executing the code fails.
+
           // For now, just try to execute it...
           doProcess = true;
           useContinuationPrompt = true; // In case we fail.
@@ -525,6 +548,8 @@ public class Shell : EditorWindow {
     }
   }
 
+//  private LineEditor editor = new LineEditor("UnityREPL", 100);
+//  private IEnumerator editorLoop = null;
   private void ShowEditor() {
     // TODO: Suss out scrolling and the like.
     GUILayout.BeginHorizontal();
@@ -535,6 +560,12 @@ public class Shell : EditorWindow {
         }
       EditorGUILayout.EndVertical();
       
+//      if(editorLoop == null)
+//        editorLoop = editor.Edit(">", "");
+//      editorLoop.MoveNext();
+//      object editTmp = editorLoop.Current;
+//      if(editTmp != null)
+//        editTmp.SetKey(...);
       GUI.SetNextControlName(editorControlName);
       codeToProcess = GUILayout.TextArea(codeToProcess, GUILayout.ExpandWidth(true), GUILayout.Height(5 * GUI.skin.label.lineHeight));
     GUILayout.EndHorizontal();
