@@ -2,6 +2,8 @@ h1. OVERVIEW
 
 UnityREPL is a REPL (Read, Eval, Print, Loop) tool based on "Miguel's CSharpRepl":http://www.mono-project.com/CsharpRepl but for Unity3D.
 
+What's a REPL?  See the "Wikipedia article.":http://en.wikipedia.org/wiki/Read_Eval_Print_Loop
+
 Clone this repository into *Assets/Editor*, then go to Window -> REPL -> Shell to open a dockable panel.
 
 From this window you can enter C# code and run it.  You should have access to all classes you've defined in C#, JavaScript, or Boo in your project.
