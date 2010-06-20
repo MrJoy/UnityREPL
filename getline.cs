@@ -35,6 +35,7 @@ using System.Text;
 using System.IO;
 using System.Threading;
 using System.Reflection;
+using UnityEngine;
 
 namespace Mono.Terminal {
 
@@ -908,16 +909,17 @@ namespace Mono.Terminal {
 					throw new ArgumentException ("size");
 
 				if (app != null){
-					string dir = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
+				  string dir = Application.dataPath;
+//					string dir = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
 					//Console.WriteLine (dir);
-					if (!Directory.Exists (dir)){
+/*					if (!Directory.Exists (dir)){
 						try {
 							Directory.CreateDirectory (dir);
 						} catch {
 							app = null;
 						}
-					}
-					if (app != null)
+					} 
+					if (app != null) */
 						histfile = Path.Combine (dir, app) + ".history";
 				}
 				
