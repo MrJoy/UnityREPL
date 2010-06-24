@@ -194,7 +194,7 @@ namespace Mono.Terminal {
 				//Handler.Control ('T', CmdDebug),
 
 				// quote
-				Handler.Control ('Q', delegate { HandleChar (Console.ReadKey (true).KeyChar); })
+//				Handler.Control ('Q', delegate { HandleChar (Console.ReadKey (true).KeyChar); })
 			};
 
 			rendered_text = new StringBuilder ();
@@ -233,9 +233,9 @@ namespace Mono.Terminal {
 
 		void UpdateHomeRow (int screenpos)
 		{
-			int lines = 1 + (screenpos / Console.WindowWidth);
+//			int lines = 1 + (screenpos / Console.WindowWidth);
 
-			home_row = Console.CursorTop - (lines - 1);
+//			home_row = Console.CursorTop - (lines - 1);
 			if (home_row < 0)
 				home_row = 0;
 		}
@@ -309,7 +309,7 @@ namespace Mono.Terminal {
 
 		int LineCount {
 			get {
-				return (shown_prompt.Length + rendered_text.Length)/Console.WindowWidth;
+				return (shown_prompt.Length + rendered_text.Length);///Console.WindowWidth;
 			}
 		}
 		
@@ -317,13 +317,13 @@ namespace Mono.Terminal {
 		{
 			cursor = newpos;
 
-			int actual_pos = shown_prompt.Length + TextToRenderPos (cursor);
-			int row = home_row + (actual_pos/Console.WindowWidth);
-			int col = actual_pos % Console.WindowWidth;
+//			int actual_pos = shown_prompt.Length + TextToRenderPos (cursor);
+//			int row = home_row + (actual_pos/Console.WindowWidth);
+//			int col = actual_pos % Console.WindowWidth;
 
-			if (row >= Console.BufferHeight)
-				row = Console.BufferHeight-1;
-			Console.SetCursorPosition (col, row);
+//			if (row >= Console.BufferHeight)
+//				row = Console.BufferHeight-1;
+//			Console.SetCursorPosition (col, row);
 			
 			//log.WriteLine ("Going to cursor={0} row={1} col={2} actual={3} prompt={4} ttr={5} old={6}", newpos, row, col, actual_pos, prompt.Length, TextToRenderPos (cursor), cursor);
 			//log.Flush ();
@@ -344,7 +344,7 @@ namespace Mono.Terminal {
 			ComputeRendered ();
 			if (prev_lines != LineCount){
 
-				Console.SetCursorPosition (0, home_row);
+//				Console.SetCursorPosition (0, home_row);
 				Render ();
 				ForceCursor (++cursor);
 			} else {
@@ -645,7 +645,7 @@ namespace Mono.Terminal {
 			text.Insert (cursor, str);
 			ComputeRendered ();
 			if (prev_lines != LineCount){
-				Console.SetCursorPosition (0, home_row);
+//				Console.SetCursorPosition (0, home_row);
 				Render ();
 				cursor += str.Length;
 				ForceCursor (cursor);
@@ -741,7 +741,7 @@ namespace Mono.Terminal {
 		
 		void CmdRefresh ()
 		{
-			Console.Clear ();
+//			Console.Clear ();
 			max_rendered = 0;
 			Render ();
 			ForceCursor (cursor);
