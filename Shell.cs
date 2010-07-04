@@ -57,7 +57,7 @@ using System.Reflection;
 using System.Text;
 using System.IO;
 using Mono.CSharp;
-using Mono.Terminal;
+//using Mono.Terminal;
 
 [System.Serializable]
 enum HistoryItemType : int {
