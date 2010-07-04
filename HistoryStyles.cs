@@ -1,9 +1,7 @@
 //-----------------------------------------------------------------
-//  HistoryStyles v0.1 (2010-03-08)
+//  HistoryStyles v0.1
 //  Copyright 2009-2010 MrJoy, Inc.
 //  All rights reserved
-//
-//  2010-03-08 - jdf - Initial version.
 //
 //-----------------------------------------------------------------
 // Styles used by history viewer.
