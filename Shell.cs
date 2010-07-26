@@ -603,31 +603,41 @@ public class Shell : EditorWindow {
   }
 
   private Hashtable fields = null;
+  public Vector2 scrollPosition = Vector2.zero;
 
   private void ShowVars() {
     if(fields == null)
       fields = EvaluatorProxy.fields;
 
-    GUILayout.BeginVertical();
+    scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, false, false);
+      if(showVars = EditorGUILayout.Foldout(showVars, "Variables", EditorStyles.foldout)) {
+        EditorGUI.indentLevel++;
 
-    // TODO: This is gonna be WAY inefficient *AND* ugly.  Need a better way to
-    // TODO: handle tabular data, and need a way to track what has/hasn't 
-    // TODO: changed here.
-    StringBuilder tmp = new StringBuilder();
-    foreach(DictionaryEntry kvp in fields) {
-      FieldInfo field = (FieldInfo)kvp.Value;
-      GUILayout.BeginHorizontal();
-        GUILayout.Label(TypeManagerProxy.CSharpName(field.FieldType));
-        GUILayout.Space(10);
-        GUILayout.Label((string)kvp.Key);
-        GUILayout.FlexibleSpace();
-        PrettyPrint.PP(tmp, field.GetValue(null));
-        GUILayout.Label(tmp.ToString());
-        tmp.Length = 0;
-      GUILayout.EndHorizontal();
-    }
+        GUILayout.BeginHorizontal();
+          GUILayout.Space(EditorGUI.indentLevel * 14);
+          GUILayout.BeginVertical();
+          // TODO: This is gonna be WAY inefficient *AND* ugly.  Need a better way to
+          // TODO: handle tabular data, and need a way to track what has/hasn't 
+          // TODO: changed here.
+          StringBuilder tmp = new StringBuilder();
+          foreach(DictionaryEntry kvp in fields) {
+            FieldInfo field = (FieldInfo)kvp.Value;
+            GUILayout.BeginHorizontal();
+              GUILayout.Label(TypeManagerProxy.CSharpName(field.FieldType));
+              GUILayout.Space(10);
+              GUILayout.Label((string)kvp.Key);
+              GUILayout.FlexibleSpace();
+              PrettyPrint.PP(tmp, field.GetValue(null));
+              GUILayout.Label(tmp.ToString());
+              tmp.Length = 0;
+            GUILayout.EndHorizontal();
+          }
 
-    GUILayout.EndVertical();
+          GUILayout.EndVertical();
+        GUILayout.EndHorizontal();
+        EditorGUI.indentLevel--;
+      }
+    EditorGUILayout.EndScrollView();
   }
 
   private const string editorControlName = "REPLEditor";
@@ -637,6 +647,7 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   // Tying It All Together...
   //----------------------------------------------------------------------------
+  public bool showVars = true;
   void OnGUI() {
     // TODO: Turn history and editor components into more general, reusable GUI 
     // TODO: widgets.
@@ -644,12 +655,13 @@ public class Shell : EditorWindow {
 
     ShowEditor();
 
-//    ShowVars();
+    ShowVars();
   }
 
-  [MenuItem("Window/REPL/Shell")]
+  [MenuItem("Window/C# Shell")]
   static void Init() {
     Shell window = (Shell)EditorWindow.GetWindow(typeof(Shell));
+    window.title = "C# Shell";
     window.Show();
   }
 }
