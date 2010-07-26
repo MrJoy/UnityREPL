@@ -14,6 +14,7 @@ using System;
 using System.Collections;
 using System.Text;
 using Mono.CSharp;
+using UnityEngine;
 
 public class PrettyPrint {
   static string EscapeString(string s) { return s.Replace ("\"", "\\\""); }
@@ -64,6 +65,10 @@ public class PrettyPrint {
       if(result is REPLMessage) {
         // Raw, no escaping or quoting.
         output.Append(((REPLMessage)result).msg);
+      } else if(result is Component) {
+        output.Append(((Component)result).name);
+      } else if(result is GameObject) {
+        output.Append(((GameObject)result).name);
       } else if(result is Array) {
         Array a = (Array) result;
         OpenInline(output);
