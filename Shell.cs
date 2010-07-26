@@ -506,13 +506,9 @@ public class Shell : EditorWindow {
   }
 
   private void ShowEditor() {
-    // TODO: Suss out scrolling and the like.
     GUILayout.BeginHorizontal();
       EditorGUILayout.BeginVertical(GUILayout.Width(35));
         GUILayout.Label(useContinuationPrompt ? "cont>" : "---->", EditorStyles.wordWrappedLabel, GUILayout.Width(35));
-//        if(GUILayout.Button("Clr")) {
-//          history.Clear();
-//        }
       EditorGUILayout.EndVertical();
 
       // This is a WAG about Unity's box model.  Seems to work though, so... 
