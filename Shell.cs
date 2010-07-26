@@ -15,18 +15,11 @@
 // TODO: Integrate with Mono.CSharp.Report to get warning/error info in a more
 //       elegant manner (just capturing it all raw is bad since we can't 
 //       reliably format it.)
-// TODO: Find the serializer used for the 'csharp' program to dump out objects 
-//       gracefully and incorporate that.
+// TODO: Format Unity objects more gracefully.
 // TODO: Replace the InteractiveBase class in which user-entered code runs so
 //       things like 'quit' aren't accessible.
-// TODO: Only auto-scroll to the bottom of the history view IFF we were at the 
-//       bottom before the last command was executed.
-// TODO: Persist history.
 // TODO: Suss out undo and wrap code execution accordingly.
 // TODO: Suss out undo and wrap editor accordingly.
-// TODO: Capture System.Console.
-// TODO: Capture Debug console outputs while running code.
-// TODO: Allow expansion of history children, colorize meaningfully, etc...
 //-----------------------------------------------------------------
 using UnityEditor;
 using UnityEngine;
