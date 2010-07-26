@@ -37,7 +37,6 @@ using System.Reflection;
 using System.Text;
 using System.IO;
 using Mono.CSharp;
-//using Mono.Terminal;
 
 [System.Serializable]
 enum HistoryItemType : int {
@@ -504,7 +503,7 @@ public class Shell : EditorWindow {
           break;
         default:
           // If we need to suss out other commands to support...
-          Debug.Log("Validate: " + evt.commandName);
+//          Debug.Log("Validate: " + evt.commandName);
           break;
       }
     } else if(evt.type == EventType.ExecuteCommand) {
@@ -570,8 +569,6 @@ public class Shell : EditorWindow {
     }
   }
 
-//  private LineEditor editor = new LineEditor("UnityREPL", 100);
-//  private IEnumerator editorLoop = null;
   private void ShowEditor() {
     // TODO: Suss out scrolling and the like.
     GUILayout.BeginHorizontal();
@@ -589,13 +586,6 @@ public class Shell : EditorWindow {
         + GUI.skin.label.padding.top + GUI.skin.label.padding.bottom
       ;
 
-      
-//      if(editorLoop == null)
-//        editorLoop = editor.Edit(">", "");
-//      editorLoop.MoveNext();
-//      object editTmp = editorLoop.Current;
-//      if(editTmp != null)
-//        editTmp.SetKey(...);
       GUI.SetNextControlName(editorControlName);
       codeToProcess = GUILayout.TextArea(codeToProcess, GUILayout.ExpandWidth(true), GUILayout.Height(effectiveWidgetHeight));
     GUILayout.EndHorizontal();
