@@ -38,57 +38,6 @@ using System.Text;
 using System.IO;
 using Mono.CSharp;
 
-[System.Serializable]
-enum HistoryItemType : int {
-  General = 0,
-  Code = 1,
-  Output = 2,
-  Warning = 3,
-  Error = 4
-}
-
-[System.Serializable]
-class HistoryItem {
-  public HistoryItemType type;
-  public string content = null, remainder = null;
-  public List<HistoryItem> children = null;
-  public bool isExpanded = true;
-  [System.NonSerialized]
-  public bool jumpTo = true;
-  
-  private static char[] trimChars = new char[] { ' ', '\t', '\n' };
-  public HistoryItem(HistoryItemType t, string c) {
-    type = t;
-    content = c.Trim(trimChars);
-    remainder = "";
-    
-    int newline = content.IndexOf("\n");
-    if(newline > -1) {
-      string summary = content.Substring(0, newline);
-      remainder = content.Substring(newline + 1);
-      content = summary;
-    }
-  }
-  
-  public void Add(HistoryItem child) {
-    if(children == null)
-      children = new List<HistoryItem>();
-    children.Add(child);
-  }
-
-  public static HistoryItem Code(string code) {
-    return new HistoryItem(HistoryItemType.Code, code);
-  }
-
-  public static HistoryItem Messages(string msgs) {
-    return new HistoryItem(HistoryItemType.General, msgs);
-  }
-
-  public static HistoryItem Output(object o) {
-    return new HistoryItem(HistoryItemType.Output, (o != null) ? o.ToString() : null);
-  }
-}
-
 class EvaluationHelper {
   private StringWriter reportWriter = new StringWriter();
   public EvaluationHelper() {
@@ -243,17 +192,16 @@ public class Shell : EditorWindow {
         bool success = helper.Eval(codeToProcess, out hasOutput, out output);
         if(success) {
           resetCommand = true;
-          HistoryItem command = HistoryItem.Code(codeToProcess);
-          history.Add(command);
+          Debug.Log(codeToProcess);
           string messages = helper.Messages;
           if((messages != null) && (messages != "")) {
-            command.Add(HistoryItem.Messages(messages));
+            Debug.LogWarning(messages);
           }
 
           if(hasOutput) {
             StringBuilder sb = new StringBuilder();
             PrettyPrint.PP(sb, output);
-            command.Add(HistoryItem.Output(sb.ToString()));
+            Debug.Log(sb.ToString());
           }
         }
       } else {
@@ -565,7 +513,6 @@ public class Shell : EditorWindow {
       resetCommand = false;
       useContinuationPrompt = false;
       codeToProcess = "";
-      ScrollHistoryToEnd();
     }
   }
 
@@ -574,9 +521,9 @@ public class Shell : EditorWindow {
     GUILayout.BeginHorizontal();
       EditorGUILayout.BeginVertical(GUILayout.Width(35));
         GUILayout.Label(useContinuationPrompt ? "cont>" : "---->", EditorStyles.wordWrappedLabel, GUILayout.Width(35));
-        if(GUILayout.Button("Clr")) {
-          history.Clear();
-        }
+//        if(GUILayout.Button("Clr")) {
+//          history.Clear();
+//        }
       EditorGUILayout.EndVertical();
 
       // This is a WAG about Unity's box model.  Seems to work though, so... 
@@ -596,62 +543,12 @@ public class Shell : EditorWindow {
 
 
   //----------------------------------------------------------------------------
-  // History View Functionality
-  //----------------------------------------------------------------------------
-  Vector2 scrollPosition = new Vector2(0,0);
-  private List<HistoryItem> history = new List<HistoryItem>();
-
-  public void ScrollHistoryToEnd() {
-    // Brute force, but it works.
-    scrollPosition.x = 0;
-    scrollPosition.y = Mathf.Infinity;
-  }
-
-  private void ShowHistory() {
-    EditorGUILayout.BeginVertical(GUI.skin.box, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-      scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-        GUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-          foreach(HistoryItem i in history) {
-            if((i.children != null) || (i.remainder != "")) {
-              if(i.isExpanded) {
-                i.isExpanded = EditorGUILayout.Foldout(i.isExpanded, i.content, HistoryStyles.CodeFoldout);
-                if(i.remainder != "")
-                  GUILayout.Label(i.remainder, HistoryStyles.CodePseudoFoldout);
-              } else {
-                if(i.remainder != "")
-                  i.isExpanded = EditorGUILayout.Foldout(i.isExpanded, i.content + "...", HistoryStyles.CodeFoldout);
-                else
-                  i.isExpanded = EditorGUILayout.Foldout(i.isExpanded, i.content, HistoryStyles.CodeFoldout);
-              }
-            } else
-              GUILayout.Label(i.content, HistoryStyles.CodePseudoFoldout);
-            if((i.children != null) && i.isExpanded) {
-              GUILayout.BeginVertical(HistoryStyles.PseudoFoldout);
-              foreach(HistoryItem ic in i.children) {
-                GUILayout.Label(ic.content);
-                if(ic.remainder != "")
-                  GUILayout.Label(ic.remainder);
-              }
-              GUILayout.EndVertical();
-            }
-          }
-          GUILayout.FlexibleSpace();
-        GUILayout.EndVertical();
-      EditorGUILayout.EndScrollView();
-    EditorGUILayout.EndVertical();
-  }
-  //----------------------------------------------------------------------------
-
-
-  //----------------------------------------------------------------------------
   // Tying It All Together...
   //----------------------------------------------------------------------------
   void OnGUI() {
     // TODO: Turn history and editor components into more general, reusable GUI 
     // TODO: widgets.
     HandleInputFocusAndStateForEditor();
-
-    ShowHistory();
 
     ShowEditor();
   }
