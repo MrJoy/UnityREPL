@@ -148,6 +148,8 @@ class EvaluationHelper {
       Debug.LogError(e);
       output = new Evaluator.NoValueSet();
       hasOutput = false;
+      status = true; // Need this to avoid 'stickiness' where we let user 
+                     // continue editing due to incomplete code.
     }
 
     ReportOutput();
