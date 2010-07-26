@@ -356,11 +356,22 @@ public class Shell : EditorWindow {
         counter += rawLines[curLine++].Length + 1; // The +1 is for the \n.
 
       if(counter >= editor.pos) {
-        curLine--;
+        // If counter == editor.pos, then the cursor is at the beginning of a 
+        // line and we run into a couple annoying issues where the logic here 
+        // acts as though it should be operating on the previous line (OY!).
+        // SO.  To that end, we treat that as a bit of a special-case.  We 
+        // don't decrement the current line counter if cursor is at start of 
+        // line:
+        if(counter > editor.pos) curLine--;
         if(rawLines[curLine].StartsWith("\t")) {
           rawLines[curLine] = rawLines[curLine].Substring(1);
-          editor.pos--;
-          editor.selectPos--;
+          // AAAAAAAAAND, we don't try to unindent the cursor.  Although, truth
+          // be told, we should probably preserve the TextMate-esaue edit 
+          // behavior of having the cursor not move when changing indentation.
+          if(counter > editor.pos) {
+            editor.pos--;
+            editor.selectPos--;
+          }
           codeToProcess = String.Join("\n", rawLines);
         }
       }
