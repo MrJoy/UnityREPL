@@ -169,6 +169,78 @@ class EvaluationHelper {
     buffer.Length = 0;
   }
 }
+
+internal class ReflectionProxy {
+  internal const BindingFlags PUBLIC_STATIC = BindingFlags.Public | BindingFlags.Static;
+  internal const BindingFlags NONPUBLIC_STATIC = BindingFlags.NonPublic | BindingFlags.Static;
+  
+  protected static Type[] Signature(params Type[] sig) { return sig; }
+}
+
+// WARNING: Absolutely NOT thread-safe!
+internal class EvaluatorProxy : ReflectionProxy {
+  private static readonly Type _Evaluator = typeof(Evaluator);
+  private static readonly FieldInfo _fields = _Evaluator.GetField("fields", NONPUBLIC_STATIC);
+
+  internal static Hashtable fields { get { return (Hashtable)_fields.GetValue(null); } }
+}
+
+// WARNING: Absolutely NOT thread-safe!
+internal class TypeManagerProxy : ReflectionProxy {
+  private static readonly Type _TypeManager = typeof(Evaluator).Assembly.GetType("Mono.CSharp.TypeManager");
+  private static readonly MethodInfo _CSharpName = _TypeManager.GetMethod("CSharpName", PUBLIC_STATIC, null, Signature(typeof(Type)), null);
+
+  // Save an allocation per access here...
+  private static readonly object[] _CSharpNameParams = new object[] { null };
+  internal static string CSharpName(Type t) { 
+    // TODO: What am I doing wrong here that this throws on generics??
+    string name = "";
+    try {
+      _CSharpNameParams[0] = t;
+      name = (string)_CSharpName.Invoke(null, _CSharpNameParams);
+    } catch(Exception) {
+      name = "<error>";
+    }
+    return name;
+  }
+}
+
+// Dummy class so we can output a string and bypass pretty-printing of it.
+public struct REPLMessage {
+  public string msg;
+  public REPLMessage(string m) {
+    msg = m;
+  }
+}
+
+public class UnityBaseClass {
+  private static readonly REPLMessage _help = new REPLMessage(@"UnityREPL:
+
+help;     -- This screen.
+vars;     -- Show the variables you've created this session, and their current values.
+
+NOTE: Variables are destroyed when your code is compiled and re-loaded.
+");
+  public static REPLMessage help { get { return _help; } }
+
+  public static REPLMessage vars {
+    get {
+      Hashtable fields = EvaluatorProxy.fields;
+      StringBuilder tmp = new StringBuilder();
+      foreach(DictionaryEntry kvp in fields) {
+        FieldInfo field = (FieldInfo)kvp.Value;
+        tmp
+          .Append(TypeManagerProxy.CSharpName(field.FieldType))
+          .Append(" ")
+          .Append(kvp.Key)
+          .Append(" = ");
+        PrettyPrint.Clear();
+        PrettyPrint.PP(tmp, field.GetValue(null));
+        tmp.Append(";\n");
+      }
+      return new REPLMessage(tmp.ToString());
+    }
+  }
 }
 
 public class Shell : EditorWindow {
@@ -183,6 +255,8 @@ public class Shell : EditorWindow {
   void Update() {
     if(doProcess) {
       if(helper.Init(ref isInitialized)) {
+        if(Evaluator.InteractiveBaseClass != typeof(UnityBaseClass))
+          Evaluator.InteractiveBaseClass = typeof(UnityBaseClass);
         doProcess = false;
         bool hasOutput = false;
         object output = null;
@@ -193,6 +267,7 @@ public class Shell : EditorWindow {
 
           if(hasOutput) {
             StringBuilder sb = new StringBuilder();
+            PrettyPrint.Clear();
             PrettyPrint.PP(sb, output);
             Debug.Log(sb.ToString());
           }

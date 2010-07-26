@@ -45,18 +45,26 @@ public class PrettyPrint {
     }
   }
 
-  private static void OpenInline(StringBuilder output) { output.Append("{ "); }
-  private static void CloseInline(StringBuilder output) { output.Append(" }"); }
+  private static int _depth = 0;
+  private static void OpenInline(StringBuilder output) { output.Append("{ "); _depth++; }
+  private static void CloseInline(StringBuilder output) { output.Append(" }"); _depth--; }
   private static void NextItem(StringBuilder output) { output.Append(", "); }
 
-  private static void Open(StringBuilder output) { output.Append("{"); }
-  private static void Close(StringBuilder output) { output.Append("}"); }
-  
+  private static void Open(StringBuilder output) { output.Append("{"); _depth++; }
+  private static void Close(StringBuilder output) { output.Append("}"); _depth--; }
+
+  public static void Clear() {
+    _depth = 0;
+  }
+
   public static void PP(StringBuilder output, object result) {
     if(result == null) {
       output.Append("null");
     } else {
-      if(result is Array) {
+      if(result is REPLMessage) {
+        // Raw, no escaping or quoting.
+        output.Append(((REPLMessage)result).msg);
+      } else if(result is Array) {
         Array a = (Array) result;
         OpenInline(output);
         int top = a.GetUpperBound(0);
@@ -92,7 +100,10 @@ public class PrettyPrint {
       } else if(result is char) {
         EscapeChar(output, (char)result);
       } else if(result is Type) {
-        output.Append(InteractiveBase.Describe(result));
+        if(_depth > 0)
+          output.Append(((Type)result).Name);
+        else
+          output.Append(InteractiveBase.Describe(result));
       } else {
         output.Append(result.ToString());
       }
