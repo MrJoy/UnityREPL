@@ -48,8 +48,10 @@ class EvaluationHelper {
       reportWriter = (StringWriter)Report.Stderr;
     }
     Report.Stderr = reportWriter;
-    InteractiveBase.Error = reportWriter;
-    InteractiveBase.Output = reportWriter;
+    // Commenting this out to see if we can reliably get ONLY output from the
+    // compiler...
+    //InteractiveBase.Error = reportWriter;
+    //InteractiveBase.Output = reportWriter;
     return reportWriter.GetStringBuilder();    
   }
   
@@ -159,7 +161,7 @@ class EvaluationHelper {
   }
   
   private void ReportOutput() {
-    // Catch compile errors, AND user output (via stdout/stderr) here...  OY.
+    // Catch compile errors.
     StringBuilder buffer = FluffReporter();
     string tmp = buffer.ToString();
     if(!String.IsNullOrEmpty(tmp))
