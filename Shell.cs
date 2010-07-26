@@ -321,6 +321,13 @@ public class Shell : EditorWindow {
       for(int i = 0; i < rawLines.Length; i++) {
         rawLines[i] = '\t' + rawLines[i];
       }
+
+      // Eep!  We don't want to indent a trailing empty line because that means
+      // the user had a 'perfect' block selection and we're accidentally 
+      // indenting the next line.  Yuck!
+      if(rawLines[rawLines.Length - 1] == "\t")
+        rawLines[rawLines.Length - 1] = "";
+
       return Paste(editor, String.Join("\n", rawLines), true);
     } else {
       string[] rawLines = codeToProcess.Split('\n');
