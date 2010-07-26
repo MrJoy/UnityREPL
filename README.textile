@@ -15,11 +15,12 @@ h1. COMPATIBILITY
 * Unity 2.6.0: Untested, should work.
 * Unity 2.6.1: Works.
 * Unity/iPhone: See iPhone branch.  Functional, but limited UI.
+* Unity 3.0.0: Use the "Unity3" branch.  Generally works (tested in 3.0.0b4), but due to a change in event semantics, I've had to change how the enter key is handled to work around an error for now.  I'm investigating.
 
 
 h1. LANGUAGE VERSION
 
-This tool implements a newer version of the C# language than Unity itself supports.  You get a couple nifty features for code entered into the interactive editor:
+This tool implements a newer version of the C# language than Unity itself supports unless you are using Unity 3.0.  You get a couple nifty features for code entered into the interactive editor:
 
 * Support for "var" keyword:
 ** *var i = 3;*
@@ -30,7 +31,7 @@ This tool implements a newer version of the C# language than Unity itself suppor
 **   *where fi.LastWriteTime > DateTime.Now - TimeSpan.FromDays(7)*
 **   *select f;*
 
-Bear in mind that when going between source files in your project and this tool that the new language features will NOT be accessible from .cs files!
+Bear in mind that if you are using Unity prior to 3.0, when going between source files in your project and this tool that the new language features will NOT be accessible from .cs files!
 
 
 h1. EDITING CODE
@@ -40,7 +41,6 @@ UnityREPL uses a GUILayout.TextArea, but with some added functionality:
 * Support for cut, copy, paste, and select-all.
 * Ability to enter tabs in the source editor.
 * Block indent/unindent using COMMAND-] and COMMAND-[ (just like XCode and TextMate)
-** One caveat: At the moment it only works if you actually have a selection.
 
 
 h1. LICENSE
@@ -60,6 +60,6 @@ h1. TODO
 ** Make sure we're not leaking references to things.
 * Capture System.Console and Debug console output.
 * Replace InteractiveBase.
-** Make things like 'quit' aren't accessible.
+** Make things like 'quit' inaccessible.
 ** Add things to help with Unity workflows.
 * Lots of other little things; see the source code for more info.
