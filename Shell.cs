@@ -581,6 +581,14 @@ public class Shell : EditorWindow {
           history.Clear();
         }
       EditorGUILayout.EndVertical();
+
+      // This is a WAG about Unity's box model.  Seems to work though, so... 
+      // yeah.
+      float effectiveWidgetHeight = 7 * GUI.skin.label.lineHeight
+//        + GUI.skin.label.margin.top + GUI.skin.label.margin.bottom
+        + GUI.skin.label.padding.top + GUI.skin.label.padding.bottom
+      ;
+
       
 //      if(editorLoop == null)
 //        editorLoop = editor.Edit(">", "");
@@ -589,7 +597,7 @@ public class Shell : EditorWindow {
 //      if(editTmp != null)
 //        editTmp.SetKey(...);
       GUI.SetNextControlName(editorControlName);
-      codeToProcess = GUILayout.TextArea(codeToProcess, GUILayout.ExpandWidth(true), GUILayout.Height(5 * GUI.skin.label.lineHeight));
+      codeToProcess = GUILayout.TextArea(codeToProcess, GUILayout.ExpandWidth(true), GUILayout.Height(effectiveWidgetHeight));
     GUILayout.EndHorizontal();
   }
 
