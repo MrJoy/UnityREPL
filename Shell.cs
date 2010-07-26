@@ -138,15 +138,6 @@ class EvaluationHelper {
       return true;
     }
   }
-  private StringBuilder messageBuffer = new StringBuilder();
-  
-  public string Messages {
-    get {
-      string tmp = messageBuffer.ToString();
-      messageBuffer.Length = 0;
-      return tmp;
-    }
-  }
 
   public bool Eval(string code, out bool hasOutput, out object output) {
     EditorApplication.LockReloadAssemblies();
@@ -154,17 +145,26 @@ class EvaluationHelper {
     try {
       status = Evaluator.Evaluate(code, out output, out hasOutput) == null;
     } catch(Exception e) {
+      Debug.LogError(e);
       output = new Evaluator.NoValueSet();
       hasOutput = false;
-      messageBuffer.Append(e.ToString());
     }
-    StringBuilder buffer = reportWriter.GetStringBuilder();
-    messageBuffer.Append(buffer.ToString());
-    buffer.Length = 0;
+
+    ReportOutput();
 
     EditorApplication.UnlockReloadAssemblies();
     return status;
   }
+  
+  private void ReportOutput() {
+    // Catch compile errors, AND user output (via stdout/stderr) here...  OY.
+    StringBuilder buffer = FluffReporter();
+    string tmp = buffer.ToString();
+    if(!String.IsNullOrEmpty(tmp))
+      Debug.LogError(tmp);
+    buffer.Length = 0;
+  }
+}
 }
 
 public class Shell : EditorWindow {
@@ -182,14 +182,10 @@ public class Shell : EditorWindow {
         doProcess = false;
         bool hasOutput = false;
         object output = null;
-        bool success = helper.Eval(codeToProcess, out hasOutput, out output);
-        if(success) {
+        Debug.Log("----> " + codeToProcess);
+        bool compiledCorrectly = helper.Eval(codeToProcess, out hasOutput, out output);
+        if(compiledCorrectly) {
           resetCommand = true;
-          Debug.Log(codeToProcess);
-          string messages = helper.Messages;
-          if((messages != null) && (messages != "")) {
-            Debug.LogWarning(messages);
-          }
 
           if(hasOutput) {
             StringBuilder sb = new StringBuilder();
