@@ -260,7 +260,6 @@ public class Shell : EditorWindow {
         doProcess = false;
         bool hasOutput = false;
         object output = null;
-        Debug.Log("----> " + codeToProcess);
         bool compiledCorrectly = helper.Eval(codeToProcess, out hasOutput, out output);
         if(compiledCorrectly) {
           resetCommand = true;
