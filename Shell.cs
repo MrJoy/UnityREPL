@@ -586,9 +586,9 @@ public class Shell : EditorWindow {
 
   private void ShowEditor() {
     GUILayout.BeginHorizontal();
-      EditorGUILayout.BeginVertical(GUILayout.Width(35));
+//      EditorGUILayout.BeginVertical(GUILayout.Width(35));
         GUILayout.Label(useContinuationPrompt ? "cont>" : "---->", EditorStyles.wordWrappedLabel, GUILayout.Width(35));
-      EditorGUILayout.EndVertical();
+//      EditorGUILayout.EndVertical();
 
       // This is a WAG about Unity's box model.  Seems to work though, so... 
       // yeah.
