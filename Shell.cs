@@ -441,7 +441,11 @@ public class Shell : EditorWindow {
 
     if(doProcess) {
       // If we're waiting for a command to run, don't muck with the text!
-      evt.Use();
+// HACK: Disabling this to avoid errors in Unity3.  Ugh.  Basically, for some 
+// reason the GUILayout.FlexibleSpace() ending the history panel goes bonkers
+// if we do this (and, presumably, there is no history -- based on the error it
+// reports).
+//      evt.Use();
       return;
     }
 
