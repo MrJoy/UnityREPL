@@ -192,6 +192,10 @@ public class Shell : EditorWindow {
             PrettyPrint.PP(sb, output);
             Debug.Log(sb.ToString());
           }
+        } else {
+          // Continue with that enter the user pressed...  Yes, this is an ugly 
+          // way to handle it.
+          codeToProcess = Paste(editorState, "\n", false);
         }
       } else {
         // For some reason, we weren't ready to run.
@@ -384,11 +388,7 @@ public class Shell : EditorWindow {
 
     if(doProcess) {
       // If we're waiting for a command to run, don't muck with the text!
-// HACK: Disabling this to avoid errors in Unity3.  Ugh.  Basically, for some 
-// reason the GUILayout.FlexibleSpace() ending the history panel goes bonkers
-// if we do this (and, presumably, there is no history -- based on the error it
-// reports).
-//      evt.Use();
+      if(evt.isKey) evt.Use();
       return;
     }
 
