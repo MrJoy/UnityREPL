@@ -54,11 +54,12 @@ public class PrettyPrint {
   private static void Open(StringBuilder output) { output.Append("{"); _depth++; }
   private static void Close(StringBuilder output) { output.Append("}"); _depth--; }
 
-  public static void Clear() {
+  public static void PP(StringBuilder output, object result) {
     _depth = 0;
+    InternalPP(output, result);
   }
 
-  public static void PP(StringBuilder output, object result) {
+  protected static void InternalPP(StringBuilder output, object result) {
     if(result == null) {
       output.Append("null");
     } else {
@@ -74,7 +75,7 @@ public class PrettyPrint {
         OpenInline(output);
         int top = a.GetUpperBound(0);
         for(int i = a.GetLowerBound(0); i <= top; i++) {
-          PP(output, a.GetValue(i));
+          InternalPP(output, a.GetValue(i));
           if(i != top) output.Append(", ");
         }
         CloseInline(output);
@@ -88,9 +89,9 @@ public class PrettyPrint {
         Open(output);
         foreach(DictionaryEntry entry in dict) {
           count++;
-          PP(output, entry.Key);
+          InternalPP(output, entry.Key);
           output.Append(": ");
-          PP(output, entry.Value);
+          InternalPP(output, entry.Value);
           if(count != top) NextItem(output);
         }
         Close(output);
@@ -99,7 +100,7 @@ public class PrettyPrint {
         OpenInline(output);
         foreach(object item in (IEnumerable)result) {
           if(i++ != 0) NextItem(output);
-          PP(output, item);
+          InternalPP(output, item);
         }
         CloseInline(output);
       } else if(result is char) {

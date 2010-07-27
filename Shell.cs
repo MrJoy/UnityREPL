@@ -234,7 +234,6 @@ NOTE: Variables are destroyed when your code is compiled and re-loaded.
           .Append(" ")
           .Append(kvp.Key)
           .Append(" = ");
-        PrettyPrint.Clear();
         PrettyPrint.PP(tmp, field.GetValue(null));
         tmp.Append(";\n");
       }
@@ -266,7 +265,6 @@ public class Shell : EditorWindow {
 
           if(hasOutput) {
             StringBuilder sb = new StringBuilder();
-            PrettyPrint.Clear();
             PrettyPrint.PP(sb, output);
             Debug.Log(sb.ToString());
           }
