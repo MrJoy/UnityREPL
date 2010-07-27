@@ -36,7 +36,7 @@ public static class HistoryStyles {
       return _CodeFoldout;
     }
   }
-  
+
   private static GUIStyle _PseudoFoldout = null;
   public static GUIStyle PseudoFoldout {
     get {
@@ -49,7 +49,7 @@ public static class HistoryStyles {
       return _PseudoFoldout;
     }
   }
-  
+
   private static GUIStyle _CodePseudoFoldout = null;
   public static GUIStyle CodePseudoFoldout {
     get {

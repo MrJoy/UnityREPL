@@ -7,7 +7,7 @@
 // Handy viewer to keep track of using/vars/etc.
 //
 // TODO: Make sure this plays nice with assembly reloads (see Shell.cs).
-// TODO: Find the serializer used for the 'csharp' program to dump out objects 
+// TODO: Find the serializer used for the 'csharp' program to dump out objects
 //       gracefully.
 // TODO: Find a way to preserve vars across assembly reloads?
 // TODO: Live value manipulator?  (Pie in the sky...)

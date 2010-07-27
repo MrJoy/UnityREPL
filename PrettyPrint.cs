@@ -7,7 +7,7 @@
 // Adapted from repl.cs:
 // http://anonsvn.mono-project.com/viewvc/trunk/mcs/tools/csharp/
 //
-// TODO: Expose this as an easy-to-use command in the REPL editor, a la 
+// TODO: Expose this as an easy-to-use command in the REPL editor, a la
 //       Describe();
 //-----------------------------------------------------------------
 using System;
@@ -21,25 +21,25 @@ public class PrettyPrint {
   static void EscapeChar(StringBuilder output, char c) {
     if(c == '\'')
       output.Append("'\\''");
-    else if(c > 32) 
+    else if(c > 32)
       output.AppendFormat("'{0}'", c);
     else {
       switch (c) {
-        case '\a': 
+        case '\a':
           output.Append("'\\a'"); break;
-        case '\b': 
+        case '\b':
           output.Append("'\\b'"); break;
-        case '\n': 
+        case '\n':
           output.Append("'\\n'"); break;
-        case '\v': 
+        case '\v':
           output.Append("'\\v'"); break;
-        case '\r': 
+        case '\r':
           output.Append("'\\r'"); break;
-        case '\f': 
+        case '\f':
           output.Append("'\\f'"); break;
-        case '\t': 
+        case '\t':
           output.Append("'\\t"); break;
-        default: 
+        default:
           output.AppendFormat("'\\x{0:x}", (int) c); break;
       }
     }
@@ -51,7 +51,7 @@ public class PrettyPrint {
 
   private static void Open(StringBuilder output) { output.Append("{"); }
   private static void Close(StringBuilder output) { output.Append("}"); }
-  
+
   public static void PP(StringBuilder output, object result) {
     if(result == null) {
       output.Append("null");
