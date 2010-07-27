@@ -10,10 +10,10 @@
 //    A) Make sure the newest version of our code is made available after a
 //       reload.
 //    B) Make sure we're not inadvertently 'leaking' things into Mono's heap
-//       (I.E. preventing unloading of old stuff) via dangling references and 
+//       (I.E. preventing unloading of old stuff) via dangling references and
 //       such.
 // TODO: Integrate with Mono.CSharp.Report to get warning/error info in a more
-//       elegant manner (just capturing it all raw is bad since we can't 
+//       elegant manner (just capturing it all raw is bad since we can't
 //       reliably format it.)
 // TODO: Format Unity objects more gracefully.
 // TODO: Replace the InteractiveBase class in which user-entered code runs so
@@ -42,7 +42,7 @@ class EvaluationHelper {
   protected StringBuilder FluffReporter() {
     if(Report.Stderr is StringWriter) {
       // In case the brutal assembly reloading Unity does caused an old instance
-      // of our StringWriter to stick around, we resurrect it to avoid the 
+      // of our StringWriter to stick around, we resurrect it to avoid the
       // chance that someone's holding a reference to it and writing to THAT
       // instead of what we assign to Report.Stderr.
       reportWriter = (StringWriter)Report.Stderr;
@@ -52,9 +52,9 @@ class EvaluationHelper {
     // compiler...
     //InteractiveBase.Error = reportWriter;
     //InteractiveBase.Output = reportWriter;
-    return reportWriter.GetStringBuilder();    
+    return reportWriter.GetStringBuilder();
   }
-  
+
   protected void TryLoadingAssemblies() {
     foreach(Assembly b in AppDomain.CurrentDomain.GetAssemblies()) {
       string assemblyShortName = b.GetName().Name;
@@ -64,10 +64,10 @@ class EvaluationHelper {
       }
     }
 
-    // These won't work the first time through after an assembly reload.  No 
-    // clue why, but the Unity* namespaces don't get found.  Perhaps they're 
+    // These won't work the first time through after an assembly reload.  No
+    // clue why, but the Unity* namespaces don't get found.  Perhaps they're
     // being loaded into our AppDomain asynchronously and just aren't done yet?
-    // Regardless, attempting to hit them early and then trying again later 
+    // Regardless, attempting to hit them early and then trying again later
     // seems to work fine.
     Evaluator.Run("using System;");
     Evaluator.Run("using System.Linq;");
@@ -84,22 +84,22 @@ class EvaluationHelper {
 
     StringBuilder buffer = FluffReporter();
     buffer.Length = 0;
-    
+
     /*
-    We need to tell the evaluator to reference stuff we care about.  Since 
+    We need to tell the evaluator to reference stuff we care about.  Since
     there's a lot of dynamically named stuff that we might want, we just pull
     the list of loaded assemblies and include them "all" (with the exception of
-    a couple that I have a sneaking suspicion may be bad to reference -- noted 
+    a couple that I have a sneaking suspicion may be bad to reference -- noted
     below).
-    
+
     Examples of what we might get when asking the current AppDomain for all
     assemblies (short names only):
-    
+
     Stuff we avoid:
       UnityDomainLoad <-- Unity gubbins.  Probably want to avoid this.
-      Mono.CSharp <-- The self-same package used to pull this off.  Probably 
+      Mono.CSharp <-- The self-same package used to pull this off.  Probably
                       safe, but not taking any chances.
-      interactive0 <-- Looks like what Mono.CSharp is making on the fly.  If we 
+      interactive0 <-- Looks like what Mono.CSharp is making on the fly.  If we
                        load those, it APPEARS we may wind up holding onto them
                        'forever', so...  Don't even try.
 
@@ -113,7 +113,7 @@ class EvaluationHelper {
       UnityEngine
       UnityScript.Lang
       Boo.Lang
-      
+
     The assemblies Unity generated from our project code, and whose names we
     can't predict (thus all this headache of doing this dynamically):
       66e7989537eed4bf0b3da7923cca36a5
@@ -125,7 +125,7 @@ class EvaluationHelper {
     */
     if(!isInitialized) {
       TryLoadingAssemblies();
-      
+
       if(buffer.Length > 0) {
         // Whoops!  Something didn't go right!
         //Console.WriteLine("Got some (hopefully transient) static while initializing:");
@@ -150,7 +150,7 @@ class EvaluationHelper {
       Debug.LogError(e);
       output = new Evaluator.NoValueSet();
       hasOutput = false;
-      status = true; // Need this to avoid 'stickiness' where we let user 
+      status = true; // Need this to avoid 'stickiness' where we let user
                      // continue editing due to incomplete code.
     }
 
@@ -159,7 +159,7 @@ class EvaluationHelper {
     EditorApplication.UnlockReloadAssemblies();
     return status;
   }
-  
+
   private void ReportOutput() {
     // Catch compile errors.
     StringBuilder buffer = FluffReporter();
@@ -167,13 +167,13 @@ class EvaluationHelper {
     if(!String.IsNullOrEmpty(tmp))
       Debug.LogError(tmp);
     buffer.Length = 0;
-  }
+}
 }
 
 internal class ReflectionProxy {
   internal const BindingFlags PUBLIC_STATIC = BindingFlags.Public | BindingFlags.Static;
   internal const BindingFlags NONPUBLIC_STATIC = BindingFlags.NonPublic | BindingFlags.Static;
-  
+
   protected static Type[] Signature(params Type[] sig) { return sig; }
 }
 
@@ -192,7 +192,7 @@ internal class TypeManagerProxy : ReflectionProxy {
 
   // Save an allocation per access here...
   private static readonly object[] _CSharpNameParams = new object[] { null };
-  internal static string CSharpName(Type t) { 
+  internal static string CSharpName(Type t) {
     // TODO: What am I doing wrong here that this throws on generics??
     string name = "";
     try {
@@ -248,10 +248,10 @@ public class Shell : EditorWindow {
   // Code Execution Functionality
   //----------------------------------------------------------------------------
   private EvaluationHelper helper = new EvaluationHelper();
-  
+
   [System.NonSerialized]
   private bool isInitialized = false;
-  
+
   void Update() {
     if(doProcess) {
       if(helper.Init(ref isInitialized)) {
@@ -271,7 +271,7 @@ public class Shell : EditorWindow {
             Debug.Log(sb.ToString());
           }
         } else {
-          // Continue with that enter the user pressed...  Yes, this is an ugly 
+          // Continue with that enter the user pressed...  Yes, this is an ugly
           // way to handle it.
           codeToProcess = Paste(editorState, "\n", false);
         }
@@ -312,7 +312,7 @@ public class Shell : EditorWindow {
       w.Repaint();
     }
   }
-  
+
   [MenuItem("Edit/Indent %]", true)]
   public static bool ValidateIndentCommand() {
     Shell w = focusedWindow as Shell;
@@ -324,9 +324,9 @@ public class Shell : EditorWindow {
     Shell w = focusedWindow as Shell;
     return (w != null) && (w.editorState != null);
   }
-  
+
   // Make our state object go away if we do, or if we lose focus, or whatnot
-  // to ensure menu items disable properly regardless of possible dangling 
+  // to ensure menu items disable properly regardless of possible dangling
   // references, etc.
   public void OnDisable() { editorState = null; }
   public void OnLostFocus() { editorState = null; }
@@ -341,7 +341,7 @@ public class Shell : EditorWindow {
       }
 
       // Eep!  We don't want to indent a trailing empty line because that means
-      // the user had a 'perfect' block selection and we're accidentally 
+      // the user had a 'perfect' block selection and we're accidentally
       // indenting the next line.  Yuck!
       if(rawLines[rawLines.Length - 1] == "\t")
         rawLines[rawLines.Length - 1] = "";
@@ -381,17 +381,17 @@ public class Shell : EditorWindow {
         counter += rawLines[curLine++].Length + 1; // The +1 is for the \n.
 
       if(counter >= editor.pos) {
-        // If counter == editor.pos, then the cursor is at the beginning of a 
-        // line and we run into a couple annoying issues where the logic here 
+        // If counter == editor.pos, then the cursor is at the beginning of a
+        // line and we run into a couple annoying issues where the logic here
         // acts as though it should be operating on the previous line (OY!).
-        // SO.  To that end, we treat that as a bit of a special-case.  We 
-        // don't decrement the current line counter if cursor is at start of 
+        // SO.  To that end, we treat that as a bit of a special-case.  We
+        // don't decrement the current line counter if cursor is at start of
         // line:
         if(counter > editor.pos) curLine--;
         if(rawLines[curLine].StartsWith("\t")) {
           rawLines[curLine] = rawLines[curLine].Substring(1);
           // AAAAAAAAAND, we don't try to unindent the cursor.  Although, truth
-          // be told, we should probably preserve the TextMate-esaue edit 
+          // be told, we should probably preserve the TextMate-esaue edit
           // behavior of having the cursor not move when changing indentation.
           if(counter > editor.pos) {
             editor.pos--;
@@ -417,7 +417,7 @@ public class Shell : EditorWindow {
     if(endAt < editor.content.text.Length)
       suffix = editor.content.text.Substring(endAt);
     string newCorpus = prefix + textToPaste + suffix;
-    
+
     editor.content.text = newCorpus;
     if(continueSelection) {
       if(editor.pos > editor.selectPos)
@@ -443,19 +443,19 @@ public class Shell : EditorWindow {
     if(endAt < editor.content.text.Length)
       suffix = editor.content.text.Substring(endAt);
     string newCorpus = prefix + suffix;
-    
+
     editor.content.text = newCorpus;
     editor.pos = editor.selectPos = prefix.Length;
     return newCorpus;
   }
 
-  // Handy-dandy method to deal with keyboard inputs which we get as actual 
+  // Handy-dandy method to deal with keyboard inputs which we get as actual
   // events.  Basically lets us deal with copy & paste, etc which GUI.TextArea
   // ordinarily does not support.
   private void FilterEditorInputs() {
     Event evt = Event.current;
     if(focusedWindow == this) {
-      // Only attempt to grab this if our window has focus in order to make 
+      // Only attempt to grab this if our window has focus in order to make
       // indent/unindent menu items behave sanely.
       int editorId = GUIUtility.keyboardControl;
       editorState = GUIUtility.QueryStateObject(typeof(System.Object), editorId) as TextEditor;
@@ -472,20 +472,20 @@ public class Shell : EditorWindow {
 
     if(evt.isKey) {
       if(evt.type == EventType.KeyDown) {
-        // KeyDown gets the key press + repeating.  We only care about a few 
+        // KeyDown gets the key press + repeating.  We only care about a few
         // things...
         if(evt.functionKey) {
           // TODO: Make sure we don't have modifier keys pressed...
-          
+
           // TODO: Proper edit-history support!
           if(evt.keyCode == KeyCode.UpArrow) {
-            // TODO: If we're at the top of the input, move to the previous 
-            // TODO: history item.  If the current item is the last history item, 
+            // TODO: If we're at the top of the input, move to the previous
+            // TODO: history item.  If the current item is the last history item,
             // TODO: update the history with changes?
 //            Debug.Log("UP");
           } else if(evt.keyCode == KeyCode.DownArrow) {
-            // TODO: If we're at the bottom of the input, move to the previous 
-            // TODO: history item.  If the current item is the last history item, 
+            // TODO: If we're at the bottom of the input, move to the previous
+            // TODO: history item.  If the current item is the last history item,
             // TODO: update the history with changes?
 //            Debug.Log("DOWN");
 //          } else {
@@ -498,8 +498,8 @@ public class Shell : EditorWindow {
           doProcess = true;
           useContinuationPrompt = true; // In case we fail.
         } else if(evt.keyCode == KeyCode.Tab) {
-          // Unity doesn't like using tab for actual editing.  We're gonna 
-          // change that.  So here we inject a tab, and later we'll deal with 
+          // Unity doesn't like using tab for actual editing.  We're gonna
+          // change that.  So here we inject a tab, and later we'll deal with
           // focus issues.
           codeToProcess = Paste(editorState, "\t", false);
         }
@@ -507,14 +507,14 @@ public class Shell : EditorWindow {
     } else if(evt.type == EventType.ValidateCommand) {
       switch(evt.commandName) {
         case "SelectAll":
-        case "Paste": 
+        case "Paste":
           // Always allowed to muck with selection or paste stuff...
-          evt.Use(); 
+          evt.Use();
           break;
-        case "Copy": 
+        case "Copy":
         case "Cut":
           // ... but can only copy & cut when we have a selection.
-          if(editorState.hasSelection) evt.Use(); 
+          if(editorState.hasSelection) evt.Use();
           break;
         default:
           // If we need to suss out other commands to support...
@@ -527,13 +527,13 @@ public class Shell : EditorWindow {
         case "SelectAll": editorState.SelectAll(); break;
         case "Copy": editorState.Copy(); break;
         // But some don't.
-        case "Paste": 
+        case "Paste":
           // Manually paste.  Keeping Use() out of the Paste() method so we can
           // re-use the functionality elsewhere.
           codeToProcess = Paste(editorState, EditorGUIUtility.systemCopyBuffer, false);
           evt.Use();
           break;
-        case "Cut": 
+        case "Cut":
           // Ditto -- manual cut.
           codeToProcess = Cut(editorState);
           evt.Use();
@@ -550,8 +550,8 @@ public class Shell : EditorWindow {
     // It SEEMS to be the case that if we constrain mucking with the focus until
     // the repaint event that stuff Just Works<tm>.
     //
-    // The only issue remaining after that is the actual selection -- mucking 
-    // with the focus will cause it to get reset.  So we need to capture and 
+    // The only issue remaining after that is the actual selection -- mucking
+    // with the focus will cause it to get reset.  So we need to capture and
     // restore it.
     if(focusedWindow == this) {
       if((Event.current != null) && (Event.current.type == EventType.Repaint)) {
@@ -589,7 +589,7 @@ public class Shell : EditorWindow {
         GUILayout.Label(useContinuationPrompt ? "cont>" : "---->", EditorStyles.wordWrappedLabel, GUILayout.Width(35));
 //      EditorGUILayout.EndVertical();
 
-      // This is a WAG about Unity's box model.  Seems to work though, so... 
+      // This is a WAG about Unity's box model.  Seems to work though, so...
       // yeah.
       float effectiveWidgetHeight = 7 * GUI.skin.label.lineHeight
 //        + GUI.skin.label.margin.top + GUI.skin.label.margin.bottom
@@ -616,7 +616,7 @@ public class Shell : EditorWindow {
           GUILayout.Space(EditorGUI.indentLevel * 14);
           GUILayout.BeginVertical();
           // TODO: This is gonna be WAY inefficient *AND* ugly.  Need a better way to
-          // TODO: handle tabular data, and need a way to track what has/hasn't 
+          // TODO: handle tabular data, and need a way to track what has/hasn't
           // TODO: changed here.
           StringBuilder tmp = new StringBuilder();
           foreach(DictionaryEntry kvp in fields) {
@@ -630,13 +630,13 @@ public class Shell : EditorWindow {
               GUILayout.Label(tmp.ToString());
               tmp.Length = 0;
             GUILayout.EndHorizontal();
-          }
+  }
 
-          GUILayout.EndVertical();
+              GUILayout.EndVertical();
         GUILayout.EndHorizontal();
         EditorGUI.indentLevel--;
-      }
-    EditorGUILayout.EndScrollView();
+            }
+      EditorGUILayout.EndScrollView();
   }
 
   private const string editorControlName = "REPLEditor";
@@ -648,7 +648,7 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   public bool showVars = true;
   void OnGUI() {
-    // TODO: Turn history and editor components into more general, reusable GUI 
+    // TODO: Turn history and editor components into more general, reusable GUI
     // TODO: widgets.
     HandleInputFocusAndStateForEditor();
 
