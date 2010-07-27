@@ -167,7 +167,7 @@ class EvaluationHelper {
     if(!String.IsNullOrEmpty(tmp))
       Debug.LogError(tmp);
     buffer.Length = 0;
-}
+  }
 }
 
 internal class ReflectionProxy {
@@ -613,27 +613,26 @@ public class Shell : EditorWindow {
         GUILayout.BeginHorizontal();
           GUILayout.Space(EditorGUI.indentLevel * 14);
           GUILayout.BeginVertical();
-          // TODO: This is gonna be WAY inefficient *AND* ugly.  Need a better way to
-          // TODO: handle tabular data, and need a way to track what has/hasn't
-          // TODO: changed here.
-          StringBuilder tmp = new StringBuilder();
-          foreach(DictionaryEntry kvp in fields) {
-            FieldInfo field = (FieldInfo)kvp.Value;
-            GUILayout.BeginHorizontal();
-              GUILayout.Label(TypeManagerProxy.CSharpName(field.FieldType));
-              GUILayout.Space(10);
-              GUILayout.Label((string)kvp.Key);
-              GUILayout.FlexibleSpace();
-              PrettyPrint.PP(tmp, field.GetValue(null));
-              GUILayout.Label(tmp.ToString());
-              tmp.Length = 0;
-            GUILayout.EndHorizontal();
-  }
-
-              GUILayout.EndVertical();
+            // TODO: This is gonna be WAY inefficient *AND* ugly.  Need a better
+            // TODO: way to handle tabular data, and need a way to track what
+            // TODO: has/hasn't changed here.
+            StringBuilder tmp = new StringBuilder();
+            foreach(DictionaryEntry kvp in fields) {
+              FieldInfo field = (FieldInfo)kvp.Value;
+              GUILayout.BeginHorizontal();
+                GUILayout.Label(TypeManagerProxy.CSharpName(field.FieldType));
+                GUILayout.Space(10);
+                GUILayout.Label((string)kvp.Key);
+                GUILayout.FlexibleSpace();
+                PrettyPrint.PP(tmp, field.GetValue(null));
+                GUILayout.Label(tmp.ToString());
+                tmp.Length = 0;
+              GUILayout.EndHorizontal();
+            }
+          GUILayout.EndVertical();
         GUILayout.EndHorizontal();
         EditorGUI.indentLevel--;
-            }
+      }
       EditorGUILayout.EndScrollView();
   }
 
