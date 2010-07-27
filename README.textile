@@ -14,7 +14,7 @@ h1. COMPATIBILITY
 * Unity 2.5.x: Probably will not work.
 * Unity 2.6.0: Untested, should work.
 * Unity 2.6.1: Works.
-* Unity/iPhone: See iPhone branch.  Functional, but limited UI.
+* Unity/iPhone 1.x: See iPhone branch.  Functional, but limited UI.
 * Unity 3.0.0: Use the "Unity3" branch.  Generally works (tested in 3.0.0b4), but due to a change in event semantics, I've had to change how the enter key is handled to work around an error for now.  I'm investigating.
 
 
@@ -55,11 +55,7 @@ h1. TODO
 * Undo functionality.
 * Editing history support (Bash style).
 * Smooth out some hiccups with assembly reloads.
-** History log gets sort-of blown away.
 ** Local vars getting fully blown away.
 ** Make sure we're not leaking references to things.
-* Capture System.Console and Debug console output.
-* Replace InteractiveBase.
-** Make things like 'quit' inaccessible.
-** Add things to help with Unity workflows.
+* Add things to UnityBaseClass to help with Unity workflows.
 * Lots of other little things; see the source code for more info.

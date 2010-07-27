@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------
-//  Editor v0.4
+//  Shell v0.5
 //  Copyright 2009-2010 MrJoy, Inc.
 //  All rights reserved
 //
@@ -16,8 +16,7 @@
 //       elegant manner (just capturing it all raw is bad since we can't
 //       reliably format it.)
 // TODO: Format Unity objects more gracefully.
-// TODO: Replace the InteractiveBase class in which user-entered code runs so
-//       things like 'quit' aren't accessible.
+// TODO: Turn editor components into more general, reusable GUI widget.
 // TODO: Suss out undo and wrap code execution accordingly.
 // TODO: Suss out undo and wrap editor accordingly.
 //-----------------------------------------------------------------
@@ -645,8 +644,6 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   public bool showVars = true;
   void OnGUI() {
-    // TODO: Turn history and editor components into more general, reusable GUI
-    // TODO: widgets.
     HandleInputFocusAndStateForEditor();
 
     ShowEditor();

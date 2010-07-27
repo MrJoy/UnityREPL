@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------
-//  PrettyPrint v0.1
+//  PrettyPrint v0.2
 //  Copyright 2009-2010 MrJoy, Inc.
 //  All rights reserved
 //
