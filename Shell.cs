@@ -19,7 +19,7 @@
 // TODO: Turn editor components into more general, reusable GUI widget.
 // TODO: Suss out undo and wrap code execution accordingly.
 // TODO: Suss out undo and wrap editor accordingly.
-// TODO: Make use of EditorWindow.minSize/EditorWindow.maxSize
+// TODO: Make use of EditorWindow.minSize/EditorWindow.maxSize.
 //-----------------------------------------------------------------
 using UnityEditor;
 using UnityEngine;

@@ -1,10 +1,52 @@
 h1. OVERVIEW
 
-UnityREPL is a REPL (Read, Eval, Print, Loop) tool based on "Miguel's CSharpRepl":http://www.mono-project.com/CsharpRepl but for Unity3D.
+UnityREPL is a REPL (Read, Eval, Print, Loop) tool based on "Miguel's CSharpRepl":CSharpRepl but for "Unity":Unity.
 
-What's a REPL?  See the "Wikipedia article.":http://en.wikipedia.org/wiki/Read_Eval_Print_Loop
+What's a REPL?  See the "Wikipedia article.":Wikipedia or the "demo videos":Wiki on the Wiki.
 
-Clone this repository into *Assets/Editor*, then go to Window -> REPL -> Shell to open a dockable panel.
+
+h1. INSTALLATION
+
+<b>Please note that all instructions assume that you are using Unity 3.0!</b>
+
+
+h2. NON-GIT, OR NON-UNITY-PRO SETUP
+
+* Grab the ".unitypackage":Package from the downloads page.
+* Open your project.
+* Click "Assets" -> "Import Package..." from the menu, and select the file.
+
+<i>If you are not using Unity 3.0, you will need to use one of the other installation methods below.</i>
+
+
+h2. GIT SETUP IN A UNITY PRO PROJECT THAT IS NOT VERSIONED WITH GIT
+
+*This is only viable if your project is set up with External Version Control enabled.  If not, please download the .unitypackage and use that.*
+
+__If you are not using Unity 3.0, replace the line @git checkout Unity3@ with either @git checkout master@ (for Unity 2.6.x), or @git checkout iPhone@ (for Unity/iPhone 1.x) as appropriate.__
+
+bc.   cd myproject/Assets/
+  mkdir -p Editor/
+  cd Editor/
+  git clone git://github.com/MrJoy/UnityREPL.git
+  cd UnityREPL/
+  git checkout Unity3
+
+
+h2. GIT SETUP IN A UNITY PRO PROJECT VERSIONED WITH GIT
+
+*This is only viable if your project is set up with External Version Control enabled.  If not, please download the .unitypackage and use that.*
+
+bc.   cd myproject/
+  git submodule add -b Unity3 git://github.com/MrJoy/UnityREPL.git
+  git submodule init
+  git submodule update
+
+
+h1. USAGE
+
+* Click "Window" -> "C# Shell"
+* Dock the new tab wherever you wish, and enjoy!
 
 From this window you can enter C# code and run it.  You should have access to all classes you've defined in C#, JavaScript, or Boo in your project.
 
@@ -12,31 +54,31 @@ From this window you can enter C# code and run it.  You should have access to al
 h1. COMPATIBILITY
 
 * Unity 2.5.x: Probably will not work.
-* Unity 2.6.0: Untested, should work.
-* Unity 2.6.1: Works.
-* Unity/iPhone 1.x: See iPhone branch.  Functional, but limited UI.
-* Unity 3.0.0: Use the "Unity3" branch.  Generally works (tested in 3.0.0b4), but due to a change in event semantics, I've had to change how the enter key is handled to work around an error for now.  I'm investigating.
+* Unity 2.6.0: Untested, should work.  Use the "master" branch.
+* Unity 2.6.1: Works.  Use the "master" branch.
+* Unity/iPhone 1.x: Sort of works.  Use the "iPhone" branch. (Functional, but limited UI.)
+* Unity 3.0.0: Works.  Use the "Unity3" branch.
 
 
 h1. LANGUAGE VERSION
 
 This tool implements a newer version of the C# language than Unity itself supports unless you are using Unity 3.0.  You get a couple nifty features for code entered into the interactive editor:
 
-* Support for "var" keyword:
-** *var i = 3;*
-* Linq syntax:
-** *using System.IO;*
-** *from f in Directory.GetFiles("/etc")*
-**   *let fi = new FileInfo(f)*
-**   *where fi.LastWriteTime > DateTime.Now - TimeSpan.FromDays(7)*
-**   *select f;*
+bc.   // Support for "var" keyword:
+  var i = 3;
+  // Linq syntax:
+  using System.IO;
+  from f in Directory.GetFiles("/etc")
+    let fi = new FileInfo(f)
+    where fi.LastWriteTime > DateTime.Now - TimeSpan.FromDays(7)
+    select f;
 
 Bear in mind that if you are using Unity prior to 3.0, when going between source files in your project and this tool that the new language features will NOT be accessible from .cs files!
 
 
 h1. EDITING CODE
 
-UnityREPL uses a GUILayout.TextArea, but with some added functionality:
+UnityREPL uses a @GUILayout.TextArea@, but with some added functionality:
 
 * Support for cut, copy, paste, and select-all.
 * Ability to enter tabs in the source editor.
@@ -47,7 +89,7 @@ h1. LICENSE
 
 Dual licensed under the terms of the MIT X11 or GNU GPL, as per the original code.
 
-The included Mono.CSharp.dll is a completely unmodified copy from "Mono 2.4.":http://www.mono-project.com
+The included Mono.CSharp.dll is a completely unmodified copy from "Mono 2.4.":Mono
 
 
 h1. TODO
@@ -55,7 +97,15 @@ h1. TODO
 * Undo functionality.
 * Editing history support (Bash style).
 * Smooth out some hiccups with assembly reloads.
-** Local vars getting fully blown away.
+** Local vars getting blown away.
 ** Make sure we're not leaking references to things.
 * Add things to UnityBaseClass to help with Unity workflows.
 * Lots of other little things; see the source code for more info.
+
+
+[Mono]http://www.mono-project.com
+[Wiki]http://wiki.github.com/MrJoy/UnityREPL/
+[Wikipedia]http://en.wikipedia.org/wiki/Read_Eval_Print_Loop 
+[CSharpRepl]http://www.mono-project.com/CsharpRepl
+[Unity]http://Unity3D.com
+[Package]http://github.com/downloads/MrJoy/UnityREPL/UnityREPL_0.5_Unity3.unitypackage
