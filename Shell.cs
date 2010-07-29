@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------
-//  Shell v0.6
+//  Shell v0.7
 //  Copyright 2009-2010 MrJoy, Inc.
 //  All rights reserved
 //
@@ -303,8 +303,7 @@ public class Shell : EditorWindow {
 
 #if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
   private static EditorWindow focusedWindow = null;
-#endif
-
+#else
   // Need to use menu items because otherwise we don't receive events for cmd-]
   // and cmd-[.
   [MenuItem("Edit/Indent %]", false, 256)]
@@ -336,6 +335,7 @@ public class Shell : EditorWindow {
     Shell w = focusedWindow as Shell;
     return (w != null) && (w.editorState != null);
   }
+#endif
 
   // Make our state object go away if we do, or if we lose focus, or whatnot
   // to ensure menu items disable properly regardless of possible dangling
@@ -350,10 +350,8 @@ public class Shell : EditorWindow {
   public void OnLostFocus() { editorState = null; }
   public void OnDestroy() { editorState = null; }
 
+#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
   public string Indent(TextEditor editor) {
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
-    return codeToProcess;
-#else
     if(editor.hasSelection) {
       string codeToIndent = editor.SelectedText;
       string[] rawLines = codeToIndent.Split('\n');
@@ -384,13 +382,9 @@ public class Shell : EditorWindow {
 
       return codeToProcess;
     }
-#endif
   }
 
   public string Unindent(TextEditor editor) {
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
-    return codeToProcess;
-#else
     if(editor.hasSelection) {
       string codeToIndent = editor.SelectedText;
       string[] rawLines = codeToIndent.Split('\n');
@@ -428,13 +422,9 @@ public class Shell : EditorWindow {
 
       return codeToProcess;
     }
-#endif
   }
 
   public string Paste(TextEditor editor, string textToPaste, bool continueSelection) {
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
-    return codeToProcess;
-#else
     // The user can select from right-to-left and Unity gives us data that's
     // different than if they selected left-to-right.  That can be handy, but
     // here we just want to know substring indexes to slice out.
@@ -456,13 +446,9 @@ public class Shell : EditorWindow {
     } else
       editor.pos = editor.selectPos = prefix.Length + textToPaste.Length;
     return newCorpus;
-#endif
   }
 
   public string Cut(TextEditor editor) {
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
-    return codeToProcess;
-#else
     EditorGUIUtility.systemCopyBuffer = editor.SelectedText;
 
     // The user can select from right-to-left and Unity gives us data that's
@@ -480,8 +466,8 @@ public class Shell : EditorWindow {
     editor.content.text = newCorpus;
     editor.pos = editor.selectPos = prefix.Length;
     return newCorpus;
-#endif
   }
+#endif
 
   // Handy-dandy method to deal with keyboard inputs which we get as actual
   // events.  Basically lets us deal with copy & paste, etc which GUI.TextArea
@@ -534,11 +520,13 @@ public class Shell : EditorWindow {
           // TODO: the middle of peoples' input...)
           doProcess = true;
           useContinuationPrompt = true; // In case we fail.
+#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
         } else if(evt.keyCode == KeyCode.Tab) {
           // Unity doesn't like using tab for actual editing.  We're gonna
           // change that.  So here we inject a tab, and later we'll deal with
           // focus issues.
           codeToProcess = Paste(editorState, "\t", false);
+#endif
         }
       }
 #if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
@@ -709,7 +697,6 @@ public class Shell : EditorWindow {
   public void OnGUI() {
 #if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     EditorGUIUtility.UseControlStyles();
-//    EditorGUIUtility.LookLikeInspector();
 #endif
     HandleInputFocusAndStateForEditor();
 
