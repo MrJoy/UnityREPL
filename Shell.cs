@@ -251,6 +251,8 @@ public class Shell : EditorWindow {
   [System.NonSerialized]
   private bool isInitialized = false;
 
+  [System.NonSerialized]
+  private StringBuilder outputBuffer = new StringBuilder();
   void Update() {
     if(doProcess) {
       if(helper.Init(ref isInitialized)) {
@@ -264,9 +266,9 @@ public class Shell : EditorWindow {
           resetCommand = true;
 
           if(hasOutput) {
-            StringBuilder sb = new StringBuilder();
-            PrettyPrint.PP(sb, output);
-            Debug.Log(sb.ToString());
+            outputBuffer.Length = 0;
+            PrettyPrint.PP(outputBuffer, output);
+            Debug.Log(outputBuffer.ToString());
           }
         } else {
           // Continue with that enter the user pressed...  Yes, this is an ugly
