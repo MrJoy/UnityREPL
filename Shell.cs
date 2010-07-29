@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------
-//  Shell v0.5
+//  Shell v0.6
 //  Copyright 2009-2010 MrJoy, Inc.
 //  All rights reserved
 //
@@ -273,7 +273,9 @@ public class Shell : EditorWindow {
         } else {
           // Continue with that enter the user pressed...  Yes, this is an ugly
           // way to handle it.
+#if UNITY_3_0
           codeToProcess = Paste(editorState, "\n", false);
+#endif
         }
       } else {
         // For some reason, we weren't ready to run.
@@ -466,7 +468,10 @@ public class Shell : EditorWindow {
 
     if(doProcess) {
       // If we're waiting for a command to run, don't muck with the text!
-      if(evt.isKey) evt.Use();
+#if UNITY_3_0
+      if(evt.isKey) 
+#endif
+        evt.Use();
       return;
     }
 
