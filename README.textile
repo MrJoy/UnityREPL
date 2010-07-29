@@ -7,7 +7,7 @@ What's a REPL?  See the "Wikipedia article.":Wikipedia or the "demo videos":Wiki
 
 h1. INSTALLATION
 
-<b>Please note that all instructions assume that you are using Unity 3.0!</b>
+<b>Please note that all instructions assume that you are using Unity 2.6.x, or 3.0!</b>
 
 
 h2. NON-GIT, OR NON-UNITY-PRO SETUP
@@ -16,21 +16,21 @@ h2. NON-GIT, OR NON-UNITY-PRO SETUP
 * Open your project.
 * Click "Assets" -> "Import Package..." from the menu, and select the file.
 
-<i>If you are not using Unity 3.0, you will need to use one of the other installation methods below.</i>
+<i>If you are using Unity/iPhone 1.x, you will need to use one of the other installation methods below.</i>
 
 
 h2. GIT SETUP IN A UNITY PRO PROJECT THAT IS NOT VERSIONED WITH GIT
 
 *This is only viable if your project is set up with External Version Control enabled.  If not, please download the .unitypackage and use that.*
 
-__If you are not using Unity 3.0, replace the line @git checkout Unity3@ with either @git checkout master@ (for Unity 2.6.x), or @git checkout iPhone@ (for Unity/iPhone 1.x) as appropriate.__
+__If you are using Unity/iPhone 1.x, replace the line @git checkout master@ with @git checkout iPhone@.__
 
 bc.   cd myproject/Assets/
   mkdir -p Editor/
   cd Editor/
   git clone git://github.com/MrJoy/UnityREPL.git
   cd UnityREPL/
-  git checkout Unity3
+  git checkout master
 
 
 h2. GIT SETUP IN A UNITY PRO PROJECT VERSIONED WITH GIT
@@ -57,7 +57,7 @@ h1. COMPATIBILITY
 * Unity 2.6.0: Untested, should work.  Use the "master" branch.
 * Unity 2.6.1: Works.  Use the "master" branch.
 * Unity/iPhone 1.x: Sort of works.  Use the "iPhone" branch. (Functional, but limited UI.)
-* Unity 3.0.0: Works.  Use the "Unity3" branch.
+* Unity 3.0.0: Works.  Use the "master" branch.
 
 
 h1. LANGUAGE VERSION
@@ -108,4 +108,4 @@ h1. TODO
 [Wikipedia]http://en.wikipedia.org/wiki/Read_Eval_Print_Loop 
 [CSharpRepl]http://www.mono-project.com/CsharpRepl
 [Unity]http://Unity3D.com
-[Package]http://github.com/downloads/MrJoy/UnityREPL/UnityREPL_0.5_Unity3.unitypackage
+[Package]http://github.com/downloads/MrJoy/UnityREPL/UnityREPL_0.6.unitypackage
