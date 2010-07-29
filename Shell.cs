@@ -644,7 +644,11 @@ public class Shell : EditorWindow {
       ;
 
       GUI.SetNextControlName(editorControlName);
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
+      codeToProcess = GUILayout.TextArea(codeToProcess, "box", GUILayout.ExpandWidth(true), GUILayout.Height(effectiveWidgetHeight));
+#else
       codeToProcess = GUILayout.TextArea(codeToProcess, GUILayout.ExpandWidth(true), GUILayout.Height(effectiveWidgetHeight));
+#endif
     GUILayout.EndHorizontal();
   }
 
@@ -655,8 +659,13 @@ public class Shell : EditorWindow {
     if(fields == null)
       fields = EvaluatorProxy.fields;
 
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
+    scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, false);
+      if(showVars = GUILayout.Toggle(showVars, "Variables", "toggle")) {
+#else
     scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, false, false);
       if(showVars = EditorGUILayout.Foldout(showVars, "Variables", EditorStyles.foldout)) {
+#endif
         EditorGUI.indentLevel++;
 
         GUILayout.BeginHorizontal();
@@ -682,7 +691,11 @@ public class Shell : EditorWindow {
         GUILayout.EndHorizontal();
         EditorGUI.indentLevel--;
       }
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
+      GUILayout.EndScrollView();
+#else
       EditorGUILayout.EndScrollView();
+#endif
   }
 
   private const string editorControlName = "REPLEditor";
