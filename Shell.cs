@@ -78,7 +78,7 @@ class EvaluationHelper {
   }
 
   public bool Init(ref bool isInitialized) {
-#if !UNITY_IPHONE
+#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     // Don't be executing code when we're about to reload it.  Not sure this is
     // actually needed but seems prudent to be wary of it.
     if(EditorApplication.isCompiling) return false;
@@ -144,7 +144,7 @@ class EvaluationHelper {
   }
 
   public bool Eval(string code, out bool hasOutput, out object output) {
-#if !UNITY_IPHONE
+#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     EditorApplication.LockReloadAssemblies();
 #endif
     bool status = false;
@@ -160,7 +160,7 @@ class EvaluationHelper {
 
     ReportOutput();
 
-#if !UNITY_IPHONE
+#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     EditorApplication.UnlockReloadAssemblies();
 #endif
     return status;
@@ -301,7 +301,7 @@ public class Shell : EditorWindow {
   // WARNING: Undocumented spookiness from deep within the bowels of Unity!
   public TextEditor editorState = null;
 
-#if UNITY_IPHONE
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
   private static EditorWindow focusedWindow = null;
 #endif
 
@@ -342,7 +342,7 @@ public class Shell : EditorWindow {
   // references, etc.
   public void OnDisable() {
     editorState = null;
-#if UNITY_IPHONE
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     window = null;
     focusedWindow = null;
 #endif
@@ -351,7 +351,7 @@ public class Shell : EditorWindow {
   public void OnDestroy() { editorState = null; }
 
   public string Indent(TextEditor editor) {
-#if UNITY_IPHONE
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     return codeToProcess;
 #else
     if(editor.hasSelection) {
@@ -388,7 +388,7 @@ public class Shell : EditorWindow {
   }
 
   public string Unindent(TextEditor editor) {
-#if UNITY_IPHONE
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     return codeToProcess;
 #else
     if(editor.hasSelection) {
@@ -432,7 +432,7 @@ public class Shell : EditorWindow {
   }
 
   public string Paste(TextEditor editor, string textToPaste, bool continueSelection) {
-#if UNITY_IPHONE
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     return codeToProcess;
 #else
     // The user can select from right-to-left and Unity gives us data that's
@@ -460,7 +460,7 @@ public class Shell : EditorWindow {
   }
 
   public string Cut(TextEditor editor) {
-#if UNITY_IPHONE
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     return codeToProcess;
 #else
     EditorGUIUtility.systemCopyBuffer = editor.SelectedText;
@@ -541,7 +541,7 @@ public class Shell : EditorWindow {
           codeToProcess = Paste(editorState, "\t", false);
         }
       }
-#if !UNITY_IPHONE
+#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     } else if(evt.type == EventType.ValidateCommand) {
       switch(evt.commandName) {
         case "SelectAll":
@@ -581,7 +581,7 @@ public class Shell : EditorWindow {
     }
   }
 
-#if !UNITY_IPHONE
+#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
   private void ForceFocus(string selectedControl, string desiredControl) {
     // Now here's how we deal with tabbing and hitting enter and whatnot.
     // Basically, if we're the current editor window we assume that we always
@@ -613,7 +613,7 @@ public class Shell : EditorWindow {
 #endif
 
   private void HandleInputFocusAndStateForEditor() {
-#if !UNITY_IPHONE
+#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     string selectedControl = GUI.GetNameOfFocusedControl();
     ForceFocus(selectedControl, editorControlName);
     if(selectedControl == editorControlName)
@@ -629,7 +629,7 @@ public class Shell : EditorWindow {
   private void ShowEditor() {
     GUILayout.BeginHorizontal();
 //      EditorGUILayout.BeginVertical(GUILayout.Width(35));
-#if UNITY_IPHONE
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
         GUILayout.Label(useContinuationPrompt ? "cont>" : "---->", GUILayout.Width(35));
 #else
         GUILayout.Label(useContinuationPrompt ? "cont>" : "---->", EditorStyles.wordWrappedLabel, GUILayout.Width(35));
@@ -694,7 +694,7 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   public bool showVars = true;
   public void OnGUI() {
-#if UNITY_IPHONE
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     EditorGUIUtility.UseControlStyles();
 //    EditorGUIUtility.LookLikeInspector();
 #endif
@@ -705,7 +705,7 @@ public class Shell : EditorWindow {
     ShowVars();
   }
 
-#if UNITY_IPHONE
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
   private static Shell window = null;
 
   public void OnCloseWindow() {
@@ -725,7 +725,7 @@ public class Shell : EditorWindow {
 
   [MenuItem("Window/C# Shell")]
   public static void Init() {
-#if UNITY_IPHONE
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     if(window == null)
       window = new Shell();
     window.Show(true);
