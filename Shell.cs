@@ -492,9 +492,6 @@ public class Shell : EditorWindow {
 //            Debug.Log("{OTHER:" + evt.keyCode + "}");
           }
         } else if(evt.keyCode == KeyCode.Return) {
-          // TODO: Only insert the return IF executing the code fails.
-
-          // For now, just try to execute it...
           doProcess = true;
           useContinuationPrompt = true; // In case we fail.
         } else if(evt.keyCode == KeyCode.Tab) {
