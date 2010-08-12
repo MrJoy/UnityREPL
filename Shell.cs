@@ -614,6 +614,7 @@ public class Shell : EditorWindow {
     }
   }
 
+  private NumberedEditorState lnEditorState = new NumberedEditorState();
   private void ShowEditor() {
     GUILayout.BeginHorizontal();
 //      EditorGUILayout.BeginVertical(GUILayout.Width(35));
@@ -624,18 +625,19 @@ public class Shell : EditorWindow {
 #endif
 //      EditorGUILayout.EndVertical();
 
+#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
       // This is a WAG about Unity's box model.  Seems to work though, so...
       // yeah.
       float effectiveWidgetHeight = 7 * GUI.skin.label.lineHeight
 //        + GUI.skin.label.margin.top + GUI.skin.label.margin.bottom
         + GUI.skin.label.padding.top + GUI.skin.label.padding.bottom
       ;
-
       GUI.SetNextControlName(editorControlName);
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
       codeToProcess = GUILayout.TextArea(codeToProcess, "box", GUILayout.ExpandWidth(true), GUILayout.Height(effectiveWidgetHeight));
 #else
-      codeToProcess = GUILayout.TextArea(codeToProcess, GUILayout.ExpandWidth(true), GUILayout.Height(effectiveWidgetHeight));
+      lnEditorState.text = codeToProcess;
+      lnEditorState = GUIHelper.NumberedTextArea(editorControlName, lnEditorState);
+      codeToProcess = lnEditorState.text;
 #endif
     GUILayout.EndHorizontal();
   }
@@ -723,7 +725,7 @@ public class Shell : EditorWindow {
 #endif
 
 
-  [MenuItem("Window/C# Shell")]
+  [MenuItem("Window/C# Shell #%r")]
   public static void Init() {
 #if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0)
     if(window == null)
