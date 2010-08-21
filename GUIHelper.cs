@@ -30,6 +30,8 @@ public class GUIHelper {
       + GUI.skin.label.padding.top + GUI.skin.label.padding.bottom
     ;
     editorState.scrollPos = GUILayout.BeginScrollView(editorState.scrollPos, false, false, CachedStyle("HorizontalScrollbar"), CachedStyle("VerticalScrollbar"), CachedStyle("TextField"), GUILayout.Height(effectiveWidgetHeight));
+      int scrollId = GUIUtility.GetControlID(FocusType.Passive);
+      Debug.Log(scrollId);
       GUILayout.BeginHorizontal();
         if((editorState.lineNumberingContent == null) || (editorState.textChanged)) {
           editorState.textChanged = false;
