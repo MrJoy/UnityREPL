@@ -30,6 +30,10 @@ public class GUIHelper {
       + GUI.skin.label.padding.top + GUI.skin.label.padding.bottom
     ;
     Rect r = EditorGUILayout.BeginVertical();
+    if(r.width > 0) {
+      editorState.scrollViewWidth = r.width;
+      editorState.scrollViewHeight = r.height;
+    }
 //Debug.Log(r);
     editorState.scrollPos = GUILayout.BeginScrollView(editorState.scrollPos, false, false, CachedStyle("HorizontalScrollbar"), CachedStyle("VerticalScrollbar"), CachedStyle("TextField"), GUILayout.Height(effectiveWidgetHeight));
 //      int scrollId = GUIUtility.GetControlID(FocusType.Passive);
@@ -49,14 +53,40 @@ public class GUIHelper {
         GUI.SetNextControlName(controlName);
         Rect editorRect = GUILayoutUtility.GetRect(txt, NumberedEditorStyles.NumberedEditor, GUILayout.Width(maxW));
         editorRect.width = maxW;
+        bool wasMouseDrag = Event.current.type == EventType.MouseDrag;
+        bool wasRelevantEvent = wasMouseDrag || Event.current.type == EventType.KeyDown;
         editorState.text = GUI.TextField(editorRect, editorState.text, NumberedEditorStyles.NumberedEditor);
 
-        if (GUI.GetNameOfFocusedControl() == controlName) {
+        if ((GUI.GetNameOfFocusedControl() == controlName) &&
+            wasRelevantEvent) {
           int editorId = GUIUtility.keyboardControl;
           TextEditor te = GUIUtility.QueryStateObject(typeof(System.Object), editorId) as TextEditor;
           int pos = te.pos; // TODO: How does this play with keyboard selection?  We want the actual cursor pos, not necessarily the right-end.
-          Vector2 cursorPixelPos = NumberedEditorStyles.NumberedEditor.GetCursorPixelPosition(editorRect, txt, pos);
-Debug.Log(cursorPixelPos + " vs. " + editorState.scrollPos);
+          if(pos != editorState.lastPos) {
+            Vector2 cursorPixelPos = NumberedEditorStyles.NumberedEditor.GetCursorPixelPosition(editorRect, txt, pos);
+            cursorPixelPos.y -= 1; // 0-align...
+            float yBuffer = NumberedEditorStyles.NumberedEditor.lineHeight * 2;
+            float xBuffer = 40f; // TODO: Make this a little less arbitrary?
+            if(wasMouseDrag) {
+              yBuffer = 0;
+              xBuffer = 0;
+            }
+//            cursorPixelPos.x -= CachedStyle("TextField").padding.left;
+//            cursorPixelPos.y -= CachedStyle("TextField").padding.top;
+
+            if(editorState.scrollViewWidth > 0) {
+              if(cursorPixelPos.y + yBuffer > editorState.scrollPos.y + editorState.scrollViewHeight - NumberedEditorStyles.NumberedEditor.lineHeight)
+                editorState.scrollPos.y = cursorPixelPos.y + yBuffer + NumberedEditorStyles.NumberedEditor.lineHeight - editorState.scrollViewHeight;
+              if(cursorPixelPos.y - yBuffer < editorState.scrollPos.y)
+                editorState.scrollPos.y = cursorPixelPos.y - yBuffer;
+
+              if(cursorPixelPos.x + xBuffer > editorState.scrollPos.x + editorState.scrollViewWidth)
+                editorState.scrollPos.x = cursorPixelPos.x + xBuffer - editorState.scrollViewWidth;
+              if(cursorPixelPos.x - xBuffer < editorState.scrollPos.x)
+                editorState.scrollPos.x = cursorPixelPos.x - xBuffer;
+            }
+          }
+          editorState.lastPos = pos;
         }
 //        editorState.scrollPos = Vector2.zero;
 
@@ -166,6 +196,8 @@ public class NumberedEditorStyles {
 [System.Serializable]
 public class NumberedEditorState {
   public Vector2 scrollPos;
+  public float scrollViewWidth, scrollViewHeight;
+  public int lastPos;
   public bool textChanged = false;
   private string _text = "";
   public string text {
