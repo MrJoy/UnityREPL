@@ -29,9 +29,11 @@ public class GUIHelper {
 //        + GUI.skin.label.margin.top + GUI.skin.label.margin.bottom
       + GUI.skin.label.padding.top + GUI.skin.label.padding.bottom
     ;
+    Rect r = EditorGUILayout.BeginVertical();
     editorState.scrollPos = GUILayout.BeginScrollView(editorState.scrollPos, false, false, CachedStyle("HorizontalScrollbar"), CachedStyle("VerticalScrollbar"), CachedStyle("TextField"), GUILayout.Height(effectiveWidgetHeight));
       int scrollId = GUIUtility.GetControlID(FocusType.Passive);
       Debug.Log(scrollId);
+      object o = GUIUtility.QueryStateObject(typeof(System.Object), scrollId);
       GUILayout.BeginHorizontal();
         if((editorState.lineNumberingContent == null) || (editorState.textChanged)) {
           editorState.textChanged = false;
@@ -49,22 +51,36 @@ public class GUIHelper {
         }
         GUILayout.Label(editorState.lineNumberingContent, NumberedEditorStyles.LineNumbering, GUILayout.ExpandWidth(false));
         string oldValue = editorState.text;
+        GUIContent txt = new GUIContent(editorState.text);
         GUI.SetNextControlName(controlName);
-        editorState.text = GUILayout.TextField(editorState.text, NumberedEditorStyles.NumberedEditor, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
-        if(GUI.changed) {
-          editorState.lineNumberingContent = null;
-          // TODO: Figure out how to auto-scroll to the right on long lines...
-          if(editorState.text.Length != oldValue.Length) {
-            // The text actually changed...
+        Rect editorRect = GUILayoutUtility.GetRect(txt, NumberedEditorStyles.NumberedEditor, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+        editorState.text = GUI.TextField(editorRect, editorState.text, NumberedEditorStyles.NumberedEditor);
 
+        if (GUI.GetNameOfFocusedControl() == controlName) {
+          int editorId = GUIUtility.keyboardControl;
+          TextEditor te = GUIUtility.QueryStateObject(typeof(System.Object), editorId) as TextEditor;
+          int pos = te.pos; // TODO: How does this play with keyboard selection?  We want the actual cursor pos, not necessarily the right-end.
+          Vector2 cursorPixelPos = NumberedEditorStyles.NumberedEditor.GetCursorPixelPosition(editorRect, txt, pos);
+Debug.Log(cursorPixelPos + " vs. " + editorState.scrollPos);
+        }
+
+        if(GUI.changed) {
+          if(editorState.text.Length != oldValue.Length) {
+            editorState.lineNumberingContent = null;
+          }
+
+          // TODO: Determine properly if we have a *keystroke* event.
+
+/*            // The text actually changed...
             if(editorState.text.StartsWith(oldValue)) {
               // The text was appended to.
               editorState.scrollPos.y = Mathf.Infinity;
             }
-          }
+          } */
         }
       GUILayout.EndHorizontal();
     GUILayout.EndScrollView();
+    EditorGUILayout.EndVertical();
 
     return editorState;
   }
