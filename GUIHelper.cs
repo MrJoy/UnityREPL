@@ -30,31 +30,24 @@ public class GUIHelper {
       + GUI.skin.label.padding.top + GUI.skin.label.padding.bottom
     ;
     Rect r = EditorGUILayout.BeginVertical();
+//Debug.Log(r);
     editorState.scrollPos = GUILayout.BeginScrollView(editorState.scrollPos, false, false, CachedStyle("HorizontalScrollbar"), CachedStyle("VerticalScrollbar"), CachedStyle("TextField"), GUILayout.Height(effectiveWidgetHeight));
-      int scrollId = GUIUtility.GetControlID(FocusType.Passive);
-      Debug.Log(scrollId);
-      object o = GUIUtility.QueryStateObject(typeof(System.Object), scrollId);
+//      int scrollId = GUIUtility.GetControlID(FocusType.Passive);
+//      Debug.Log(scrollId);
+//      object o = GUIUtility.QueryStateObject(typeof(System.Object), scrollId);
+//      if(o != null)
+//        Debug.Log(o.GetType().FullName);
+//      else
+//        Debug.Log("Well, honey...  I blew it again.");
+
       GUILayout.BeginHorizontal();
-        if((editorState.lineNumberingContent == null) || (editorState.textChanged)) {
-          editorState.textChanged = false;
-
-          int lines = 1;
-          for(int i = 0; i < editorState.text.Length; i++)
-            if(editorState.text[i] == '\n') 
-              lines++;
-
-          StringBuilder sb = new StringBuilder();
-          for(int j = 0; j < lines; j++)
-            sb.Append(j+1).Append('\n');
-
-          editorState.lineNumberingContent = new GUIContent(sb.ToString());
-        }
-        GUILayout.Label(editorState.lineNumberingContent, NumberedEditorStyles.LineNumbering, GUILayout.ExpandWidth(false));
-        string oldValue = editorState.text;
+        GUILayout.Label(editorState.lineNumberingContent, NumberedEditorStyles.LineNumbering);
         GUIContent txt = new GUIContent(editorState.text);
         GUI.SetNextControlName(controlName);
-        Rect editorRect = GUILayoutUtility.GetRect(txt, NumberedEditorStyles.NumberedEditor, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
-        editorState.text = GUI.TextField(editorRect, editorState.text, NumberedEditorStyles.NumberedEditor);
+        Rect editorRect = GUILayoutUtility.GetRect(new GUIContent((Event.current.type == EventType.Layout) ? editorState.dummyText : editorState.text), NumberedEditorStyles.NumberedEditor, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
+        string tmp = GUI.TextField(editorRect, (Event.current.type == EventType.Layout) ? editorState.dummyText : editorState.text, NumberedEditorStyles.NumberedEditor);
+        if(Event.current.type != EventType.Layout)
+          editorState.text = tmp;
 
         if (GUI.GetNameOfFocusedControl() == controlName) {
           int editorId = GUIUtility.keyboardControl;
@@ -63,13 +56,13 @@ public class GUIHelper {
           Vector2 cursorPixelPos = NumberedEditorStyles.NumberedEditor.GetCursorPixelPosition(editorRect, txt, pos);
 Debug.Log(cursorPixelPos + " vs. " + editorState.scrollPos);
         }
+//        editorState.scrollPos = Vector2.zero;
 
         if(GUI.changed) {
-          if(editorState.text.Length != oldValue.Length) {
-            editorState.lineNumberingContent = null;
-          }
+//Debug.Log("A");
 
           // TODO: Determine properly if we have a *keystroke* event.
+
 
 /*            // The text actually changed...
             if(editorState.text.StartsWith(oldValue)) {
@@ -144,14 +137,26 @@ public class NumberedEditorStyles {
         _NumberedEditor.margin = new RectOffset();
         _NumberedEditor.padding = new RectOffset();
         _NumberedEditor.overflow = new RectOffset();
-        _NumberedEditor.clipping = TextClipping.Overflow;
+        _NumberedEditor.clipping = TextClipping.Clip;
 
         _NumberedEditor.margin.left = 5;
-        _NumberedEditor.padding.right = 2;
+        _NumberedEditor.padding.right = 4;
 
         _NumberedEditor.normal.textColor = new Color(0f, 0f, 0f, 1f);
       }
       return _NumberedEditor;
+    }
+  }
+
+  private static GUIStyle _DummyStyle = null;
+  public static GUIStyle DummyStyle {
+    get {
+      if(_DummyStyle == null) {
+        _DummyStyle = new GUIStyle(NumberedEditor);
+        _DummyStyle.name = "DummyStyle";
+        _DummyStyle.normal.textColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+      }
+      return _DummyStyle;
     }
   }
 }
@@ -166,9 +171,50 @@ public class NumberedEditorState {
     set {
       if(_text != value) {
         _text = value;
+        _lineNumberingContent = null;
+        _textContent = null;
+        _dummyText = null;
         textChanged = true;
       }
     }
   }
-  public GUIContent lineNumberingContent = null;
+
+  private GUIContent _textContent = null;
+  public GUIContent textContent {
+    get {
+      if(_textContent == null)
+        _textContent = new GUIContent(text);
+      return _textContent;
+    }
+  }
+
+  private string _dummyText = null;
+  public string dummyText {
+    get {
+      return _dummyText;
+    }
+  }
+
+  private GUIContent _lineNumberingContent = null;
+  public GUIContent lineNumberingContent {
+    get {
+      if(_lineNumberingContent == null) {
+        string[] linesRaw = text.Split('\n');
+        int lines = linesRaw.Length;
+        if(lines == 0) lines = 1;
+
+        StringBuilder sb = new StringBuilder();
+        for(int j = 0; j < lines; j++)
+          sb.Append(linesRaw[j]).Append(".").Append("\n");
+        _dummyText = sb.ToString();
+
+        sb.Length = 0;
+        for(int j = 0; j < lines; j++)
+          sb.Append(j+1).Append('\n');
+
+        _lineNumberingContent = new GUIContent(sb.ToString());
+      }
+      return _lineNumberingContent;
+    }
+  }
 }
