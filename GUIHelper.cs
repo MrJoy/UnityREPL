@@ -43,11 +43,13 @@ public class GUIHelper {
       GUILayout.BeginHorizontal();
         GUILayout.Label(editorState.lineNumberingContent, NumberedEditorStyles.LineNumbering);
         GUIContent txt = new GUIContent(editorState.text);
+        GUIContent dTxt = new GUIContent(editorState.dummyText);
+        float minW, maxW;
+        NumberedEditorStyles.NumberedEditor.CalcMinMaxWidth(dTxt, out minW, out maxW);
         GUI.SetNextControlName(controlName);
-        Rect editorRect = GUILayoutUtility.GetRect(new GUIContent((Event.current.type == EventType.Layout) ? editorState.dummyText : editorState.text), NumberedEditorStyles.NumberedEditor, GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
-        string tmp = GUI.TextField(editorRect, (Event.current.type == EventType.Layout) ? editorState.dummyText : editorState.text, NumberedEditorStyles.NumberedEditor);
-        if(Event.current.type != EventType.Layout)
-          editorState.text = tmp;
+        Rect editorRect = GUILayoutUtility.GetRect(txt, NumberedEditorStyles.NumberedEditor, GUILayout.Width(maxW));
+        editorRect.width = maxW;
+        editorState.text = GUI.TextField(editorRect, editorState.text, NumberedEditorStyles.NumberedEditor);
 
         if (GUI.GetNameOfFocusedControl() == controlName) {
           int editorId = GUIUtility.keyboardControl;
