@@ -53,10 +53,12 @@ public class GUIHelper {
         GUI.SetNextControlName(controlName);
         Rect editorRect = GUILayoutUtility.GetRect(txt, NumberedEditorStyles.NumberedEditor, GUILayout.Width(maxW));
         editorRect.width = maxW;
+//        Debug.Log("B: " + Event.current.type.ToString() + ", " + Event.current.isKey + "," + Event.current.isMouse + "," + Event.current.button);
         bool wasMouseDrag = Event.current.type == EventType.MouseDrag;
         bool wasRelevantEvent = wasMouseDrag || Event.current.type == EventType.KeyDown;
         editorState.text = GUI.TextField(editorRect, editorState.text, NumberedEditorStyles.NumberedEditor);
 
+//        Debug.Log("A: " + Event.current.type.ToString() + ", " + Event.current.isKey + "," + Event.current.isMouse + "," + Event.current.button);
         if ((GUI.GetNameOfFocusedControl() == controlName) &&
             wasRelevantEvent) {
           int editorId = GUIUtility.keyboardControl;
