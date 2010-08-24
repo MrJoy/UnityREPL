@@ -279,7 +279,7 @@ public class Shell : EditorWindow {
         } else {
           // Continue with that enter the user pressed...  Yes, this is an ugly
           // way to handle it.
-#if UNITY_3_0
+#if UNITY_3_0 || UNITY_2_6 || UNITY_2_6_1
           codeToProcess = Paste(editorState, "\n", false);
 #endif
         }
