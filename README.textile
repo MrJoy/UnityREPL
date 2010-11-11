@@ -106,4 +106,4 @@ h1. TODO
 [Wikipedia]http://en.wikipedia.org/wiki/Read_Eval_Print_Loop 
 [CSharpRepl]http://www.mono-project.com/CsharpRepl
 [Unity]http://Unity3D.com
-[Package]http://github.com/downloads/MrJoy/UnityREPL/UnityREPL_0.7.unitypackage
+[Package]http://github.com/downloads/MrJoy/UnityREPL/UnityREPL_0.8.unitypackage
