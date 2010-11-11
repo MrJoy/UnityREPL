@@ -53,6 +53,7 @@ h1. COMPATIBILITY
 * Unity/iPhone 1.5.x or below: Does not work.
 * Unity/iPhone 1.6/1.7: Works.  (Functional, but limited UI; no copy/cut/paste, or block indent/unindent.)
 * Unity 3.0.0: Works.
+* Unity 3.1.0: Works.
 
 
 h1. LANGUAGE VERSION

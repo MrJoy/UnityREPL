@@ -1,10 +1,7 @@
 //-----------------------------------------------------------------
-//  GUIHelper v0.11 (2009-10-12)
+//  GUIHelper v0.11
 //  Copyright 2009 MrJoy, Inc.
 //  All rights reserved
-//
-//  2009-10-12 - jdf - Compile clean on Unity/iPhone.  Not terribly USEFUL...
-//  2009-10-08 - jdf - Initial version.
 //
 //-----------------------------------------------------------------
 // Helper for UnityGUI tasks, particularly editor-related.
