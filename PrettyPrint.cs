@@ -76,7 +76,7 @@ public class PrettyPrint {
         int top = a.GetUpperBound(0);
         for(int i = a.GetLowerBound(0); i <= top; i++) {
           InternalPP(output, a.GetValue(i));
-          if(i != top) output.Append(", ");
+          if(i != top) NextItem(output);
         }
         CloseInline(output);
       } else if(result is bool) {
