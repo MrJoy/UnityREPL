@@ -118,11 +118,7 @@ public class NumberedEditorStyles {
   public static GUIStyle LineNumbering {
     get {
       if(_LineNumbering == null) {
-#if UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_0_0
         _LineNumbering = new GUIStyle(EditorStyles.textField);
-#else
-        _LineNumbering = new GUIStyle("textField");
-#endif
         _LineNumbering.name = "LineNumbering";
         _LineNumbering.alignment = TextAnchor.UpperRight;
         _LineNumbering.fixedWidth = 0;

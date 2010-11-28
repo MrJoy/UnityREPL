@@ -78,11 +78,9 @@ class EvaluationHelper {
   }
 
   public bool Init(ref bool isInitialized) {
-#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
     // Don't be executing code when we're about to reload it.  Not sure this is
     // actually needed but seems prudent to be wary of it.
     if(EditorApplication.isCompiling) return false;
-#endif
 
     StringBuilder buffer = FluffReporter();
     buffer.Length = 0;
@@ -144,9 +142,8 @@ class EvaluationHelper {
   }
 
   public bool Eval(string code, out bool hasOutput, out object output) {
-#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
     EditorApplication.LockReloadAssemblies();
-#endif
+
     bool status = false;
     try {
       status = Evaluator.Evaluate(code, out output, out hasOutput) == null;
@@ -160,9 +157,7 @@ class EvaluationHelper {
 
     ReportOutput();
 
-#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
     EditorApplication.UnlockReloadAssemblies();
-#endif
     return status;
   }
 
@@ -279,9 +274,7 @@ public class Shell : EditorWindow {
         } else {
           // Continue with that enter the user pressed...  Yes, this is an ugly
           // way to handle it.
-#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
           codeToProcess = Paste(editorState, "\n", false);
-#endif
         }
       } else {
         // For some reason, we weren't ready to run.
@@ -301,9 +294,6 @@ public class Shell : EditorWindow {
   // WARNING: Undocumented spookiness from deep within the bowels of Unity!
   public TextEditor editorState = null;
 
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
-  private static EditorWindow focusedWindow = null;
-#else
   // Need to use menu items because otherwise we don't receive events for cmd-]
   // and cmd-[.
   [MenuItem("Edit/Indent %]", false, 256)]
@@ -335,22 +325,16 @@ public class Shell : EditorWindow {
     Shell w = focusedWindow as Shell;
     return (w != null) && (w.editorState != null);
   }
-#endif
 
   // Make our state object go away if we do, or if we lose focus, or whatnot
   // to ensure menu items disable properly regardless of possible dangling
   // references, etc.
   public void OnDisable() {
     editorState = null;
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
-    window = null;
-    focusedWindow = null;
-#endif
   }
   public void OnLostFocus() { editorState = null; }
   public void OnDestroy() { editorState = null; }
 
-#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
   public string Indent(TextEditor editor) {
     if(editor.hasSelection) {
       string codeToIndent = editor.SelectedText;
@@ -467,7 +451,6 @@ public class Shell : EditorWindow {
     editor.pos = editor.selectPos = prefix.Length;
     return newCorpus;
   }
-#endif
 
   // Handy-dandy method to deal with keyboard inputs which we get as actual
   // events.  Basically lets us deal with copy & paste, etc which GUI.TextArea
@@ -486,9 +469,7 @@ public class Shell : EditorWindow {
 
     if(doProcess) {
       // If we're waiting for a command to run, don't muck with the text!
-#if UNITY_3_0 || UNITY_3_1
       if(evt.isKey)
-#endif
         evt.Use();
       return;
     }
@@ -520,16 +501,13 @@ public class Shell : EditorWindow {
           // TODO: the middle of peoples' input...)
           doProcess = true;
           useContinuationPrompt = true; // In case we fail.
-#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
         } else if(evt.keyCode == KeyCode.Tab) {
           // Unity doesn't like using tab for actual editing.  We're gonna
           // change that.  So here we inject a tab, and later we'll deal with
           // focus issues.
           codeToProcess = Paste(editorState, "\t", false);
-#endif
         }
       }
-#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
     } else if(evt.type == EventType.ValidateCommand) {
       switch(evt.commandName) {
         case "SelectAll":
@@ -565,11 +543,9 @@ public class Shell : EditorWindow {
           evt.Use();
           break;
       }
-#endif
     }
   }
 
-#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
   private void ForceFocus(string selectedControl, string desiredControl) {
     // Now here's how we deal with tabbing and hitting enter and whatnot.
     // Basically, if we're the current editor window we assume that we always
@@ -598,14 +574,11 @@ public class Shell : EditorWindow {
       }
     }
   }
-#endif
 
   private void HandleInputFocusAndStateForEditor() {
-#if (UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
     string selectedControl = GUI.GetNameOfFocusedControl();
     ForceFocus(selectedControl, editorControlName);
     if(selectedControl == editorControlName)
-#endif
       FilterEditorInputs();
     if(resetCommand) {
       resetCommand = false;
@@ -617,28 +590,11 @@ public class Shell : EditorWindow {
   private NumberedEditorState lnEditorState = new NumberedEditorState();
   private void ShowEditor() {
     GUILayout.BeginHorizontal();
-//      EditorGUILayout.BeginVertical(GUILayout.Width(35));
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
-        GUILayout.Label(useContinuationPrompt ? "cont>" : "---->", GUILayout.Width(35));
-#else
-        GUILayout.Label(useContinuationPrompt ? "cont>" : "---->", EditorStyles.wordWrappedLabel, GUILayout.Width(35));
-#endif
-//      EditorGUILayout.EndVertical();
+      GUILayout.Label(useContinuationPrompt ? "cont>" : "---->", EditorStyles.wordWrappedLabel, GUILayout.Width(35));
 
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
-      // This is a WAG about Unity's box model.  Seems to work though, so...
-      // yeah.
-      float effectiveWidgetHeight = 7 * GUI.skin.label.lineHeight
-//        + GUI.skin.label.margin.top + GUI.skin.label.margin.bottom
-        + GUI.skin.label.padding.top + GUI.skin.label.padding.bottom
-      ;
-      GUI.SetNextControlName(editorControlName);
-      codeToProcess = GUILayout.TextArea(codeToProcess, "box", GUILayout.ExpandWidth(true), GUILayout.Height(effectiveWidgetHeight));
-#else
       lnEditorState.text = codeToProcess;
       lnEditorState = GUIHelper.NumberedTextArea(editorControlName, lnEditorState);
       codeToProcess = lnEditorState.text;
-#endif
     GUILayout.EndHorizontal();
   }
 
@@ -649,13 +605,8 @@ public class Shell : EditorWindow {
     if(fields == null)
       fields = EvaluatorProxy.fields;
 
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
-    scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, false);
-      if(showVars = GUILayout.Toggle(showVars, "Variables", "toggle")) {
-#else
     scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, false, false);
       if(showVars = EditorGUILayout.Foldout(showVars, "Variables", EditorStyles.foldout)) {
-#endif
         EditorGUI.indentLevel++;
 
         GUILayout.BeginHorizontal();
@@ -681,11 +632,7 @@ public class Shell : EditorWindow {
         GUILayout.EndHorizontal();
         EditorGUI.indentLevel--;
       }
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
-      GUILayout.EndScrollView();
-#else
-      EditorGUILayout.EndScrollView();
-#endif
+    EditorGUILayout.EndScrollView();
   }
 
   private const string editorControlName = "REPLEditor";
@@ -697,9 +644,6 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   public bool showVars = true;
   public void OnGUI() {
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
-    EditorGUIUtility.UseControlStyles();
-#endif
     HandleInputFocusAndStateForEditor();
 
     ShowEditor();
@@ -707,35 +651,10 @@ public class Shell : EditorWindow {
     ShowVars();
   }
 
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
-  private static Shell window = null;
-
-  public void OnCloseWindow() {
-    window = null;
-    focusedWindow = null;
-    DestroyImmediate(this);
-  }
-
-  public void OnEnable() {
-    if(window == null)
-      window = this;
-    Show(true);
-    focusedWindow = this;
-  }
-#endif
-
-
   [MenuItem("Window/C# Shell #%r")]
   public static void Init() {
-#if !(UNITY_2_6 || UNITY_2_6_1 || UNITY_3_0 || UNITY_3_1)
-    if(window == null)
-      window = new Shell();
-    window.Show(true);
-    focusedWindow = window;
-#else
     Shell window = (Shell)EditorWindow.GetWindow(typeof(Shell));
     window.title = "C# Shell";
     window.Show();
-#endif
   }
 }
