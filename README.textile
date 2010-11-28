@@ -47,13 +47,9 @@ From this window you can enter C# code and run it.  You should have access to al
 
 h1. COMPATIBILITY
 
-* Unity 2.5.x: Probably will not work.
-* Unity 2.6.0: Untested, should work.
-* Unity 2.6.1: Works.
-* Unity/iPhone 1.5.x or below: Does not work.
-* Unity/iPhone 1.6/1.7: Works.  (Functional, but limited UI; no copy/cut/paste, or block indent/unindent.)
-* Unity 3.0.0: Works.
-* Unity 3.1.0: Works.
+Tested on Unity 3.1.0, but should work on Unity 3.0.0 as well.
+
+Will not work on older versions of Unity (2.5.x, 2.6.x, or Unity/iPhone 1.x).
 
 
 h1. LANGUAGE VERSION
@@ -80,8 +76,6 @@ UnityREPL uses a @GUILayout.TextArea@, but with some added functionality:
 * Ability to enter tabs in the source editor.
 * Block indent/unindent using COMMAND-] and COMMAND-[ (just like XCode and TextMate)
 
-Unfortunately, none of this functionality works in Unity/iPhone 1.6/1.7.
-
 
 h1. LICENSE
 
@@ -103,7 +97,7 @@ h1. TODO
 
 [Mono]http://www.mono-project.com
 [Wiki]http://wiki.github.com/MrJoy/UnityREPL/
-[Wikipedia]http://en.wikipedia.org/wiki/Read_Eval_Print_Loop 
+[Wikipedia]http://en.wikipedia.org/wiki/Read_Eval_Print_Loop
 [CSharpRepl]http://www.mono-project.com/CsharpRepl
 [Unity]http://Unity3D.com
 [Package]http://github.com/downloads/MrJoy/UnityREPL/UnityREPL_0.8.unitypackage
