@@ -82,7 +82,7 @@ public class PrettyPrint {
       } else if(result is bool) {
         output.Append(((bool) result) ? "true" : "false");
       } else if(result is string) {
-        output.AppendFormat("\"{0}\"", EscapeString((string)result));
+        output.Append('"').Append(EscapeString((string)result)).Append('"');
       } else if(result is IDictionary) {
         IDictionary dict = (IDictionary)result;
         int top = dict.Count, count = 0;
