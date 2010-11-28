@@ -32,7 +32,8 @@ h2. GIT SETUP IN A UNITY PRO PROJECT VERSIONED WITH GIT
 *This is only viable if your project is set up with External Version Control enabled.  If not, please download the .unitypackage and use that.*
 
 bc.   cd myproject/
-  git submodule add git://github.com/MrJoy/UnityREPL.git
+  mkdir -p Assets/Editor
+  git submodule add git://github.com/MrJoy/UnityREPL.git Assets/Editor/UnityREPL
   git submodule init
   git submodule update
 
