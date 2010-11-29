@@ -1,3 +1,4 @@
+using UnityEngine;
 using UnityEditor;
 using System;
 using System.Collections;
@@ -140,6 +141,14 @@ class EvaluationHelper {
     };
 
     try {
+      Application.RegisterLogCallback(delegate(string cond, string sTrace, LogType lType) {
+        cmdEntry.Add(new LogEntry() {
+          logEntryType = LogEntryType.ConsoleLog,
+          condition = cond,
+          stackTrace = sTrace,
+          consoleLogType = lType
+        });
+      });
       status = Evaluator.Evaluate(code, out output, out hasOutput) == null;
       if(status) {
         logEntries.Add(cmdEntry);
@@ -154,6 +163,8 @@ class EvaluationHelper {
       hasOutput = false;
       status = true; // Need this to avoid 'stickiness' where we let user
                      // continue editing due to incomplete code.
+    } finally {
+      Application.RegisterLogCallback(null);
     }
 
     // Catch compile errors that are not dismissed as a product of interactive

@@ -106,12 +106,9 @@ public class Shell : EditorWindow {
   // Make our state object go away if we do, or if we lose focus, or whatnot
   // to ensure menu items disable properly regardless of possible dangling
   // references, etc.
-  public void OnDisable() {
-    editorState = null;
-    Application.RegisterLogCallback(null);
-  }
+  public void OnDisable() { editorState = null; }
   public void OnLostFocus() { editorState = null; }
-  public void OnDestroy() { OnDisable(); }
+  public void OnDestroy() { editorState = null; }
 
   public string Indent(TextEditor editor) {
     if(editor.hasSelection) {
@@ -587,18 +584,6 @@ public class Shell : EditorWindow {
     VerticalSplitter();
       ShowLog();
     EndVerticalPanes();
-  }
-
-  public void OnEnable() {
-    List<LogEntry> log = logEntries;
-    Application.RegisterLogCallback(delegate(string cond, string sTrace, LogType lType) {
-      log.Add(new LogEntry() {
-        logEntryType = LogEntryType.ConsoleLog,
-        condition = cond,
-        stackTrace = sTrace,
-        consoleLogType = lType
-      });
-    });
   }
 
   [MenuItem("Window/C# Shell #%r")]
