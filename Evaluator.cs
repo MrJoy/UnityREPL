@@ -124,17 +124,26 @@ class EvaluationHelper {
     return retVal;
   }
 
-  public bool Eval(List<LogEntry> logEntries, string code, out bool hasOutput, out object output, out LogEntry cmdEntry) {
+  private StringBuilder outputBuffer = new StringBuilder();
+
+  public bool Eval(List<LogEntry> logEntries, string code) {
     EditorApplication.LockReloadAssemblies();
 
     bool status = false;
+    bool hasOutput = false;
+    object output = null;
+    LogEntry cmdEntry = null;
+
     cmdEntry = new LogEntry() {
       logEntryType = LogEntryType.Command,
       command = code
     };
-    logEntries.Add(cmdEntry);
+
     try {
       status = Evaluator.Evaluate(code, out output, out hasOutput) == null;
+      if(status) {
+        logEntries.Add(cmdEntry);
+      }
     } catch(Exception e) {
       cmdEntry.Add(new LogEntry() {
         logEntryType = LogEntryType.EvaluationError,
@@ -147,23 +156,32 @@ class EvaluationHelper {
                      // continue editing due to incomplete code.
     }
 
-    ReportOutput(cmdEntry, logEntries);
-
-    EditorApplication.UnlockReloadAssemblies();
-    return status;
-  }
-
-  private void ReportOutput(LogEntry cmdEntry, List<LogEntry> logEntries) {
-    // Catch compile errors.
+    // Catch compile errors that are not dismissed as a product of interactive
+    // editing by Mono.CSharp.Evaluator...
     StringBuilder buffer = FluffReporter();
     string tmp = buffer.ToString();
+    buffer.Length = 0;
     if(!String.IsNullOrEmpty(tmp)) {
       cmdEntry.Add(new LogEntry() {
         logEntryType = LogEntryType.SystemConsole,
-        output = tmp
+        error = tmp
       });
+      status = false;
     }
-    buffer.Length = 0;
+
+    if(hasOutput) {
+      if(status) {
+        outputBuffer.Length = 0;
+        PrettyPrint.PP(outputBuffer, output);
+        cmdEntry.Add(new LogEntry() {
+          logEntryType = LogEntryType.Output,
+          output = outputBuffer.ToString()
+        });
+      }
+    }
+
+    EditorApplication.UnlockReloadAssemblies();
+    return status;
   }
 }
 

@@ -41,27 +41,13 @@ public class Shell : EditorWindow {
   [System.NonSerialized]
   private bool isInitialized = false;
 
-  [System.NonSerialized]
-  private StringBuilder outputBuffer = new StringBuilder();
   public void Update() {
     if(doProcess) {
       if(helper.Init(ref isInitialized)) {
         doProcess = false;
-        bool hasOutput = false;
-        object output = null;
-        LogEntry cmdEntry = null;
-        bool compiledCorrectly = helper.Eval(logEntries, codeToProcess, out hasOutput, out output, out cmdEntry);
+        bool compiledCorrectly = helper.Eval(logEntries, codeToProcess);
         if(compiledCorrectly) {
           resetCommand = true;
-
-          if(hasOutput) {
-            outputBuffer.Length = 0;
-            PrettyPrint.PP(outputBuffer, output);
-            cmdEntry.Add(new LogEntry() {
-              logEntryType = LogEntryType.Output,
-              output = outputBuffer.ToString()
-            });
-          }
         } else {
           // Continue with that enter the user pressed...  Yes, this is an ugly
           // way to handle it.
