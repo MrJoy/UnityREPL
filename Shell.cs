@@ -557,10 +557,6 @@ public class Shell : EditorWindow {
     EditorGUILayout.EndVertical();
   }
 
-  protected static void ToolbarSpace() {
-    GUILayout.Space(6);
-  }
-
   //----------------------------------------------------------------------------
   // Tying It All Together...
   //----------------------------------------------------------------------------
@@ -573,17 +569,16 @@ public class Shell : EditorWindow {
   public void OnGUI() {
     HandleInputFocusAndStateForEditor();
 
-    GUILayout.BeginHorizontal(EditorStyles.toolbar, GUILayout.ExpandWidth(true));
+    EditorGUILayoutToolbar.Begin();
       if(GUILayout.Button("Clear Log", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false)))
         logEntries.Clear();
 
-      ToolbarSpace();
+      EditorGUILayoutToolbar.Space();
 
       showVars = GUILayout.Toggle(showVars, "Locals", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
       showLog = GUILayout.Toggle(showLog, "Log", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
 
-      GUILayout.Label(GUIContent.none, GUIStyle.none, GUILayout.ExpandWidth(true));
-    GUILayout.EndHorizontal();
+    EditorGUILayoutToolbar.End();
 
     ShowEditor();
 
