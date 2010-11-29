@@ -136,7 +136,7 @@ class EvaluationHelper {
 
     cmdEntry = new LogEntry() {
       logEntryType = LogEntryType.Command,
-      command = code
+      command = code.Trim()
     };
 
     try {
@@ -147,7 +147,7 @@ class EvaluationHelper {
     } catch(Exception e) {
       cmdEntry.Add(new LogEntry() {
         logEntryType = LogEntryType.EvaluationError,
-        error = e.ToString()
+        error = e.ToString().Trim()
       });
 
       output = new Evaluator.NoValueSet();
@@ -159,7 +159,7 @@ class EvaluationHelper {
     // Catch compile errors that are not dismissed as a product of interactive
     // editing by Mono.CSharp.Evaluator...
     StringBuilder buffer = FluffReporter();
-    string tmp = buffer.ToString();
+    string tmp = buffer.ToString().Trim();
     buffer.Length = 0;
     if(!String.IsNullOrEmpty(tmp)) {
       cmdEntry.Add(new LogEntry() {

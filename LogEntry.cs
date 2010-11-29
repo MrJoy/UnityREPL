@@ -43,18 +43,18 @@ public class LogEntry {
     switch(logEntryType) {
       case LogEntryType.Command:
         GUI.contentColor = Color.blue;
-        if(children != null && children.Count > 0) {
-          isExpanded = EditorGUILayout.Foldout(isExpanded, command, EditorStyles.foldout);
+          if(children != null && children.Count > 0) {
+            isExpanded = GUILayout.Toggle(isExpanded, command, EditorStyles.foldout, GUILayout.ExpandWidth(false));
+          } else {
+            GUILayout.BeginHorizontal();
+              GUILayout.Space(15);
+              GUILayout.Label(command);
+            GUILayout.EndHorizontal();
+          }
           if(isExpanded) {
             foreach(LogEntry le in children)
               le.OnGUI();
           }
-        } else {
-          GUILayout.BeginHorizontal();
-            GUILayout.Space(16);
-            GUILayout.Label(command);
-          GUILayout.EndHorizontal();
-        }
         break;
       case LogEntryType.Output:
         GUILayout.BeginHorizontal(GUI.skin.box);
