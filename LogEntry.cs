@@ -42,15 +42,15 @@ public class LogEntry {
         GUI.contentColor = Color.blue;
           if(children != null && children.Count > 0) {
             isExpanded = GUILayout.Toggle(isExpanded, command, EditorStyles.foldout, GUILayout.ExpandWidth(false));
+            if(isExpanded) {
+              foreach(LogEntry le in children)
+                le.OnGUI();
+            }
           } else {
             GUILayout.BeginHorizontal();
               GUILayout.Space(15);
               GUILayout.Label(command);
             GUILayout.EndHorizontal();
-          }
-          if(isExpanded) {
-            foreach(LogEntry le in children)
-              le.OnGUI();
           }
         break;
       case LogEntryType.Output:
