@@ -7,33 +7,36 @@ What's a REPL?  See the "Wikipedia article.":Wikipedia or the "demo videos":Wiki
 
 h1. INSTALLATION
 
+Please note that this requires UnityGUIExtensions.  The .unitypackage includes everything you need
 
-h2. NON-GIT, OR NON-UNITY-PRO SETUP
+h2. NON-GIT, OR UNITY-INDIE SETUP
 
 * Grab the ".unitypackage":Package from the downloads page.
 * Open your project.
 * Click "Assets" -> "Import Package..." from the menu, and select the file.
 
 
-h2. GIT SETUP IN A UNITY PRO PROJECT THAT IS NOT VERSIONED WITH GIT
+h2. GIT SETUP IN A UNITY-PRO PROJECT THAT IS NOT VERSIONED WITH GIT
 
-*This is only viable if your project is set up with External Version Control enabled.  If not, please download the .unitypackage and use that.*
+*You must have External Version Control enabled to use these instructions.  If not, please download the .unitypackage and use that.*
 
 bc.   cd myproject/Assets/
   mkdir -p Editor/
   cd Editor/
   git clone git://github.com/MrJoy/UnityREPL.git
-  cd UnityREPL/
-  git checkout master
+  git clone git://github.com/MrJoy/UnityGUIExtensions.git
+
+By setting up this way, you can track updates using "git pull".
 
 
-h2. GIT SETUP IN A UNITY PRO PROJECT VERSIONED WITH GIT
+h2. GIT SETUP IN A UNITY-PRO PROJECT VERSIONED WITH GIT
 
-*This is only viable if your project is set up with External Version Control enabled.  If not, please download the .unitypackage and use that.*
+*You must have External Version Control enabled to use these instructions.  If not, please download the .unitypackage and use that.*
 
 bc.   cd myproject/
   mkdir -p Assets/Editor
   git submodule add git://github.com/MrJoy/UnityREPL.git Assets/Editor/UnityREPL
+  git submodule add git://github.com/MrJoy/UnityGUIExtensions.git Assets/Editor/UnityGUIExtensions
   git submodule init
   git submodule update
 
@@ -80,9 +83,11 @@ UnityREPL uses a @GUILayout.TextArea@, but with some added functionality:
 
 h1. LICENSE
 
+All original/novel code is Copyright (c) 2010 MrJoy, Inc.  All other code is the property of the respective authors.
+
 Dual licensed under the terms of the MIT X11 or GNU GPL, as per the original code.
 
-The included Mono.CSharp.dll is a completely unmodified copy from "Mono 2.4.":Mono
+The included Mono.CSharp.dll is a completely unmodified copy from "Mono 2.4.":Mono, please see the "Mono Project":Mono for details on obtaining source to it.
 
 
 h1. TODO
