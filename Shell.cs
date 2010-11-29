@@ -368,7 +368,7 @@ public class Shell : EditorWindow {
       GUILayout.Label(useContinuationPrompt ? "cont>" : "---->", EditorStyles.wordWrappedLabel, GUILayout.Width(35));
 
       lnEditorState.text = codeToProcess;
-      lnEditorState = GUIHelper.NumberedTextArea(editorControlName, lnEditorState);
+      lnEditorState = UnityREPLHelper.NumberedTextArea(editorControlName, lnEditorState);
       codeToProcess = lnEditorState.text;
     GUILayout.EndHorizontal();
   }

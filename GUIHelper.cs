@@ -11,7 +11,7 @@ using UnityEditor;
 using System.Text;
 using System.Collections;
 
-public class GUIHelper {
+public class UnityREPLHelper {
   private static Hashtable styleCache = new Hashtable();
   public static GUIStyle CachedStyle(string name) {
     if(!styleCache.ContainsKey(name))
