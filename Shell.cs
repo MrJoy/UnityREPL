@@ -409,10 +409,11 @@ public class Shell : EditorWindow {
 
   public Vector2 logScrollPos;
   private void ShowLog() {
+    // TODO: Auto-scroll to the end if a message comes in and we're already at
+    // TODO: the end...
     logScrollPos = EditorGUILayout.BeginScrollView(logScrollPos);
     foreach(LogEntry le in logEntries) {
       le.OnGUI();
-      //GUILayout.Label(le.ToString());
     }
     EditorGUILayout.EndScrollView();
   }
