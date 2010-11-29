@@ -36,9 +36,6 @@ public class LogEntry {
   }
 
   public void OnGUI() {
-//    if(associatedCommand != null && (!associatedCommand.isExpanded))
-//      return;
-
     Color c = GUI.contentColor;
     switch(logEntryType) {
       case LogEntryType.Command:

@@ -150,9 +150,8 @@ class EvaluationHelper {
         });
       });
       status = Evaluator.Evaluate(code, out output, out hasOutput) == null;
-      if(status) {
+      if(status)
         logEntries.Add(cmdEntry);
-      }
     } catch(Exception e) {
       cmdEntry.Add(new LogEntry() {
         logEntryType = LogEntryType.EvaluationError,
