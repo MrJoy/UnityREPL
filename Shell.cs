@@ -557,11 +557,14 @@ public class Shell : EditorWindow {
     EditorGUILayout.EndVertical();
   }
 
+  protected static void ToolbarSpace() {
+    GUILayout.Space(6);
+  }
 
   //----------------------------------------------------------------------------
   // Tying It All Together...
   //----------------------------------------------------------------------------
-  public bool showVars = true;
+  public bool showVars = true, showLog = true;
   // TODO: Save pane sizing states...
   private VerticalPaneState paneConfiguration = new VerticalPaneState() {
     minPaneHeightTop = 65,
@@ -574,16 +577,28 @@ public class Shell : EditorWindow {
       if(GUILayout.Button("Clear Log", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false)))
         logEntries.Clear();
 
+      ToolbarSpace();
+
+      showVars = GUILayout.Toggle(showVars, "Locals", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
+      showLog = GUILayout.Toggle(showLog, "Log", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
+
       GUILayout.Label(GUIContent.none, GUIStyle.none, GUILayout.ExpandWidth(true));
     GUILayout.EndHorizontal();
 
     ShowEditor();
 
-    BeginVerticalPanes(paneConfiguration);
-      ShowVars();
-    VerticalSplitter();
-      ShowLog();
-    EndVerticalPanes();
+    if(showVars && showLog) {
+      BeginVerticalPanes(paneConfiguration);
+        ShowVars();
+      VerticalSplitter();
+        ShowLog();
+      EndVerticalPanes();
+    } else {
+      if(showVars)
+        ShowVars();
+      else
+        ShowLog();
+    }
   }
 
   [MenuItem("Window/C# Shell #%r")]
