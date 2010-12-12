@@ -41,10 +41,8 @@ public class LogEntry {
   }
 
   public void OnGUI() {
-    Color c = GUI.contentColor;
     switch(logEntryType) {
       case LogEntryType.Command:
-        GUI.contentColor = Color.blue;
           if(children != null && children.Count > 0) {
               hasChildren = true;
           }
@@ -57,7 +55,7 @@ public class LogEntry {
             }
           }
           if(isExpandable) {
-            isExpanded = GUILayout.Toggle(isExpanded, (isExpanded) ? command: shortCommand, EditorStyles.foldout, GUILayout.ExpandWidth(false));
+            isExpanded = GUILayout.Toggle(isExpanded, (isExpanded) ? command: shortCommand, LogEntryStyles.FoldoutCommandStyle, GUILayout.ExpandWidth(false));
             if(isExpanded && hasChildren) {
               foreach(LogEntry le in children)
                 le.OnGUI();
@@ -65,43 +63,37 @@ public class LogEntry {
           } else {
             GUILayout.BeginHorizontal();
               GUILayout.Space(15);
-              GUILayout.Label(command);
+              GUILayout.Label(command, LogEntryStyles.DefaultCommandStyle);
             GUILayout.EndHorizontal();
           }
         break;
       case LogEntryType.Output:
         GUILayout.BeginHorizontal(GUI.skin.box);
           GUILayout.Space(14);
-          GUI.contentColor = Color.green;
-          GUILayout.Label(output);
+          GUILayout.Label(output, LogEntryStyles.OutputStyle);
         GUILayout.EndHorizontal();
         break;
       case LogEntryType.EvaluationError:
         GUILayout.BeginHorizontal(GUI.skin.box);
           GUILayout.Space(14);
-          GUI.contentColor = Color.red;
-          GUILayout.Label(error);
+          GUILayout.Label(error, LogEntryStyles.EvaluationErrorStyle);
         GUILayout.EndHorizontal();
         break;
       case LogEntryType.SystemConsole:
         GUILayout.BeginHorizontal(GUI.skin.box);
           GUILayout.Space(14);
-          GUI.contentColor = Color.yellow;
-          GUILayout.Label(error);
+          GUILayout.Label(error, LogEntryStyles.SystemConsoleStyle);
         GUILayout.EndHorizontal();
         break;
       case LogEntryType.ConsoleLog:
         GUILayout.BeginHorizontal(GUI.skin.box);
           GUILayout.Space(14);
           GUILayout.BeginVertical();
-            GUI.contentColor = c;
-            GUILayout.Label(condition);
-            GUI.contentColor = Color.red;
-            GUILayout.Label(stackTrace);
+            GUILayout.Label(condition, LogEntryStyles.ConsoleLogConditionStyle);
+            GUILayout.Label(stackTrace, LogEntryStyles.ConsoleLogStackTraceStyle);
           GUILayout.EndVertical();
         GUILayout.EndHorizontal();
         break;
     }
-    GUI.contentColor = c;
   }
 }

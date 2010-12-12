@@ -188,6 +188,126 @@ public class NumberedEditorStyles {
   }
 }
 
+public class LogEntryStyles {
+  private static GUIStyle _Default = null;
+  public static GUIStyle Default {
+    get {
+      if(_Default == null) {
+        _Default = new GUIStyle("Label");
+        _Default.name = "Default";
+        _Default.normal.textColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        _Default.hover.textColor = Color.white;
+        _Default.active.textColor = Color.white;
+        _Default.focused.textColor = Color.white;
+        _Default.onNormal.textColor = Color.white;
+        _Default.onHover.textColor = Color.white;
+        _Default.onActive.textColor = Color.white;
+        _Default.onFocused.textColor = Color.white;
+      }
+      return _Default;
+    }
+  }
+
+  private static GUIStyle _DefaultCommandStyle = null;
+  public static GUIStyle DefaultCommandStyle {
+    get {
+      if(_DefaultCommandStyle == null) {
+        _DefaultCommandStyle = new GUIStyle(Default);
+        _DefaultCommandStyle.name = "DefaultCommandStyle";
+        _DefaultCommandStyle.normal.textColor = Color.blue;
+      }
+      return _DefaultCommandStyle;
+    }
+  }
+
+  private static GUIStyle _FoldoutCommandStyle = null;
+  public static GUIStyle FoldoutCommandStyle {
+    get {
+      if(_FoldoutCommandStyle == null) {
+        _FoldoutCommandStyle = new GUIStyle(EditorStyles.foldout);
+        _FoldoutCommandStyle.name = "FoldoutCommandStyle";
+        _FoldoutCommandStyle.normal.textColor = Color.blue;
+        _FoldoutCommandStyle.active.textColor = Color.blue;
+        _FoldoutCommandStyle.onNormal.textColor = Color.blue;
+        _FoldoutCommandStyle.onActive.textColor = Color.blue;
+      }
+      return _FoldoutCommandStyle;
+    }
+  }
+
+  private static GUIStyle _OutputStyle = null;
+  public static GUIStyle OutputStyle {
+    get {
+      if(_OutputStyle == null) {
+        _OutputStyle = new GUIStyle(Default);
+        _OutputStyle.name = "OutputStyle";
+        _OutputStyle.normal.textColor = Color.green;
+      }
+      return _OutputStyle;
+    }
+  }
+
+  private static GUIStyle _EvaluationErrorStyle = null;
+  public static GUIStyle EvaluationErrorStyle {
+    get {
+      if(_EvaluationErrorStyle == null) {
+        _EvaluationErrorStyle = new GUIStyle(Default);
+        _EvaluationErrorStyle.name = "EvaluationErrorStyle";
+        _EvaluationErrorStyle.normal.textColor = Color.red;
+      }
+      return _EvaluationErrorStyle;
+    }
+  }
+
+  private static GUIStyle _SystemConsoleStyle = null;
+  public static GUIStyle SystemConsoleStyle {
+    get {
+      if(_SystemConsoleStyle == null) {
+        _SystemConsoleStyle = new GUIStyle(Default);
+        _SystemConsoleStyle.name = "SystemConsoleStyle";
+        _SystemConsoleStyle.normal.textColor = Color.yellow;
+      }
+      return _SystemConsoleStyle;
+    }
+  }
+
+  private static GUIStyle _ConsoleLogStyle = null;
+  public static GUIStyle ConsoleLogStyle {
+    get {
+      if(_ConsoleLogStyle == null) {
+        _ConsoleLogStyle = new GUIStyle(Default);
+        _ConsoleLogStyle.name = "ConsoleLogStyle";
+        _ConsoleLogStyle.normal.textColor = GUI.contentColor;
+      }
+      return _ConsoleLogStyle;
+    }
+  }
+
+  private static GUIStyle _ConsoleLogConditionStyle = null;
+  public static GUIStyle ConsoleLogConditionStyle {
+    get {
+      if(_ConsoleLogConditionStyle == null) {
+        _ConsoleLogConditionStyle = new GUIStyle(ConsoleLogStyle);
+        _ConsoleLogConditionStyle.name = "ConsoleLogConditionStyle";
+      }
+      return _ConsoleLogConditionStyle;
+    }
+  }
+
+  private static GUIStyle _ConsoleLogStackTraceStyle = null;
+  public static GUIStyle ConsoleLogStackTraceStyle {
+    get {
+      if(_ConsoleLogStackTraceStyle == null) {
+        _ConsoleLogStackTraceStyle = new GUIStyle(ConsoleLogStyle);
+        _ConsoleLogStackTraceStyle.name = "ConsoleLogStackTraceStyle";
+        _ConsoleLogStackTraceStyle.normal.textColor = Color.red;
+      }
+      return _ConsoleLogStackTraceStyle;
+    }
+  }
+
+}
+
 [System.Serializable]
 public class NumberedEditorState {
   public Vector2 scrollPos;
