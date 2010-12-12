@@ -196,13 +196,9 @@ public class LogEntryStyles {
         _Default = new GUIStyle("Label");
         _Default.name = "Default";
         _Default.normal.textColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-        _Default.hover.textColor = Color.white;
         _Default.active.textColor = Color.white;
-        _Default.focused.textColor = Color.white;
         _Default.onNormal.textColor = Color.white;
-        _Default.onHover.textColor = Color.white;
         _Default.onActive.textColor = Color.white;
-        _Default.onFocused.textColor = Color.white;
       }
       return _Default;
     }
@@ -215,6 +211,9 @@ public class LogEntryStyles {
         _DefaultCommandStyle = new GUIStyle(Default);
         _DefaultCommandStyle.name = "DefaultCommandStyle";
         _DefaultCommandStyle.normal.textColor = Color.blue;
+        _DefaultCommandStyle.active.textColor = Color.blue;
+        _DefaultCommandStyle.onNormal.textColor = Color.blue;
+        _DefaultCommandStyle.onActive.textColor = Color.blue;
       }
       return _DefaultCommandStyle;
     }
@@ -242,6 +241,9 @@ public class LogEntryStyles {
         _OutputStyle = new GUIStyle(Default);
         _OutputStyle.name = "OutputStyle";
         _OutputStyle.normal.textColor = Color.green;
+        _OutputStyle.active.textColor = Color.green;
+        _OutputStyle.onNormal.textColor = Color.green;
+        _OutputStyle.onActive.textColor = Color.green;
       }
       return _OutputStyle;
     }
@@ -254,6 +256,9 @@ public class LogEntryStyles {
         _EvaluationErrorStyle = new GUIStyle(Default);
         _EvaluationErrorStyle.name = "EvaluationErrorStyle";
         _EvaluationErrorStyle.normal.textColor = Color.red;
+        _EvaluationErrorStyle.active.textColor = Color.red;
+        _EvaluationErrorStyle.onNormal.textColor = Color.red;
+        _EvaluationErrorStyle.onActive.textColor = Color.red;
       }
       return _EvaluationErrorStyle;
     }
@@ -266,6 +271,9 @@ public class LogEntryStyles {
         _SystemConsoleStyle = new GUIStyle(Default);
         _SystemConsoleStyle.name = "SystemConsoleStyle";
         _SystemConsoleStyle.normal.textColor = Color.yellow;
+        _SystemConsoleStyle.active.textColor = Color.yellow;
+        _SystemConsoleStyle.onNormal.textColor = Color.yellow;
+        _SystemConsoleStyle.onActive.textColor = Color.yellow;
       }
       return _SystemConsoleStyle;
     }
@@ -301,6 +309,9 @@ public class LogEntryStyles {
         _ConsoleLogStackTraceStyle = new GUIStyle(ConsoleLogStyle);
         _ConsoleLogStackTraceStyle.name = "ConsoleLogStackTraceStyle";
         _ConsoleLogStackTraceStyle.normal.textColor = Color.red;
+        _ConsoleLogStackTraceStyle.active.textColor = Color.red;
+        _ConsoleLogStackTraceStyle.onNormal.textColor = Color.red;
+        _ConsoleLogStackTraceStyle.onActive.textColor = Color.red;
       }
       return _ConsoleLogStackTraceStyle;
     }
