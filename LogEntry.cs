@@ -49,7 +49,7 @@ public class LogEntry {
               hasChildren = true;
           }
           if(shortCommand == null) {
-			command = command.TrimEnd();
+            command = command.TrimEnd();
             string[] commandList = command.Split(newline, 2);
             shortCommand = commandList[0];
             if(hasChildren || command != shortCommand) {
