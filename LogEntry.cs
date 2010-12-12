@@ -19,8 +19,13 @@ public class LogEntry {
   public LogEntryType logEntryType;
 
   public string command;
+  public string shortCommand = null;
   public bool isExpanded = true;
+  public bool hasChildren = false;
+  public bool isExpandable = false;
   public List<LogEntry> children;
+
+  private char[] newline = new char[] {'\n'};
 
   public string output;
 
@@ -40,9 +45,24 @@ public class LogEntry {
     switch(logEntryType) {
       case LogEntryType.Command:
         GUI.contentColor = Color.blue;
-          if(children != null && children.Count > 0) {
-            isExpanded = GUILayout.Toggle(isExpanded, command, EditorStyles.foldout, GUILayout.ExpandWidth(false));
-            if(isExpanded) {
+		  if(children != null && children.Count > 0) {
+			  hasChildren = true;
+		  }
+		  if(shortCommand == null) {
+            string[] commandList = command.Split(newline, 2);
+			shortCommand = commandList[0];
+			if(commandList.Length > 1 && commandList[1].Length > 0) {
+			  command = shortCommand + '\n' + commandList[1];
+		    } else {
+			  command = shortCommand;
+			}
+		  }
+		  if(hasChildren || command != shortCommand) {
+			  isExpandable = true;
+		  }
+          if(isExpandable) {
+            isExpanded = GUILayout.Toggle(isExpanded, (isExpanded) ? command: shortCommand, EditorStyles.foldout, GUILayout.ExpandWidth(false));
+            if(isExpanded && hasChildren) {
               foreach(LogEntry le in children)
                 le.OnGUI();
             }
