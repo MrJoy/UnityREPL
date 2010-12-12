@@ -45,21 +45,21 @@ public class LogEntry {
     switch(logEntryType) {
       case LogEntryType.Command:
         GUI.contentColor = Color.blue;
-		  if(children != null && children.Count > 0) {
-			  hasChildren = true;
-		  }
-		  if(shortCommand == null) {
+          if(children != null && children.Count > 0) {
+              hasChildren = true;
+          }
+          if(shortCommand == null) {
             string[] commandList = command.Split(newline, 2);
-			shortCommand = commandList[0];
-			if(commandList.Length > 1 && commandList[1].Length > 0) {
-			  command = shortCommand + '\n' + commandList[1];
-		    } else {
-			  command = shortCommand;
-			}
-		  }
-		  if(hasChildren || command != shortCommand) {
-			  isExpandable = true;
-		  }
+            shortCommand = commandList[0];
+            if(commandList.Length > 1 && commandList[1].Length > 0) {
+              command = shortCommand + '\n' + commandList[1];
+            } else {
+              command = shortCommand;
+            }
+          }
+          if(hasChildren || command != shortCommand) {
+              isExpandable = true;
+          }
           if(isExpandable) {
             isExpanded = GUILayout.Toggle(isExpanded, (isExpanded) ? command: shortCommand, EditorStyles.foldout, GUILayout.ExpandWidth(false));
             if(isExpanded && hasChildren) {
