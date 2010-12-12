@@ -49,16 +49,12 @@ public class LogEntry {
               hasChildren = true;
           }
           if(shortCommand == null) {
+			command = command.TrimEnd();
             string[] commandList = command.Split(newline, 2);
             shortCommand = commandList[0];
-            if(commandList.Length > 1 && commandList[1].Length > 0) {
-              command = shortCommand + '\n' + commandList[1];
-            } else {
-              command = shortCommand;
-            }
-          }
-          if(hasChildren || command != shortCommand) {
+            if(hasChildren || command != shortCommand) {
               isExpandable = true;
+            }
           }
           if(isExpandable) {
             isExpanded = GUILayout.Toggle(isExpanded, (isExpanded) ? command: shortCommand, EditorStyles.foldout, GUILayout.ExpandWidth(false));
