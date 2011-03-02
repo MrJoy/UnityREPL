@@ -240,10 +240,10 @@ public class LogEntryStyles {
       if(_OutputStyle == null) {
         _OutputStyle = new GUIStyle(Default);
         _OutputStyle.name = "OutputStyle";
-        _OutputStyle.normal.textColor = Color.green;
-        _OutputStyle.active.textColor = Color.green;
-        _OutputStyle.onNormal.textColor = Color.green;
-        _OutputStyle.onActive.textColor = Color.green;
+        _OutputStyle.normal.textColor = new Color(0f, 0.5f, 0f, 1f);
+        _OutputStyle.active.textColor = new Color(0f, 0.5f, 0f, 1f);
+        _OutputStyle.onNormal.textColor = new Color(0f, 0.5f, 0f, 1f);
+        _OutputStyle.onActive.textColor = new Color(0f, 0.5f, 0f, 1f);
       }
       return _OutputStyle;
     }
@@ -255,10 +255,10 @@ public class LogEntryStyles {
       if(_EvaluationErrorStyle == null) {
         _EvaluationErrorStyle = new GUIStyle(Default);
         _EvaluationErrorStyle.name = "EvaluationErrorStyle";
-        _EvaluationErrorStyle.normal.textColor = Color.red;
-        _EvaluationErrorStyle.active.textColor = Color.red;
-        _EvaluationErrorStyle.onNormal.textColor = Color.red;
-        _EvaluationErrorStyle.onActive.textColor = Color.red;
+        _EvaluationErrorStyle.normal.textColor = new Color(0.5f, 0f, 0f, 1f);
+        _EvaluationErrorStyle.active.textColor = new Color(0.5f, 0f, 0f, 1f);
+        _EvaluationErrorStyle.onNormal.textColor = new Color(0.5f, 0f, 0f, 1f);
+        _EvaluationErrorStyle.onActive.textColor = new Color(0.5f, 0f, 0f, 1f);
       }
       return _EvaluationErrorStyle;
     }
@@ -270,10 +270,10 @@ public class LogEntryStyles {
       if(_SystemConsoleStyle == null) {
         _SystemConsoleStyle = new GUIStyle(Default);
         _SystemConsoleStyle.name = "SystemConsoleStyle";
-        _SystemConsoleStyle.normal.textColor = Color.yellow;
-        _SystemConsoleStyle.active.textColor = Color.yellow;
-        _SystemConsoleStyle.onNormal.textColor = Color.yellow;
-        _SystemConsoleStyle.onActive.textColor = Color.yellow;
+        _SystemConsoleStyle.normal.textColor = new Color(0.5f, 0.5f, 0f, 1f);
+        _SystemConsoleStyle.active.textColor = new Color(0.5f, 0.5f, 0f, 1f);
+        _SystemConsoleStyle.onNormal.textColor = new Color(0.5f, 0.5f, 0f, 1f);
+        _SystemConsoleStyle.onActive.textColor = new Color(0.5f, 0.5f, 0f, 1f);
       }
       return _SystemConsoleStyle;
     }
