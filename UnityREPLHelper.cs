@@ -247,9 +247,11 @@ public class LogEntryStyles {
   public static GUIStyle Default {
     get {
       if(_Default == null) {
-        _Default = new GUIStyle("Label")
-          .Named("DummyStyle")
-          .BaseTextColor(new Color(0f, 0f, 0f, 1f));
+        _Default = new GUIStyle(EditorStyles.label)
+          .Named("DefaultLogEntry")
+          .ResetBoxModel()
+          .Padding(2, 2, 2, 2)
+          .Size(0, 0, true, false);
       }
       return _Default;
     }
@@ -260,8 +262,7 @@ public class LogEntryStyles {
     get {
       if(_DefaultCommandStyle == null) {
         _DefaultCommandStyle = new GUIStyle(Default)
-          .Named("DefaultCommandStyle")
-          .BaseTextColor(new Color(0f, 0f, 0f, 1f));
+          .Named("DefaultCommandStyle");
       }
       return _DefaultCommandStyle;
     }
@@ -331,8 +332,7 @@ public class LogEntryStyles {
     get {
       if(_ConsoleLogNormalStyle == null) {
         _ConsoleLogNormalStyle = new GUIStyle(ConsoleLogStyle)
-          .Named("ConsoleLogNormalStyle")
-          .BaseTextColor(new Color(0f, 0f, 0f, 1f));
+          .Named("ConsoleLogNormalStyle");
       }
       return _ConsoleLogNormalStyle;
     }
