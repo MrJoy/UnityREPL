@@ -542,14 +542,14 @@ public class Shell : EditorWindow {
           if(Application.platform == RuntimePlatform.OSXEditor)
             GUILayout.Label("<cmd>-]", HelpStyles.Shortcut);
           else
-            GUILayout.Label("<windows>-]", HelpStyles.Shortcut);
+            GUILayout.Label("<ctrl>-]", HelpStyles.Shortcut);
           GUILayout.Label("If text is selected, indent all of it.  If there is no text selected, indent the current line.", HelpStyles.Explanation);
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal();
         if(Application.platform == RuntimePlatform.OSXEditor)
           GUILayout.Label("<cmd>-[", HelpStyles.Shortcut);
         else
-          GUILayout.Label("<windows>-[", HelpStyles.Shortcut);
+          GUILayout.Label("<ctrl>-[", HelpStyles.Shortcut);
           GUILayout.Label("If text is selected, un-indent all of it.  If there is no text selected, un-indent the current line.", HelpStyles.Explanation);
         GUILayout.EndHorizontal();
         GUILayout.Label("", HelpStyles.Content);
