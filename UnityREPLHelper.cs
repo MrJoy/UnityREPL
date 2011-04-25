@@ -213,21 +213,45 @@ public class LogEntryStyles {
     get {
       if(_ConsoleLogStyle == null) {
         _ConsoleLogStyle = new GUIStyle(Default)
-          .Named("ConsoleLogStyle")
-          .BaseTextColor(new Color(0.25f, 0.25f, 0.25f, 1f));
+          .Named("ConsoleLogStyle");
       }
       return _ConsoleLogStyle;
     }
   }
 
-  private static GUIStyle _ConsoleLogConditionStyle = null;
-  public static GUIStyle ConsoleLogConditionStyle {
+  private static GUIStyle _ConsoleLogNormalStyle = null;
+  public static GUIStyle ConsoleLogNormalStyle {
     get {
-      if(_ConsoleLogConditionStyle == null) {
-        _ConsoleLogConditionStyle = new GUIStyle(ConsoleLogStyle)
-          .Named("ConsoleLogConditionStyle");
+      if(_ConsoleLogNormalStyle == null) {
+        _ConsoleLogNormalStyle = new GUIStyle(ConsoleLogStyle)
+          .Named("ConsoleLogNormalStyle")
+          .BaseTextColor(new Color(0f, 0f, 0f, 1f));
       }
-      return _ConsoleLogConditionStyle;
+      return _ConsoleLogNormalStyle;
+    }
+  }
+
+  private static GUIStyle _ConsoleLogWarningStyle = null;
+  public static GUIStyle ConsoleLogWarningStyle {
+    get {
+      if(_ConsoleLogWarningStyle == null) {
+        _ConsoleLogWarningStyle = new GUIStyle(ConsoleLogStyle)
+          .Named("ConsoleLogWarningStyle")
+          .BaseTextColor(new Color(0.5f, 0.5f, 0f, 1f));
+      }
+      return _ConsoleLogWarningStyle;
+    }
+  }
+
+  private static GUIStyle _ConsoleLogErrorStyle = null;
+  public static GUIStyle ConsoleLogErrorStyle {
+    get {
+      if(_ConsoleLogErrorStyle == null) {
+        _ConsoleLogErrorStyle = new GUIStyle(ConsoleLogStyle)
+          .Named("ConsoleLogErrorStyle")
+          .BaseTextColor(new Color(0.5f, 0f, 0f, 1f));
+      }
+      return _ConsoleLogErrorStyle;
     }
   }
 
@@ -237,7 +261,7 @@ public class LogEntryStyles {
       if(_ConsoleLogStackTraceStyle == null) {
         _ConsoleLogStackTraceStyle = new GUIStyle(ConsoleLogStyle)
           .Named("ConsoleLogStackTraceStyle")
-          .BaseTextColor(new Color(0.5f, 0f, 0f, 1f));
+          .BaseTextColor(new Color(0.25f, 0.25f, 0.25f, 1f));
       }
       return _ConsoleLogStackTraceStyle;
     }
