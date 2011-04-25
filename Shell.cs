@@ -627,7 +627,7 @@ public class Shell : EditorWindow {
       } else {
         if(showVars)
           ShowVars();
-        else
+        else if(showLog)
           ShowLog();
       }
     }
