@@ -20,10 +20,8 @@ public class UnityREPLHelper {
   }
 
   public static NumberedEditorState NumberedTextArea(string controlName, NumberedEditorState editorState) {
-    // This is a WAG about Unity's box model.  Seems to work though, so...
-    // yeah.
+    // This is a WAG about Unity's box model.  Seems to work though, so... yeah.
     float effectiveWidgetHeight = 7 * GUI.skin.label.lineHeight
-//        + GUI.skin.label.margin.top + GUI.skin.label.margin.bottom
       + GUI.skin.label.padding.top + GUI.skin.label.padding.bottom
     ;
     Rect r = EditorGUILayout.BeginVertical();
@@ -31,16 +29,8 @@ public class UnityREPLHelper {
       editorState.scrollViewWidth = r.width;
       editorState.scrollViewHeight = r.height;
     }
-//Debug.Log(r);
-    editorState.scrollPos = GUILayout.BeginScrollView(editorState.scrollPos, false, false, CachedStyle("HorizontalScrollbar"), CachedStyle("VerticalScrollbar"), CachedStyle("TextField"), GUILayout.Height(effectiveWidgetHeight));
-//      int scrollId = GUIUtility.GetControlID(FocusType.Passive);
-//      Debug.Log(scrollId);
-//      object o = GUIUtility.QueryStateObject(typeof(System.Object), scrollId);
-//      if(o != null)
-//        Debug.Log(o.GetType().FullName);
-//      else
-//        Debug.Log("Well, honey...  I blew it again.");
 
+    editorState.scrollPos = GUILayout.BeginScrollView(editorState.scrollPos, false, false, CachedStyle("HorizontalScrollbar"), CachedStyle("VerticalScrollbar"), CachedStyle("TextField"), GUILayout.Height(effectiveWidgetHeight));
       GUILayout.BeginHorizontal();
         GUILayout.Label(editorState.lineNumberingContent, NumberedEditorStyles.LineNumbering);
         GUIContent txt = new GUIContent(editorState.text);
@@ -50,12 +40,10 @@ public class UnityREPLHelper {
         GUI.SetNextControlName(controlName);
         Rect editorRect = GUILayoutUtility.GetRect(txt, NumberedEditorStyles.NumberedEditor, GUILayout.Width(maxW));
         editorRect.width = maxW;
-//        Debug.Log("B: " + Event.current.type.ToString() + ", " + Event.current.isKey + "," + Event.current.isMouse + "," + Event.current.button);
         bool wasMouseDrag = Event.current.type == EventType.MouseDrag;
         bool wasRelevantEvent = wasMouseDrag || Event.current.type == EventType.KeyDown;
         editorState.text = GUI.TextField(editorRect, editorState.text, NumberedEditorStyles.NumberedEditor);
 
-//        Debug.Log("A: " + Event.current.type.ToString() + ", " + Event.current.isKey + "," + Event.current.isMouse + "," + Event.current.button);
         if ((GUI.GetNameOfFocusedControl() == controlName) &&
             wasRelevantEvent) {
           int editorId = GUIUtility.keyboardControl;
@@ -70,8 +58,6 @@ public class UnityREPLHelper {
               yBuffer = 0;
               xBuffer = 0;
             }
-//            cursorPixelPos.x -= CachedStyle("TextField").padding.left;
-//            cursorPixelPos.y -= CachedStyle("TextField").padding.top;
 
             if(editorState.scrollViewWidth > 0) {
               if(cursorPixelPos.y + yBuffer > editorState.scrollPos.y + editorState.scrollViewHeight - NumberedEditorStyles.NumberedEditor.lineHeight)
@@ -87,30 +73,12 @@ public class UnityREPLHelper {
           }
           editorState.lastPos = pos;
         }
-//        editorState.scrollPos = Vector2.zero;
-
-        if(GUI.changed) {
-//Debug.Log("A");
-
-          // TODO: Determine properly if we have a *keystroke* event.
-
-
-/*            // The text actually changed...
-            if(editorState.text.StartsWith(oldValue)) {
-              // The text was appended to.
-              editorState.scrollPos.y = Mathf.Infinity;
-            }
-          } */
-        }
       GUILayout.EndHorizontal();
     GUILayout.EndScrollView();
     EditorGUILayout.EndVertical();
 
     return editorState;
   }
-
-//  private static Rect zero = new Rect(0,0,0,0);
-//  private static char NEWLINE = "\n"[0];
 }
 
 public static class GUIStyleExtensions {
