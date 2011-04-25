@@ -138,6 +138,35 @@ public static class GUIStyleExtensions {
       c;
     return style;
   }
+
+  public static GUIStyle ResetBoxModel(this GUIStyle style) {
+    style.border = new RectOffset();
+    style.margin = new RectOffset();
+    style.padding = new RectOffset();
+    style.overflow = new RectOffset();
+
+    return style;
+  }
+
+  public static GUIStyle Padding(this GUIStyle style, int left, int right, int top, int bottom) {
+    style.padding = new RectOffset(left, right, top, bottom);
+    return style;
+  }
+
+  public static GUIStyle Margin(this GUIStyle style, int left, int right, int top, int bottom) {
+    style.margin = new RectOffset(left, right, top, bottom);
+    return style;
+  }
+
+  public static GUIStyle Named(this GUIStyle style, string name) {
+    style.name = name;
+    return style;
+  }
+
+  public static GUIStyle ClipText(this GUIStyle style) {
+    style.clipping = TextClipping.Clip;
+    return style;
+  }
 }
 
 public class NumberedEditorStyles {
@@ -146,22 +175,20 @@ public class NumberedEditorStyles {
     get {
       if(_LineNumbering == null) {
         _LineNumbering = new GUIStyle(EditorStyles.textField) {
-          name = "LineNumbering",
           alignment = TextAnchor.UpperRight,
           fixedWidth = 0,
           fixedHeight = 0,
           wordWrap = false,
           stretchWidth = false,
           stretchHeight = true,
-          imagePosition = ImagePosition.TextOnly,
-          clipping = TextClipping.Clip,
-          border = new RectOffset(),
-          margin = new RectOffset(),
-          padding = new RectOffset(5, 0, 0, 0),
-          overflow = new RectOffset()
+          imagePosition = ImagePosition.TextOnly
         }
+          .Named("LineNumbering")
           .NoBackgroundImages()
-          .BaseTextColor(new Color(0.5f, 0.5f, 0.5f, 1f));
+          .ResetBoxModel()
+          .Padding(5, 0, 0, 0)
+          .BaseTextColor(new Color(0.5f, 0.5f, 0.5f, 1f))
+          .ClipText();
       }
       return _LineNumbering;
     }
@@ -172,18 +199,16 @@ public class NumberedEditorStyles {
     get {
       if(_NumberedEditor == null) {
         _NumberedEditor = new GUIStyle(LineNumbering) {
-          name = "NumberedEditor",
           alignment = TextAnchor.UpperLeft,
           stretchWidth = true,
-          stretchHeight = true,
-
-          clipping = TextClipping.Clip,
-          border = new RectOffset(),
-          margin = new RectOffset(5, 0, 0, 0),
-          padding = new RectOffset(0, 4, 0, 0),
-          overflow = new RectOffset()
+          stretchHeight = true
         }
-          .BaseTextColor(new Color(0f, 0f, 0f, 1f));
+          .Named("NumberedEditor")
+          .ResetBoxModel()
+          .Padding(0, 4, 0, 0)
+          .Margin(5, 0, 0, 0)
+          .BaseTextColor(new Color(0f, 0f, 0f, 1f))
+          .ClipText();
       }
       return _NumberedEditor;
     }
@@ -193,9 +218,8 @@ public class NumberedEditorStyles {
   public static GUIStyle DummyStyle {
     get {
       if(_DummyStyle == null) {
-        _DummyStyle = new GUIStyle(NumberedEditor) {
-          name = "DummyStyle"
-        }
+        _DummyStyle = new GUIStyle(NumberedEditor)
+          .Named("DummyStyle")
           .BaseTextColor(new Color(0f, 0f, 0f, 0f));
       }
       return _DummyStyle;
@@ -208,9 +232,8 @@ public class LogEntryStyles {
   public static GUIStyle Default {
     get {
       if(_Default == null) {
-        _Default = new GUIStyle("Label") {
-          name = "Default"
-        }
+        _Default = new GUIStyle("Label")
+          .Named("DummyStyle")
           .BaseTextColor(new Color(1f, 1f, 1f, 1f));
       }
       return _Default;
@@ -221,9 +244,8 @@ public class LogEntryStyles {
   public static GUIStyle DefaultCommandStyle {
     get {
       if(_DefaultCommandStyle == null) {
-        _DefaultCommandStyle = new GUIStyle(Default) {
-          name = "DefaultCommandStyle"
-        }
+        _DefaultCommandStyle = new GUIStyle(Default)
+          .Named("DefaultCommandStyle")
           .BaseTextColor(Color.blue);
       }
       return _DefaultCommandStyle;
@@ -234,9 +256,8 @@ public class LogEntryStyles {
   public static GUIStyle FoldoutCommandStyle {
     get {
       if(_FoldoutCommandStyle == null) {
-        _FoldoutCommandStyle = new GUIStyle(EditorStyles.foldout) {
-          name = "FoldoutCommandStyle"
-        }
+        _FoldoutCommandStyle = new GUIStyle(EditorStyles.foldout)
+          .Named("FoldoutCommandStyle")
           .BaseTextColor(Color.blue);
       }
       return _FoldoutCommandStyle;
@@ -247,9 +268,8 @@ public class LogEntryStyles {
   public static GUIStyle OutputStyle {
     get {
       if(_OutputStyle == null) {
-        _OutputStyle = new GUIStyle(Default) {
-          name = "OutputStyle"
-        }
+        _OutputStyle = new GUIStyle(Default)
+          .Named("OutputStyle")
           .BaseTextColor(new Color(0f, 0.5f, 0f, 1f));
       }
       return _OutputStyle;
@@ -260,9 +280,8 @@ public class LogEntryStyles {
   public static GUIStyle EvaluationErrorStyle {
     get {
       if(_EvaluationErrorStyle == null) {
-        _EvaluationErrorStyle = new GUIStyle(Default) {
-          name = "EvaluationErrorStyle"
-        }
+        _EvaluationErrorStyle = new GUIStyle(Default)
+          .Named("EvaluationErrorStyle")
           .BaseTextColor(new Color(0.5f, 0f, 0f, 1f));
       }
       return _EvaluationErrorStyle;
@@ -273,9 +292,8 @@ public class LogEntryStyles {
   public static GUIStyle SystemConsoleStyle {
     get {
       if(_SystemConsoleStyle == null) {
-        _SystemConsoleStyle = new GUIStyle(Default) {
-          name = "SystemConsoleStyle"
-        }
+        _SystemConsoleStyle = new GUIStyle(Default)
+          .Named("SystemConsoleStyle")
           .BaseTextColor(new Color(0.5f, 0.5f, 0f, 1f));
       }
       return _SystemConsoleStyle;
@@ -286,9 +304,8 @@ public class LogEntryStyles {
   public static GUIStyle ConsoleLogStyle {
     get {
       if(_ConsoleLogStyle == null) {
-        _ConsoleLogStyle = new GUIStyle(Default) {
-          name = "ConsoleLogStyle"
-        }
+        _ConsoleLogStyle = new GUIStyle(Default)
+          .Named("ConsoleLogStyle")
           .BaseTextColor(GUI.contentColor);
       }
       return _ConsoleLogStyle;
@@ -299,9 +316,8 @@ public class LogEntryStyles {
   public static GUIStyle ConsoleLogConditionStyle {
     get {
       if(_ConsoleLogConditionStyle == null) {
-        _ConsoleLogConditionStyle = new GUIStyle(ConsoleLogStyle) {
-          name = "ConsoleLogConditionStyle"
-        };
+        _ConsoleLogConditionStyle = new GUIStyle(ConsoleLogStyle)
+          .Named("ConsoleLogConditionStyle");
       }
       return _ConsoleLogConditionStyle;
     }
@@ -311,9 +327,8 @@ public class LogEntryStyles {
   public static GUIStyle ConsoleLogStackTraceStyle {
     get {
       if(_ConsoleLogStackTraceStyle == null) {
-        _ConsoleLogStackTraceStyle = new GUIStyle(ConsoleLogStyle) {
-          name = "ConsoleLogStackTraceStyle"
-        }
+        _ConsoleLogStackTraceStyle = new GUIStyle(ConsoleLogStyle)
+          .Named("ConsoleLogStackTraceStyle")
           .BaseTextColor(Color.red);
       }
       return _ConsoleLogStackTraceStyle;
