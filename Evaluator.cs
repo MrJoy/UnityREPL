@@ -47,6 +47,7 @@ class EvaluationHelper {
     // Regardless, attempting to hit them early and then trying again later
     // seems to work fine.
     Evaluator.Run("using System;");
+    Evaluator.Run("using System.IO;");
     Evaluator.Run("using System.Linq;");
     Evaluator.Run("using System.Collections;");
     Evaluator.Run("using System.Collections.Generic;");
