@@ -136,12 +136,19 @@ class EvaluationHelper {
     object output = null;
     LogEntry cmdEntry = null;
 
+    string tmpCode = code.Trim();
+
     cmdEntry = new LogEntry() {
       logEntryType = LogEntryType.Command,
-      command = code.Trim()
+      command = tmpCode
     };
 
+    bool isExpression = false;
     try {
+      if(tmpCode.StartsWith("=")) {
+        tmpCode = "(" + tmpCode.Substring(1, tmpCode.Length-1) + ");";
+        isExpression = true;
+      }
       Application.RegisterLogCallback(delegate(string cond, string sTrace, LogType lType) {
         cmdEntry.Add(new LogEntry() {
           logEntryType = LogEntryType.ConsoleLog,
@@ -150,7 +157,7 @@ class EvaluationHelper {
           consoleLogType = lType
         });
       });
-      status = Evaluator.Evaluate(code, out output, out hasOutput) == null;
+      status = Evaluator.Evaluate(tmpCode, out output, out hasOutput) == null;
       if(status)
         logEntries.Add(cmdEntry);
     } catch(Exception e) {
@@ -180,7 +187,7 @@ class EvaluationHelper {
       status = false;
     }
 
-    if(hasOutput) {
+    if(hasOutput && (isExpression || output is REPLMessage)) {
       if(status) {
         outputBuffer.Length = 0;
         PrettyPrint.PP(outputBuffer, output);
