@@ -419,10 +419,15 @@ public class Shell : EditorWindow {
   }
 
   public Vector2 logScrollPos;
+  private int numEntriesLastSeen = -1;
   private void ShowLog() {
     // TODO: Auto-scroll to the end if a message comes in and we're already at
     // TODO: the end...
     logScrollPos = EditorGUILayout.BeginScrollView(logScrollPos);
+    if(numEntriesLastSeen != logEntries.Count) {
+      numEntriesLastSeen = logEntries.Count;
+      logScrollPos.y = float.MaxValue;
+    }
     foreach(LogEntry le in logEntries) {
       if(le.OnGUI(filterTraces)) {
         codeToProcess = le.command;
