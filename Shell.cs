@@ -416,7 +416,7 @@ public class Shell : EditorWindow {
     // TODO: the end...
     logScrollPos = EditorGUILayout.BeginScrollView(logScrollPos);
     foreach(LogEntry le in logEntries) {
-      if(le.OnGUI()) {
+      if(le.OnGUI(filterTraces)) {
         codeToProcess = le.command;
       }
     }
@@ -428,7 +428,7 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   // Tying It All Together...
   //----------------------------------------------------------------------------
-  public bool showVars = true, showLog = true;
+  public bool showVars = true, showLog = true, filterTraces = true;
   // TODO: Save pane sizing states...
   private VerticalPaneState paneConfiguration = new VerticalPaneState() {
     minPaneHeightTop = 65,
@@ -446,6 +446,11 @@ public class Shell : EditorWindow {
       showVars = GUILayout.Toggle(showVars, "Locals", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
       showLog = GUILayout.Toggle(showLog, "Log", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
 
+      if(showLog) {
+        EditorGUILayoutToolbar.Space();
+
+        filterTraces = GUILayout.Toggle(filterTraces, "Filter", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
+      }
     EditorGUILayoutToolbar.End();
 
     ShowEditor();
