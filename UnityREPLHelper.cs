@@ -195,10 +195,11 @@ public class LogEntryStyles {
       if(_Default == null) {
         _Default = new GUIStyle("Label");
         _Default.name = "Default";
-        _Default.normal.textColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-        _Default.active.textColor = Color.white;
-        _Default.onNormal.textColor = Color.white;
-        _Default.onActive.textColor = Color.white;
+        _Default.normal.textColor =
+          _Default.active.textColor =
+          _Default.onNormal.textColor =
+          _Default.onActive.textColor =
+          new Color(1.0f, 1.0f, 1.0f, 1.0f);
       }
       return _Default;
     }
@@ -210,10 +211,11 @@ public class LogEntryStyles {
       if(_DefaultCommandStyle == null) {
         _DefaultCommandStyle = new GUIStyle(Default);
         _DefaultCommandStyle.name = "DefaultCommandStyle";
-        _DefaultCommandStyle.normal.textColor = Color.blue;
-        _DefaultCommandStyle.active.textColor = Color.blue;
-        _DefaultCommandStyle.onNormal.textColor = Color.blue;
-        _DefaultCommandStyle.onActive.textColor = Color.blue;
+        _DefaultCommandStyle.normal.textColor =
+          _DefaultCommandStyle.active.textColor =
+          _DefaultCommandStyle.onNormal.textColor =
+          _DefaultCommandStyle.onActive.textColor =
+          Color.blue;
       }
       return _DefaultCommandStyle;
     }
@@ -225,10 +227,11 @@ public class LogEntryStyles {
       if(_FoldoutCommandStyle == null) {
         _FoldoutCommandStyle = new GUIStyle(EditorStyles.foldout);
         _FoldoutCommandStyle.name = "FoldoutCommandStyle";
-        _FoldoutCommandStyle.normal.textColor = Color.blue;
-        _FoldoutCommandStyle.active.textColor = Color.blue;
-        _FoldoutCommandStyle.onNormal.textColor = Color.blue;
-        _FoldoutCommandStyle.onActive.textColor = Color.blue;
+        _FoldoutCommandStyle.normal.textColor =
+          _FoldoutCommandStyle.active.textColor =
+          _FoldoutCommandStyle.onNormal.textColor =
+          _FoldoutCommandStyle.onActive.textColor =
+          Color.blue;
       }
       return _FoldoutCommandStyle;
     }
@@ -240,10 +243,11 @@ public class LogEntryStyles {
       if(_OutputStyle == null) {
         _OutputStyle = new GUIStyle(Default);
         _OutputStyle.name = "OutputStyle";
-        _OutputStyle.normal.textColor = new Color(0f, 0.5f, 0f, 1f);
-        _OutputStyle.active.textColor = new Color(0f, 0.5f, 0f, 1f);
-        _OutputStyle.onNormal.textColor = new Color(0f, 0.5f, 0f, 1f);
-        _OutputStyle.onActive.textColor = new Color(0f, 0.5f, 0f, 1f);
+        _OutputStyle.normal.textColor =
+          _OutputStyle.active.textColor =
+          _OutputStyle.onNormal.textColor =
+          _OutputStyle.onActive.textColor =
+          new Color(0f, 0.5f, 0f, 1f);
       }
       return _OutputStyle;
     }
@@ -255,10 +259,11 @@ public class LogEntryStyles {
       if(_EvaluationErrorStyle == null) {
         _EvaluationErrorStyle = new GUIStyle(Default);
         _EvaluationErrorStyle.name = "EvaluationErrorStyle";
-        _EvaluationErrorStyle.normal.textColor = new Color(0.5f, 0f, 0f, 1f);
-        _EvaluationErrorStyle.active.textColor = new Color(0.5f, 0f, 0f, 1f);
-        _EvaluationErrorStyle.onNormal.textColor = new Color(0.5f, 0f, 0f, 1f);
-        _EvaluationErrorStyle.onActive.textColor = new Color(0.5f, 0f, 0f, 1f);
+        _EvaluationErrorStyle.normal.textColor =
+          _EvaluationErrorStyle.active.textColor =
+          _EvaluationErrorStyle.onNormal.textColor =
+          _EvaluationErrorStyle.onActive.textColor =
+          new Color(0.5f, 0f, 0f, 1f);
       }
       return _EvaluationErrorStyle;
     }
@@ -270,10 +275,11 @@ public class LogEntryStyles {
       if(_SystemConsoleStyle == null) {
         _SystemConsoleStyle = new GUIStyle(Default);
         _SystemConsoleStyle.name = "SystemConsoleStyle";
-        _SystemConsoleStyle.normal.textColor = new Color(0.5f, 0.5f, 0f, 1f);
-        _SystemConsoleStyle.active.textColor = new Color(0.5f, 0.5f, 0f, 1f);
-        _SystemConsoleStyle.onNormal.textColor = new Color(0.5f, 0.5f, 0f, 1f);
-        _SystemConsoleStyle.onActive.textColor = new Color(0.5f, 0.5f, 0f, 1f);
+        _SystemConsoleStyle.normal.textColor =
+          _SystemConsoleStyle.active.textColor =
+          _SystemConsoleStyle.onNormal.textColor =
+          _SystemConsoleStyle.onActive.textColor =
+          new Color(0.5f, 0.5f, 0f, 1f);
       }
       return _SystemConsoleStyle;
     }
@@ -308,10 +314,11 @@ public class LogEntryStyles {
       if(_ConsoleLogStackTraceStyle == null) {
         _ConsoleLogStackTraceStyle = new GUIStyle(ConsoleLogStyle);
         _ConsoleLogStackTraceStyle.name = "ConsoleLogStackTraceStyle";
-        _ConsoleLogStackTraceStyle.normal.textColor = Color.red;
-        _ConsoleLogStackTraceStyle.active.textColor = Color.red;
-        _ConsoleLogStackTraceStyle.onNormal.textColor = Color.red;
-        _ConsoleLogStackTraceStyle.onActive.textColor = Color.red;
+        _ConsoleLogStackTraceStyle.normal.textColor =
+          _ConsoleLogStackTraceStyle.active.textColor =
+          _ConsoleLogStackTraceStyle.onNormal.textColor =
+          _ConsoleLogStackTraceStyle.onActive.textColor =
+          Color.red;
       }
       return _ConsoleLogStackTraceStyle;
     }
