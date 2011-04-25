@@ -286,7 +286,7 @@ public class LogEntryStyles {
       if(_OutputStyle == null) {
         _OutputStyle = new GUIStyle(Default)
           .Named("OutputStyle")
-          .BaseTextColor(new Color(0f, 0.5f, 0f, 1f));
+          .BaseTextColor(new Color(0f, 0.5f, 0f, 1f), new Color(0f, 0.75f, 0f, 1f));
       }
       return _OutputStyle;
     }
@@ -298,7 +298,7 @@ public class LogEntryStyles {
       if(_EvaluationErrorStyle == null) {
         _EvaluationErrorStyle = new GUIStyle(Default)
           .Named("EvaluationErrorStyle")
-          .BaseTextColor(new Color(0.5f, 0f, 0f, 1f));
+          .BaseTextColor(new Color(0.5f, 0f, 0f, 1f), new Color(0.75f, 0.25f, 0.25f, 1f));
       }
       return _EvaluationErrorStyle;
     }
@@ -310,7 +310,7 @@ public class LogEntryStyles {
       if(_SystemConsoleStyle == null) {
         _SystemConsoleStyle = new GUIStyle(Default)
           .Named("SystemConsoleStyle")
-          .BaseTextColor(new Color(0.5f, 0.5f, 0f, 1f));
+          .BaseTextColor(new Color(0.5f, 0.5f, 0f, 1f), new Color(0.75f, 0.75f, 0f, 1f));
       }
       return _SystemConsoleStyle;
     }
@@ -344,7 +344,7 @@ public class LogEntryStyles {
       if(_ConsoleLogWarningStyle == null) {
         _ConsoleLogWarningStyle = new GUIStyle(ConsoleLogStyle)
           .Named("ConsoleLogWarningStyle")
-          .BaseTextColor(new Color(0.5f, 0.5f, 0f, 1f));
+          .BaseTextColor(new Color(0.5f, 0.5f, 0f, 1f), new Color(0.75f, 0.75f, 0f, 1f));
       }
       return _ConsoleLogWarningStyle;
     }
@@ -356,7 +356,7 @@ public class LogEntryStyles {
       if(_ConsoleLogErrorStyle == null) {
         _ConsoleLogErrorStyle = new GUIStyle(ConsoleLogStyle)
           .Named("ConsoleLogErrorStyle")
-          .BaseTextColor(new Color(0.5f, 0f, 0f, 1f));
+          .BaseTextColor(new Color(0.5f, 0f, 0f, 1f), new Color(0.75f, 0.25f, 0.25f, 1f));
       }
       return _ConsoleLogErrorStyle;
     }
@@ -368,7 +368,7 @@ public class LogEntryStyles {
       if(_ConsoleLogStackTraceStyle == null) {
         _ConsoleLogStackTraceStyle = new GUIStyle(ConsoleLogStyle)
           .Named("ConsoleLogStackTraceStyle")
-          .BaseTextColor(new Color(0.25f, 0.25f, 0.25f, 1f));
+          .BaseTextColor(new Color(0.25f, 0.25f, 0.25f, 1f), new Color(0.5f, 0.5f, 0.5f, 1f));
       }
       return _ConsoleLogStackTraceStyle;
     }
