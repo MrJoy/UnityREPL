@@ -163,7 +163,7 @@ class EvaluationHelper {
     } catch(Exception e) {
       cmdEntry.Add(new LogEntry() {
         logEntryType = LogEntryType.EvaluationError,
-        error = e.ToString().Trim()
+        error = e.ToString().Trim() // TODO: Produce a stack trace a la Debug, and put it in stackTrace so we can filter it.
       });
 
       output = new Evaluator.NoValueSet();
