@@ -113,6 +113,33 @@ public class UnityREPLHelper {
 //  private static char NEWLINE = "\n"[0];
 }
 
+public static class GUIStyleExtensions {
+  public static GUIStyle NoBackgroundImages(this GUIStyle style) {
+    style.normal.background = null;
+    style.active.background = null;
+    style.hover.background = null;
+    style.focused.background = null;
+    style.onNormal.background = null;
+    style.onActive.background = null;
+    style.onHover.background = null;
+    style.onFocused.background = null;
+    return style;
+  }
+
+  public static GUIStyle BaseTextColor(this GUIStyle style, Color c) {
+    style.normal.textColor =
+      style.active.textColor =
+      style.hover.textColor =
+      style.focused.textColor =
+      style.onNormal.textColor =
+      style.onActive.textColor =
+      style.onHover.textColor =
+      style.onFocused.textColor =
+      c;
+    return style;
+  }
+}
+
 public class NumberedEditorStyles {
   private static GUIStyle _LineNumbering = null;
   public static GUIStyle LineNumbering {
@@ -130,21 +157,11 @@ public class NumberedEditorStyles {
           clipping = TextClipping.Clip,
           border = new RectOffset(),
           margin = new RectOffset(),
-          padding = new RectOffset(),
+          padding = new RectOffset(5, 0, 0, 0),
           overflow = new RectOffset()
-        };
-
-        _LineNumbering.padding.left = 5;
-
-        _LineNumbering.normal.background = null;
-        _LineNumbering.active.background = null;
-        _LineNumbering.hover.background = null;
-        _LineNumbering.focused.background = null;
-        _LineNumbering.onNormal.background = null;
-        _LineNumbering.onActive.background = null;
-        _LineNumbering.onHover.background = null;
-        _LineNumbering.onFocused.background = null;
-        _LineNumbering.normal.textColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+        }
+          .NoBackgroundImages()
+          .BaseTextColor(new Color(0.5f, 0.5f, 0.5f, 1f));
       }
       return _LineNumbering;
     }
@@ -165,9 +182,8 @@ public class NumberedEditorStyles {
           margin = new RectOffset(5, 0, 0, 0),
           padding = new RectOffset(0, 4, 0, 0),
           overflow = new RectOffset()
-        };
-
-        _NumberedEditor.normal.textColor = new Color(0f, 0f, 0f, 1f);
+        }
+          .BaseTextColor(new Color(0f, 0f, 0f, 1f));
       }
       return _NumberedEditor;
     }
@@ -179,8 +195,8 @@ public class NumberedEditorStyles {
       if(_DummyStyle == null) {
         _DummyStyle = new GUIStyle(NumberedEditor) {
           name = "DummyStyle"
-        };
-        _DummyStyle.normal.textColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+        }
+          .BaseTextColor(new Color(0f, 0f, 0f, 0f));
       }
       return _DummyStyle;
     }
@@ -194,12 +210,8 @@ public class LogEntryStyles {
       if(_Default == null) {
         _Default = new GUIStyle("Label") {
           name = "Default"
-        };
-        _Default.normal.textColor =
-          _Default.active.textColor =
-          _Default.onNormal.textColor =
-          _Default.onActive.textColor =
-          new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        }
+          .BaseTextColor(new Color(1f, 1f, 1f, 1f));
       }
       return _Default;
     }
@@ -211,12 +223,8 @@ public class LogEntryStyles {
       if(_DefaultCommandStyle == null) {
         _DefaultCommandStyle = new GUIStyle(Default) {
           name = "DefaultCommandStyle"
-        };
-        _DefaultCommandStyle.normal.textColor =
-          _DefaultCommandStyle.active.textColor =
-          _DefaultCommandStyle.onNormal.textColor =
-          _DefaultCommandStyle.onActive.textColor =
-          Color.blue;
+        }
+          .BaseTextColor(Color.blue);
       }
       return _DefaultCommandStyle;
     }
@@ -228,12 +236,8 @@ public class LogEntryStyles {
       if(_FoldoutCommandStyle == null) {
         _FoldoutCommandStyle = new GUIStyle(EditorStyles.foldout) {
           name = "FoldoutCommandStyle"
-        };
-        _FoldoutCommandStyle.normal.textColor =
-          _FoldoutCommandStyle.active.textColor =
-          _FoldoutCommandStyle.onNormal.textColor =
-          _FoldoutCommandStyle.onActive.textColor =
-          Color.blue;
+        }
+          .BaseTextColor(Color.blue);
       }
       return _FoldoutCommandStyle;
     }
@@ -245,12 +249,8 @@ public class LogEntryStyles {
       if(_OutputStyle == null) {
         _OutputStyle = new GUIStyle(Default) {
           name = "OutputStyle"
-        };
-        _OutputStyle.normal.textColor =
-          _OutputStyle.active.textColor =
-          _OutputStyle.onNormal.textColor =
-          _OutputStyle.onActive.textColor =
-          new Color(0f, 0.5f, 0f, 1f);
+        }
+          .BaseTextColor(new Color(0f, 0.5f, 0f, 1f));
       }
       return _OutputStyle;
     }
@@ -262,12 +262,8 @@ public class LogEntryStyles {
       if(_EvaluationErrorStyle == null) {
         _EvaluationErrorStyle = new GUIStyle(Default) {
           name = "EvaluationErrorStyle"
-        };
-        _EvaluationErrorStyle.normal.textColor =
-          _EvaluationErrorStyle.active.textColor =
-          _EvaluationErrorStyle.onNormal.textColor =
-          _EvaluationErrorStyle.onActive.textColor =
-          new Color(0.5f, 0f, 0f, 1f);
+        }
+          .BaseTextColor(new Color(0.5f, 0f, 0f, 1f));
       }
       return _EvaluationErrorStyle;
     }
@@ -279,12 +275,8 @@ public class LogEntryStyles {
       if(_SystemConsoleStyle == null) {
         _SystemConsoleStyle = new GUIStyle(Default) {
           name = "SystemConsoleStyle"
-        };
-        _SystemConsoleStyle.normal.textColor =
-          _SystemConsoleStyle.active.textColor =
-          _SystemConsoleStyle.onNormal.textColor =
-          _SystemConsoleStyle.onActive.textColor =
-          new Color(0.5f, 0.5f, 0f, 1f);
+        }
+          .BaseTextColor(new Color(0.5f, 0.5f, 0f, 1f));
       }
       return _SystemConsoleStyle;
     }
@@ -296,8 +288,8 @@ public class LogEntryStyles {
       if(_ConsoleLogStyle == null) {
         _ConsoleLogStyle = new GUIStyle(Default) {
           name = "ConsoleLogStyle"
-        };
-        _ConsoleLogStyle.normal.textColor = GUI.contentColor;
+        }
+          .BaseTextColor(GUI.contentColor);
       }
       return _ConsoleLogStyle;
     }
@@ -321,12 +313,8 @@ public class LogEntryStyles {
       if(_ConsoleLogStackTraceStyle == null) {
         _ConsoleLogStackTraceStyle = new GUIStyle(ConsoleLogStyle) {
           name = "ConsoleLogStackTraceStyle"
-        };
-        _ConsoleLogStackTraceStyle.normal.textColor =
-          _ConsoleLogStackTraceStyle.active.textColor =
-          _ConsoleLogStackTraceStyle.onNormal.textColor =
-          _ConsoleLogStackTraceStyle.onActive.textColor =
-          Color.red;
+        }
+          .BaseTextColor(Color.red);
       }
       return _ConsoleLogStackTraceStyle;
     }
