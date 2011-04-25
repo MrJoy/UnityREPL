@@ -274,7 +274,10 @@ public class Shell : EditorWindow {
           // TODO: Do we only want to do this only when the cursor is at the
           // TODO: end of the input?  (Avoids unexpectedly putting newlines in
           // TODO: the middle of peoples' input...)
-          doProcess = true;
+          if(Event.current.shift)
+            codeToProcess = Paste(editorState, "\n", false);
+          else
+            doProcess = true;
           useContinuationPrompt = true; // In case we fail.
         } else if(evt.keyCode == KeyCode.Tab) {
           // Unity doesn't like using tab for actual editing.  We're gonna
