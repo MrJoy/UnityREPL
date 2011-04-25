@@ -241,9 +241,9 @@ public struct REPLMessage {
 }
 
 public class UnityBaseClass {
-  private static readonly REPLMessage _help = new REPLMessage(@"UnityREPL:
+  private static readonly REPLMessage _help = new REPLMessage(@"UnityREPL v." + Shell.VERSION + @":
 
-help;     -- This screen.
+help;     -- This screen; help for helper commands.  Click the '?' icon on the toolbar for more comprehensive help.
 vars;     -- Show the variables you've created this session, and their current values.
 ");
   public static REPLMessage help { get { return _help; } }

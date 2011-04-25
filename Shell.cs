@@ -31,6 +31,15 @@ using System.Text;
 
 public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
+  // Constants, specified here to keep things DRY.
+  //----------------------------------------------------------------------------
+  public const string VERSION="1.0.0",
+                      COPYRIGHT="(C) Copyright 2009-2011 MrJoy, Inc.\nAll rights reserved",
+
+                      MAIN_PROMPT = "---->",
+                      CONTINUATION_PROMPT = "cont>";
+
+  //----------------------------------------------------------------------------
   // Code Execution Functionality
   //----------------------------------------------------------------------------
   private EvaluationHelper helper = new EvaluationHelper();
@@ -368,7 +377,7 @@ public class Shell : EditorWindow {
   private NumberedEditorState lnEditorState = new NumberedEditorState();
   private void ShowEditor() {
     GUILayout.BeginHorizontal();
-      GUILayout.Label(useContinuationPrompt ? "cont>" : "---->", EditorStyles.wordWrappedLabel, GUILayout.Width(35));
+      GUILayout.Label(useContinuationPrompt ? Shell.CONTINUATION_PROMPT : Shell.MAIN_PROMPT, EditorStyles.wordWrappedLabel, GUILayout.Width(35));
 
       lnEditorState.text = codeToProcess;
       lnEditorState = UnityREPLHelper.NumberedTextArea(editorControlName, lnEditorState);
@@ -378,7 +387,6 @@ public class Shell : EditorWindow {
 
   private Hashtable fields = null;
   public Vector2 scrollPosition = Vector2.zero;
-
   private void ShowVars() {
     if(fields == null)
       fields = EvaluatorProxy.fields;
@@ -426,9 +434,144 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
 
   //----------------------------------------------------------------------------
+  // Help Screen
+  //----------------------------------------------------------------------------
+  public Vector2 helpScrollPosition = Vector2.zero;
+  private bool showQuickStart = true, showEditing = true, showLogging = true,
+               showShortcuts = true, showLocals = true, showKnownIssues = true,
+               showExpressions = true, showLanguageFeatures = true;
+  public void ShowHelp() {
+    helpScrollPosition = EditorGUILayout.BeginScrollView(helpScrollPosition);
+      GUILayout.Label("UnityREPL v." + Shell.VERSION, HelpStyles.Header);
+      GUILayout.Label(Shell.COPYRIGHT, HelpStyles.Header);
+
+      GUILayout.Label("", HelpStyles.Content);
+
+      showQuickStart = EditorGUILayout.Foldout(showQuickStart, "Quick Start", HelpStyles.SubHeader);
+      if(showQuickStart) {
+        GUILayout.Label("Type your C# code into the main text area, and press <enter> when you're done." +
+          "  If your code has an error, or is incomplete, the prompt will change from '" + Shell.MAIN_PROMPT +
+          "' to '" + Shell.CONTINUATION_PROMPT + "', and you'll be allowed to continue typing." +
+          "  If there's a logic-error that the C# compiler can detect at compile-time, it will be" +
+          " written to the log pane as well.\n\nIf your code is correct, it will be executed immediately upon" +
+          " pressing <enter>.\n\nPlease see the Known Issues section below, to avoid some frustrating corner-cases!",
+          HelpStyles.Content);
+        GUILayout.Label("", HelpStyles.Content);
+      }
+
+      showExpressions = EditorGUILayout.Foldout(showExpressions, "Expressions", HelpStyles.SubHeader);
+      if(showExpressions) {
+        GUILayout.Label("If you begin your code with an '=', and omit a trailing ';', then UnityREPL" +
+          " will behave a little differently than usual, and will evaluate everything after the '=' as" +
+          " an expression.  The log pane will show both the expression you entered, and the result of the" +
+          " evaluation.  This can be handy for a quick calculator, or for peeking at data in detail.  In" +
+          " particular, if an expression evaluates to a Type object, you will be shown a the interface exposed" +
+          " by that type in pseudo-C# syntax.  Try these out:", HelpStyles.Content);
+
+        GUILayout.Label("= 4 * 20", HelpStyles.Code);
+        GUILayout.Label("= typeof(EditorApplication)", HelpStyles.Code);
+
+        GUILayout.Label("", HelpStyles.Content);
+      }
+
+      showLanguageFeatures = EditorGUILayout.Foldout(showLanguageFeatures, "Language Features", HelpStyles.SubHeader);
+      if(showLanguageFeatures) {
+        GUILayout.Label("UnityREPL implements a newer version of the C# language than Unity itself supports, unless" +
+          " you are using Unity 3.0 or newer.  You get a couple nifty features for code entered into the interactive" +
+          " editor...", HelpStyles.Content);
+        GUILayout.Label("", HelpStyles.Content);
+        GUILayout.Label("The 'var' keyword:", HelpStyles.Content);
+        GUILayout.Label("var i = 3;", HelpStyles.Code);
+        GUILayout.Label("", HelpStyles.Content);
+        GUILayout.Label("Linq:", HelpStyles.Content);
+        GUILayout.Label("= from f in Directory.GetFiles(Application.dataPath)\n" +
+          "  let fi = new FileInfo(f)\n" +
+          "  where fi.LastWriteTime > DateTime.Now - TimeSpan.FromDays(7)\n" +
+          "  select f", HelpStyles.Code);
+        GUILayout.Label("", HelpStyles.Content);
+        GUILayout.Label("Anonymous Types:", HelpStyles.Content);
+        GUILayout.Label("var x = new { foo = \"blah\", bar = 123 };", HelpStyles.Code);
+        GUILayout.Space(4);
+        GUILayout.Label("... which you can access like so:", HelpStyles.Content);
+        GUILayout.Label("= x.foo", HelpStyles.Code);
+        GUILayout.Label("", HelpStyles.Content);
+      }
+
+      showEditing = EditorGUILayout.Foldout(showEditing, "Editing", HelpStyles.SubHeader);
+      if(showEditing) {
+        GUILayout.Label("The editor panel works like many familiar text editors, and supports using the <tab>" +
+          " key to indent, unlike normal Unity text fields.  Additionally, there are keyboard shortcuts to" +
+          " indent/unindent a single line or a selected block of lines.  Cut/Copy/Paste are also fully supported.\n\n" +
+          "If you wish to insert a line into your code, but pressing <enter> would execute it, you can press " +
+          "<shift>-<enter> to suppress execution.", HelpStyles.Content);
+        GUILayout.Label("", HelpStyles.Content);
+      }
+
+      showLogging = EditorGUILayout.Foldout(showLogging, "Logging", HelpStyles.SubHeader);
+      if(showLogging) {
+        GUILayout.Label("Any output sent to Debug.Log, Debug.LogWarning, or Debug.LogError during execution of" +
+          " your code is captured and showed in the log pane, as well as the normal Unity console view.  You can" +
+          " disable this view by disabling the 'Log' toggle on the toolbar.  You can also filter certain stack" +
+          " trace elements that are unlikely to be useful by enabling the 'Filter' toggle on the toolbar.  Any" +
+          " code that takes the form of an expression will be evaluated and the result of the expression will" +
+          " appear below it in the log in green.  Any errors or exceptions will appear in red.  Warnings in yellow." +
+          "  Normal log messages will appear in black or white depending on which Unity skin is" +
+          " enabled.\n\nIf your code spans multiple lines, or there is any form of output associated with it, a" +
+          " disclosure triangle will appear next to it, allowing you to collapse the log entry down to a single" +
+          " line.\n\nFinally, a button with a '+' on it appears next to the part of the log entry showing code" +
+          " you've executed.  Pressing this button will replace the contents of the editor field with that code," +
+          " so you can run it again.", HelpStyles.Content);
+        GUILayout.Label("", HelpStyles.Content);
+      }
+
+      showLocals = EditorGUILayout.Foldout(showLocals, "Locals", HelpStyles.SubHeader);
+      if(showLocals) {
+        GUILayout.Label("The locals pane will show you the type, name, and current value of any variables your" +
+          " code creates.  These variables will persist across multiple snippets of code, which can be very helpful" +
+          " for breaking tasks up into separate steps.", HelpStyles.Content);
+        GUILayout.Label("", HelpStyles.Content);
+      }
+
+      showShortcuts = EditorGUILayout.Foldout(showShortcuts, "Keyboard Shortcuts", HelpStyles.SubHeader);
+      if(showShortcuts) {
+        GUILayout.BeginHorizontal();
+          GUILayout.Label("<shift>-<enter>", HelpStyles.Shortcut);
+          GUILayout.Label("Insert a new line, without submitting the code for execution.", HelpStyles.Explanation);
+        GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal();
+          if(Application.platform == RuntimePlatform.OSXEditor)
+            GUILayout.Label("<cmd>-]", HelpStyles.Shortcut);
+          else
+            GUILayout.Label("<windows>-]", HelpStyles.Shortcut);
+          GUILayout.Label("If text is selected, indent all of it.  If there is no text selected, indent the current line.", HelpStyles.Explanation);
+        GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal();
+        if(Application.platform == RuntimePlatform.OSXEditor)
+          GUILayout.Label("<cmd>-[", HelpStyles.Shortcut);
+        else
+          GUILayout.Label("<windows>-[", HelpStyles.Shortcut);
+          GUILayout.Label("If text is selected, un-indent all of it.  If there is no text selected, un-indent the current line.", HelpStyles.Explanation);
+        GUILayout.EndHorizontal();
+        GUILayout.Label("", HelpStyles.Content);
+      }
+
+      showKnownIssues = EditorGUILayout.Foldout(showKnownIssues, "Known Issues", HelpStyles.SubHeader);
+      if(showKnownIssues) {
+        GUILayout.Label("Any 'using' statements must be executed by themselves, as separate and individual code snippets.", HelpStyles.Content);
+        GUILayout.Label("Locals are wiped when Unity recompiles your code, or when entering play-mode.", HelpStyles.Content);
+        GUILayout.Label("Locals view cannot display the name of a generic type.", HelpStyles.Content);
+        GUILayout.Label("", HelpStyles.Content);
+      }
+
+      GUILayout.Space(4);
+    EditorGUILayout.EndScrollView();
+  }
+  //----------------------------------------------------------------------------
+
+  //----------------------------------------------------------------------------
   // Tying It All Together...
   //----------------------------------------------------------------------------
-  public bool showVars = true, showLog = true, filterTraces = true;
+  public bool showVars = true, showLog = true, filterTraces = true, showHelp = false;
   // TODO: Save pane sizing states...
   private VerticalPaneState paneConfiguration = new VerticalPaneState() {
     minPaneHeightTop = 65,
@@ -451,21 +594,30 @@ public class Shell : EditorWindow {
 
         filterTraces = GUILayout.Toggle(filterTraces, "Filter", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
       }
+
+      EditorGUILayoutToolbar.FlexibleSpace();
+
+      showHelp = GUILayout.Toggle(showHelp, "?", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
+
     EditorGUILayoutToolbar.End();
 
-    ShowEditor();
-
-    if(showVars && showLog) {
-      EditorGUILayoutVerticalPanes.Begin(paneConfiguration);
-        ShowVars();
-      EditorGUILayoutVerticalPanes.Splitter();
-        ShowLog();
-      EditorGUILayoutVerticalPanes.End();
+    if(showHelp) {
+      ShowHelp();
     } else {
-      if(showVars)
-        ShowVars();
-      else
-        ShowLog();
+      ShowEditor();
+
+      if(showVars && showLog) {
+        EditorGUILayoutVerticalPanes.Begin(paneConfiguration);
+          ShowVars();
+        EditorGUILayoutVerticalPanes.Splitter();
+          ShowLog();
+        EditorGUILayoutVerticalPanes.End();
+      } else {
+        if(showVars)
+          ShowVars();
+        else
+          ShowLog();
+      }
     }
   }
 

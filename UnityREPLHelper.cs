@@ -81,6 +81,127 @@ public class UnityREPLHelper {
   }
 }
 
+public class HelpStyles {
+  private static GUIStyle _Header = null;
+  public static GUIStyle Header {
+    get {
+      if(_Header == null) {
+        _Header = new GUIStyle(EditorStyles.largeLabel) {
+          alignment = TextAnchor.UpperLeft,
+          wordWrap = true,
+          imagePosition = ImagePosition.TextOnly
+        }
+          .Named("HelpHeader")
+          .Size(0, 0, false, false)
+          .NoBackgroundImages()
+          .ResetBoxModel()
+          .Margin(4, 4, 0, 0)
+          .ClipText();
+      }
+      return _Header;
+    }
+  }
+
+  private static GUIStyle _SubHeader = null;
+  public static GUIStyle SubHeader {
+    get {
+      if(_SubHeader == null) {
+        _SubHeader = new GUIStyle(EditorStyles.foldout) {
+          alignment = TextAnchor.UpperLeft,
+          wordWrap = false,
+          imagePosition = ImagePosition.TextOnly,
+          font = EditorStyles.boldLabel.font
+        }
+          .Named("HelpSubHeader")
+          .Size(0, 0, true, false)
+          .Margin(4, 4, 0, 0);
+      }
+      return _SubHeader;
+    }
+  }
+
+  private static GUIStyle _Content = null;
+  public static GUIStyle Content {
+    get {
+      if(_Content == null) {
+        _Content = new GUIStyle(EditorStyles.wordWrappedLabel) {
+          alignment = TextAnchor.UpperLeft,
+          wordWrap = true,
+          imagePosition = ImagePosition.TextOnly
+        }
+          .Named("HelpContent")
+          .Size(0, 0, false, false)
+          .NoBackgroundImages()
+          .ResetBoxModel()
+          .Margin(4+14, 4, 0, 0)
+          .ClipText();
+      }
+      return _Content;
+    }
+  }
+
+  private static GUIStyle _Code = null;
+  public static GUIStyle Code {
+    get {
+      if(_Code == null) {
+        _Code = new GUIStyle(EditorStyles.boldLabel) {
+          alignment = TextAnchor.UpperLeft,
+          wordWrap = false,
+          imagePosition = ImagePosition.TextOnly
+        }
+          .Named("HelpCode")
+          .Size(0, 0, false, false)
+          .NoBackgroundImages()
+          .ResetBoxModel()
+          .Margin(4+14+10, 4, 4, 0)
+          .ClipText();
+      }
+      return _Code;
+    }
+  }
+
+  private static GUIStyle _Shortcut = null;
+  public static GUIStyle Shortcut {
+    get {
+      if(_Shortcut == null) {
+        _Shortcut = new GUIStyle(EditorStyles.boldLabel) {
+          alignment = TextAnchor.UpperLeft,
+          wordWrap = false,
+          imagePosition = ImagePosition.TextOnly
+        }
+          .Named("HelpShortcut")
+          .Size(110, 0, false, false)
+          .NoBackgroundImages()
+          .ResetBoxModel()
+          .Margin(4+14+10, 0, 0, 0)
+          .ClipText();
+      }
+      return _Shortcut;
+    }
+  }
+
+  private static GUIStyle _Explanation = null;
+  public static GUIStyle Explanation {
+    get {
+      if(_Explanation == null) {
+        _Explanation = new GUIStyle(EditorStyles.label) {
+          alignment = TextAnchor.UpperLeft,
+          wordWrap = true,
+          imagePosition = ImagePosition.TextOnly
+        }
+          .Named("HelpExplanation")
+          .Size(0, 0, false, false)
+          .NoBackgroundImages()
+          .ResetBoxModel()
+          .Margin(0, 4, 0, 0)
+          .ClipText();
+      }
+      return _Explanation;
+    }
+  }
+
+}
+
 public class NumberedEditorStyles {
   private static GUIStyle _LineNumbering = null;
   public static GUIStyle LineNumbering {

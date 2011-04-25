@@ -55,29 +55,9 @@ Tested on Unity 3.1.0, but should work on Unity 3.0.0 as well.
 Will not work on older versions of Unity (2.5.x, 2.6.x, or Unity/iPhone 1.x).
 
 
-h1. LANGUAGE VERSION
+h1. DOCUMENTATION
 
-This tool implements a newer version of the C# language than Unity itself supports unless you are using Unity 3.0.  You get a couple nifty features for code entered into the interactive editor:
-
-bc.   // Support for "var" keyword:
-  var i = 3;
-  // Linq syntax:
-  using System.IO;
-  from f in Directory.GetFiles("/etc")
-    let fi = new FileInfo(f)
-    where fi.LastWriteTime > DateTime.Now - TimeSpan.FromDays(7)
-    select f;
-
-Bear in mind that if you are using Unity prior to 3.0, when going between source files in your project and this tool that the new language features will NOT be accessible from .cs files!
-
-
-h1. EDITING CODE
-
-UnityREPL uses a @GUILayout.TextArea@, but with some added functionality:
-
-* Support for cut, copy, paste, and select-all.
-* Ability to enter tabs in the source editor.
-* Block indent/unindent using COMMAND-] and COMMAND-[ (just like XCode and TextMate)
+Full documentation is available from within UnityREPL by clicking the '?' button on the toolbar.
 
 
 h1. LICENSE
