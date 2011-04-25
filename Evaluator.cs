@@ -185,7 +185,7 @@ class EvaluationHelper {
         PrettyPrint.PP(outputBuffer, output);
         cmdEntry.Add(new LogEntry() {
           logEntryType = LogEntryType.Output,
-          output = outputBuffer.ToString()
+          output = outputBuffer.ToString().Trim()
         });
       }
     }
@@ -218,7 +218,7 @@ internal class TypeManagerProxy : ReflectionProxy {
       _CSharpNameParams[0] = t;
       name = (string)_CSharpName.Invoke(null, _CSharpNameParams);
     } catch(Exception) {
-      name = "<error>";
+      name = "?";
     }
     return name;
   }
