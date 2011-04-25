@@ -118,21 +118,21 @@ public class NumberedEditorStyles {
   public static GUIStyle LineNumbering {
     get {
       if(_LineNumbering == null) {
-        _LineNumbering = new GUIStyle(EditorStyles.textField);
-        _LineNumbering.name = "LineNumbering";
-        _LineNumbering.alignment = TextAnchor.UpperRight;
-        _LineNumbering.fixedWidth = 0;
-        _LineNumbering.fixedHeight = 0;
-        _LineNumbering.wordWrap = false;
-        _LineNumbering.stretchWidth = false;
-        _LineNumbering.stretchHeight = true;
-        _LineNumbering.imagePosition = ImagePosition.TextOnly;
-        _LineNumbering.clipping = TextClipping.Clip;
-
-        _LineNumbering.border = new RectOffset();
-        _LineNumbering.margin = new RectOffset();
-        _LineNumbering.padding = new RectOffset();
-        _LineNumbering.overflow = new RectOffset();
+        _LineNumbering = new GUIStyle(EditorStyles.textField) {
+          name = "LineNumbering",
+          alignment = TextAnchor.UpperRight,
+          fixedWidth = 0,
+          fixedHeight = 0,
+          wordWrap = false,
+          stretchWidth = false,
+          stretchHeight = true,
+          imagePosition = ImagePosition.TextOnly,
+          clipping = TextClipping.Clip,
+          border = new RectOffset(),
+          margin = new RectOffset(),
+          padding = new RectOffset(),
+          overflow = new RectOffset()
+        };
 
         _LineNumbering.padding.left = 5;
 
@@ -154,20 +154,18 @@ public class NumberedEditorStyles {
   public static GUIStyle NumberedEditor {
     get {
       if(_NumberedEditor == null) {
-        _NumberedEditor = new GUIStyle(LineNumbering);
-        _NumberedEditor.name = "NumberedEditor";
-        _NumberedEditor.alignment = TextAnchor.UpperLeft;
-        _NumberedEditor.stretchWidth = true;
-        _NumberedEditor.stretchHeight = true;
+        _NumberedEditor = new GUIStyle(LineNumbering) {
+          name = "NumberedEditor",
+          alignment = TextAnchor.UpperLeft,
+          stretchWidth = true,
+          stretchHeight = true,
 
-        _NumberedEditor.border = new RectOffset();
-        _NumberedEditor.margin = new RectOffset();
-        _NumberedEditor.padding = new RectOffset();
-        _NumberedEditor.overflow = new RectOffset();
-        _NumberedEditor.clipping = TextClipping.Clip;
-
-        _NumberedEditor.margin.left = 5;
-        _NumberedEditor.padding.right = 4;
+          clipping = TextClipping.Clip,
+          border = new RectOffset(),
+          margin = new RectOffset(5, 0, 0, 0),
+          padding = new RectOffset(0, 4, 0, 0),
+          overflow = new RectOffset()
+        };
 
         _NumberedEditor.normal.textColor = new Color(0f, 0f, 0f, 1f);
       }
@@ -179,8 +177,9 @@ public class NumberedEditorStyles {
   public static GUIStyle DummyStyle {
     get {
       if(_DummyStyle == null) {
-        _DummyStyle = new GUIStyle(NumberedEditor);
-        _DummyStyle.name = "DummyStyle";
+        _DummyStyle = new GUIStyle(NumberedEditor) {
+          name = "DummyStyle"
+        };
         _DummyStyle.normal.textColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
       }
       return _DummyStyle;
@@ -193,8 +192,9 @@ public class LogEntryStyles {
   public static GUIStyle Default {
     get {
       if(_Default == null) {
-        _Default = new GUIStyle("Label");
-        _Default.name = "Default";
+        _Default = new GUIStyle("Label") {
+          name = "Default"
+        };
         _Default.normal.textColor =
           _Default.active.textColor =
           _Default.onNormal.textColor =
@@ -209,8 +209,9 @@ public class LogEntryStyles {
   public static GUIStyle DefaultCommandStyle {
     get {
       if(_DefaultCommandStyle == null) {
-        _DefaultCommandStyle = new GUIStyle(Default);
-        _DefaultCommandStyle.name = "DefaultCommandStyle";
+        _DefaultCommandStyle = new GUIStyle(Default) {
+          name = "DefaultCommandStyle"
+        };
         _DefaultCommandStyle.normal.textColor =
           _DefaultCommandStyle.active.textColor =
           _DefaultCommandStyle.onNormal.textColor =
@@ -225,8 +226,9 @@ public class LogEntryStyles {
   public static GUIStyle FoldoutCommandStyle {
     get {
       if(_FoldoutCommandStyle == null) {
-        _FoldoutCommandStyle = new GUIStyle(EditorStyles.foldout);
-        _FoldoutCommandStyle.name = "FoldoutCommandStyle";
+        _FoldoutCommandStyle = new GUIStyle(EditorStyles.foldout) {
+          name = "FoldoutCommandStyle"
+        };
         _FoldoutCommandStyle.normal.textColor =
           _FoldoutCommandStyle.active.textColor =
           _FoldoutCommandStyle.onNormal.textColor =
@@ -241,8 +243,9 @@ public class LogEntryStyles {
   public static GUIStyle OutputStyle {
     get {
       if(_OutputStyle == null) {
-        _OutputStyle = new GUIStyle(Default);
-        _OutputStyle.name = "OutputStyle";
+        _OutputStyle = new GUIStyle(Default) {
+          name = "OutputStyle"
+        };
         _OutputStyle.normal.textColor =
           _OutputStyle.active.textColor =
           _OutputStyle.onNormal.textColor =
@@ -257,8 +260,9 @@ public class LogEntryStyles {
   public static GUIStyle EvaluationErrorStyle {
     get {
       if(_EvaluationErrorStyle == null) {
-        _EvaluationErrorStyle = new GUIStyle(Default);
-        _EvaluationErrorStyle.name = "EvaluationErrorStyle";
+        _EvaluationErrorStyle = new GUIStyle(Default) {
+          name = "EvaluationErrorStyle"
+        };
         _EvaluationErrorStyle.normal.textColor =
           _EvaluationErrorStyle.active.textColor =
           _EvaluationErrorStyle.onNormal.textColor =
@@ -273,8 +277,9 @@ public class LogEntryStyles {
   public static GUIStyle SystemConsoleStyle {
     get {
       if(_SystemConsoleStyle == null) {
-        _SystemConsoleStyle = new GUIStyle(Default);
-        _SystemConsoleStyle.name = "SystemConsoleStyle";
+        _SystemConsoleStyle = new GUIStyle(Default) {
+          name = "SystemConsoleStyle"
+        };
         _SystemConsoleStyle.normal.textColor =
           _SystemConsoleStyle.active.textColor =
           _SystemConsoleStyle.onNormal.textColor =
@@ -289,8 +294,9 @@ public class LogEntryStyles {
   public static GUIStyle ConsoleLogStyle {
     get {
       if(_ConsoleLogStyle == null) {
-        _ConsoleLogStyle = new GUIStyle(Default);
-        _ConsoleLogStyle.name = "ConsoleLogStyle";
+        _ConsoleLogStyle = new GUIStyle(Default) {
+          name = "ConsoleLogStyle"
+        };
         _ConsoleLogStyle.normal.textColor = GUI.contentColor;
       }
       return _ConsoleLogStyle;
@@ -301,8 +307,9 @@ public class LogEntryStyles {
   public static GUIStyle ConsoleLogConditionStyle {
     get {
       if(_ConsoleLogConditionStyle == null) {
-        _ConsoleLogConditionStyle = new GUIStyle(ConsoleLogStyle);
-        _ConsoleLogConditionStyle.name = "ConsoleLogConditionStyle";
+        _ConsoleLogConditionStyle = new GUIStyle(ConsoleLogStyle) {
+          name = "ConsoleLogConditionStyle"
+        };
       }
       return _ConsoleLogConditionStyle;
     }
@@ -312,8 +319,9 @@ public class LogEntryStyles {
   public static GUIStyle ConsoleLogStackTraceStyle {
     get {
       if(_ConsoleLogStackTraceStyle == null) {
-        _ConsoleLogStackTraceStyle = new GUIStyle(ConsoleLogStyle);
-        _ConsoleLogStackTraceStyle.name = "ConsoleLogStackTraceStyle";
+        _ConsoleLogStackTraceStyle = new GUIStyle(ConsoleLogStyle) {
+          name = "ConsoleLogStackTraceStyle"
+        };
         _ConsoleLogStackTraceStyle.normal.textColor =
           _ConsoleLogStackTraceStyle.active.textColor =
           _ConsoleLogStackTraceStyle.onNormal.textColor =
@@ -365,6 +373,10 @@ public class NumberedEditorState {
   private GUIContent _lineNumberingContent = null;
   public GUIContent lineNumberingContent {
     get {
+      // Unity likes to ignore trailing space when sizing content, which is a
+      // problem for us, so we construct a version of our content that has a .
+      // at the end of each line -- small enough to not consume too much extra
+      // width, but not a space, so we can use that for sizing later on.
       if(_lineNumberingContent == null) {
         string[] linesRaw = text.Split('\n');
         int lines = linesRaw.Length;
@@ -375,6 +387,7 @@ public class NumberedEditorState {
           sb.Append(linesRaw[j]).Append(".").Append("\n");
         _dummyText = sb.ToString();
 
+        // While we're at it, build a single string with all our line numbers.
         sb.Length = 0;
         for(int j = 0; j < lines; j++)
           sb.Append(j+1).Append('\n');
