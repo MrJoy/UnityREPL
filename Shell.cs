@@ -416,7 +416,9 @@ public class Shell : EditorWindow {
     // TODO: the end...
     logScrollPos = EditorGUILayout.BeginScrollView(logScrollPos);
     foreach(LogEntry le in logEntries) {
-      le.OnGUI();
+      if(le.OnGUI()) {
+        codeToProcess = le.command;
+      }
     }
     EditorGUILayout.EndScrollView();
   }

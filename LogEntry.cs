@@ -54,7 +54,8 @@ public class LogEntry {
     children.Add(child);
   }
 
-  public void OnGUI() {
+  public bool OnGUI() {
+    bool retVal = false;
     switch(logEntryType) {
       case LogEntryType.Command:
           if(children != null && children.Count > 0) {
@@ -69,7 +70,11 @@ public class LogEntry {
             }
           }
           if(isExpandable) {
-            isExpanded = GUILayout.Toggle(isExpanded, (isExpanded) ? command: shortCommand, LogEntryStyles.FoldoutCommandStyle, GUILayout.ExpandWidth(false));
+            GUILayout.BeginHorizontal();
+              isExpanded = GUILayout.Toggle(isExpanded, (isExpanded) ? command: shortCommand, LogEntryStyles.FoldoutCommandStyle, GUILayout.ExpandWidth(false));
+              GUILayout.FlexibleSpace();
+              retVal = GUILayout.Button("+", GUILayout.ExpandWidth(false));
+            GUILayout.EndHorizontal();
             if(isExpanded && hasChildren) {
               GUILayout.BeginHorizontal();
                 GUILayout.Space(15);
@@ -83,6 +88,8 @@ public class LogEntry {
             GUILayout.BeginHorizontal();
               GUILayout.Space(15);
               GUILayout.Label(command, LogEntryStyles.DefaultCommandStyle);
+              GUILayout.FlexibleSpace();
+              retVal = GUILayout.Button("+", GUILayout.ExpandWidth(false));
             GUILayout.EndHorizontal();
           }
         break;
@@ -125,5 +132,6 @@ public class LogEntry {
         GUILayout.EndHorizontal();
         break;
     }
+    return retVal;
   }
 }
