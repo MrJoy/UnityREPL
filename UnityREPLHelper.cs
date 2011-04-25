@@ -81,62 +81,6 @@ public class UnityREPLHelper {
   }
 }
 
-public static class GUIStyleExtensions {
-  public static GUIStyle NoBackgroundImages(this GUIStyle style) {
-    style.normal.background = null;
-    style.active.background = null;
-    style.hover.background = null;
-    style.focused.background = null;
-    style.onNormal.background = null;
-    style.onActive.background = null;
-    style.onHover.background = null;
-    style.onFocused.background = null;
-    return style;
-  }
-
-  public static GUIStyle BaseTextColor(this GUIStyle style, Color c) {
-    style.normal.textColor =
-      style.active.textColor =
-      style.hover.textColor =
-      style.focused.textColor =
-      style.onNormal.textColor =
-      style.onActive.textColor =
-      style.onHover.textColor =
-      style.onFocused.textColor =
-      c;
-    return style;
-  }
-
-  public static GUIStyle ResetBoxModel(this GUIStyle style) {
-    style.border = new RectOffset();
-    style.margin = new RectOffset();
-    style.padding = new RectOffset();
-    style.overflow = new RectOffset();
-
-    return style;
-  }
-
-  public static GUIStyle Padding(this GUIStyle style, int left, int right, int top, int bottom) {
-    style.padding = new RectOffset(left, right, top, bottom);
-    return style;
-  }
-
-  public static GUIStyle Margin(this GUIStyle style, int left, int right, int top, int bottom) {
-    style.margin = new RectOffset(left, right, top, bottom);
-    return style;
-  }
-
-  public static GUIStyle Named(this GUIStyle style, string name) {
-    style.name = name;
-    return style;
-  }
-
-  public static GUIStyle ClipText(this GUIStyle style) {
-    style.clipping = TextClipping.Clip;
-    return style;
-  }
-}
-
 public class NumberedEditorStyles {
   private static GUIStyle _LineNumbering = null;
   public static GUIStyle LineNumbering {
@@ -144,14 +88,11 @@ public class NumberedEditorStyles {
       if(_LineNumbering == null) {
         _LineNumbering = new GUIStyle(EditorStyles.textField) {
           alignment = TextAnchor.UpperRight,
-          fixedWidth = 0,
-          fixedHeight = 0,
           wordWrap = false,
-          stretchWidth = false,
-          stretchHeight = true,
           imagePosition = ImagePosition.TextOnly
         }
           .Named("LineNumbering")
+          .Size(0, 0, false, true)
           .NoBackgroundImages()
           .ResetBoxModel()
           .Padding(5, 0, 0, 0)
@@ -167,11 +108,10 @@ public class NumberedEditorStyles {
     get {
       if(_NumberedEditor == null) {
         _NumberedEditor = new GUIStyle(LineNumbering) {
-          alignment = TextAnchor.UpperLeft,
-          stretchWidth = true,
-          stretchHeight = true
+          alignment = TextAnchor.UpperLeft
         }
           .Named("NumberedEditor")
+          .Size(0, 0, true, true)
           .ResetBoxModel()
           .Padding(0, 4, 0, 0)
           .Margin(5, 0, 0, 0)
