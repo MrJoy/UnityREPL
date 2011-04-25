@@ -203,55 +203,41 @@ public class HelpStyles {
 }
 
 public class NumberedEditorStyles {
-  private static GUIStyle _LineNumbering = null;
-  public static GUIStyle LineNumbering {
-    get {
-      if(_LineNumbering == null) {
-        _LineNumbering = new GUIStyle(EditorStyles.textField) {
-          alignment = TextAnchor.UpperRight,
-          wordWrap = false,
-          imagePosition = ImagePosition.TextOnly
-        }
-          .Named("LineNumbering")
-          .Size(0, 0, false, true)
-          .NoBackgroundImages()
-          .ResetBoxModel()
-          .Padding(5, 0, 0, 0)
-          .BaseTextColor(new Color(0.5f, 0.5f, 0.5f, 1f))
-          .ClipText();
-      }
-      return _LineNumbering;
-    }
-  }
-
   private static GUIStyle _NumberedEditor = null;
   public static GUIStyle NumberedEditor {
     get {
       if(_NumberedEditor == null) {
-        _NumberedEditor = new GUIStyle(LineNumbering) {
-          alignment = TextAnchor.UpperLeft
+        _NumberedEditor = new GUIStyle(EditorStyles.textField) {
+          alignment = TextAnchor.UpperLeft,
+          wordWrap = false,
+          imagePosition = ImagePosition.TextOnly
         }
           .Named("NumberedEditor")
           .Size(0, 0, true, true)
+          .NoBackgroundImages()
           .ResetBoxModel()
           .Padding(0, 4, 0, 0)
           .Margin(5, 0, 0, 0)
-          .BaseTextColor(new Color(0f, 0f, 0f, 1f))
           .ClipText();
       }
       return _NumberedEditor;
     }
   }
 
-  private static GUIStyle _DummyStyle = null;
-  public static GUIStyle DummyStyle {
+  private static GUIStyle _LineNumbering = null;
+  public static GUIStyle LineNumbering {
     get {
-      if(_DummyStyle == null) {
-        _DummyStyle = new GUIStyle(NumberedEditor)
-          .Named("DummyStyle")
-          .BaseTextColor(new Color(0f, 0f, 0f, 0f));
+      if(_LineNumbering == null) {
+        _LineNumbering = new GUIStyle(NumberedEditor) {
+          alignment = TextAnchor.UpperRight
+        }
+          .Named("LineNumbering")
+          .Size(0, 0, false, true)
+          .Padding(5, 0, 0, 0)
+          .Margin(0, 0, 0, 0)
+          .BaseTextColor(new Color(0.5f, 0.5f, 0.5f, 1f));
       }
-      return _DummyStyle;
+      return _LineNumbering;
     }
   }
 }
