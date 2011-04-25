@@ -535,6 +535,13 @@ public class Shell : EditorWindow {
       showShortcuts = EditorGUILayout.Foldout(showShortcuts, "Keyboard Shortcuts", HelpStyles.SubHeader);
       if(showShortcuts) {
         GUILayout.BeginHorizontal();
+          if(Application.platform == RuntimePlatform.OSXEditor)
+            GUILayout.Label("<cmd>-<shift>-R", HelpStyles.Shortcut);
+          else
+            GUILayout.Label("<ctrl>-<shift>-R", HelpStyles.Shortcut);
+          GUILayout.Label("Switch to the UnityREPL window (opening one if needed).", HelpStyles.Explanation);
+        GUILayout.EndHorizontal();
+        GUILayout.BeginHorizontal();
           GUILayout.Label("<shift>-<enter>", HelpStyles.Shortcut);
           GUILayout.Label("Insert a new line, without submitting the code for execution.", HelpStyles.Explanation);
         GUILayout.EndHorizontal();

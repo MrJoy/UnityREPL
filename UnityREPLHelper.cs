@@ -170,7 +170,7 @@ public class HelpStyles {
           imagePosition = ImagePosition.TextOnly
         }
           .Named("HelpShortcut")
-          .Size(110, 0, false, false)
+          .Size(120, 0, false, false)
           .NoBackgroundImages()
           .ResetBoxModel()
           .Margin(4+14+10, 0, 0, 0)
