@@ -202,7 +202,7 @@ public class LogEntryStyles {
       if(_Default == null) {
         _Default = new GUIStyle("Label")
           .Named("DummyStyle")
-          .BaseTextColor(new Color(1f, 1f, 1f, 1f));
+          .BaseTextColor(new Color(0f, 0f, 0f, 1f));
       }
       return _Default;
     }
@@ -214,7 +214,7 @@ public class LogEntryStyles {
       if(_DefaultCommandStyle == null) {
         _DefaultCommandStyle = new GUIStyle(Default)
           .Named("DefaultCommandStyle")
-          .BaseTextColor(Color.blue);
+          .BaseTextColor(new Color(0f, 0f, 0f, 1f));
       }
       return _DefaultCommandStyle;
     }
@@ -226,7 +226,7 @@ public class LogEntryStyles {
       if(_FoldoutCommandStyle == null) {
         _FoldoutCommandStyle = new GUIStyle(EditorStyles.foldout)
           .Named("FoldoutCommandStyle")
-          .BaseTextColor(Color.blue);
+          .BaseTextColor(DefaultCommandStyle.active.textColor);
       }
       return _FoldoutCommandStyle;
     }
@@ -274,7 +274,7 @@ public class LogEntryStyles {
       if(_ConsoleLogStyle == null) {
         _ConsoleLogStyle = new GUIStyle(Default)
           .Named("ConsoleLogStyle")
-          .BaseTextColor(GUI.contentColor);
+          .BaseTextColor(new Color(0.25f, 0.25f, 0.25f, 1f));
       }
       return _ConsoleLogStyle;
     }
@@ -297,7 +297,7 @@ public class LogEntryStyles {
       if(_ConsoleLogStackTraceStyle == null) {
         _ConsoleLogStackTraceStyle = new GUIStyle(ConsoleLogStyle)
           .Named("ConsoleLogStackTraceStyle")
-          .BaseTextColor(Color.red);
+          .BaseTextColor(new Color(0.5f, 0f, 0f, 1f));
       }
       return _ConsoleLogStackTraceStyle;
     }
