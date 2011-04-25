@@ -82,7 +82,7 @@ UnityREPL uses a @GUILayout.TextArea@, but with some added functionality:
 
 h1. LICENSE
 
-All original/novel code is Copyright (c) 2010 MrJoy, Inc.  All other code is the property of the respective authors.
+All original/novel code is Copyright (c) 2009-2011 MrJoy, Inc.  All other code is the property of the respective authors.
 
 Dual licensed under the terms of the MIT X11 or GNU GPL, as per the original code.
 

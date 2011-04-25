@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------
-//  Shell v0.8
+//  Shell v0.9
 //  Copyright 2009-2010 MrJoy, Inc.
 //  All rights reserved
 //
@@ -16,7 +16,7 @@
 //       elegant manner (just capturing it all raw is bad since we can't
 //       reliably format it.)
 // TODO: Format Unity objects more gracefully.
-// TODO: Turn editor components into more general, reusable GUI widget.
+// TODO: Turn editor components into more general, reusable GUI widgets.
 // TODO: Suss out undo and wrap code execution accordingly.
 // TODO: Suss out undo and wrap editor accordingly.
 // TODO: Make use of EditorWindow.minSize/EditorWindow.maxSize.

@@ -237,8 +237,6 @@ public class UnityBaseClass {
 
 help;     -- This screen.
 vars;     -- Show the variables you've created this session, and their current values.
-
-NOTE: Variables are destroyed when your code is compiled and re-loaded.
 ");
   public static REPLMessage help { get { return _help; } }
 

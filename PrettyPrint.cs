@@ -7,8 +7,6 @@
 // Adapted from repl.cs:
 // http://anonsvn.mono-project.com/viewvc/trunk/mcs/tools/csharp/
 //
-// TODO: Expose this as an easy-to-use command in the REPL editor, a la
-//       Describe();
 //-----------------------------------------------------------------
 using System;
 using System.Collections;

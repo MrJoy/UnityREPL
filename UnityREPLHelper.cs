@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------
-//  GUIHelper v0.12
+//  GUIHelper v0.2
 //  Copyright 2009-2011 MrJoy, Inc.
 //  All rights reserved
 //
