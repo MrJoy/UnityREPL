@@ -170,6 +170,7 @@ class EvaluationHelper {
       hasOutput = false;
       status = true; // Need this to avoid 'stickiness' where we let user
                      // continue editing due to incomplete code.
+      logEntries.Add(cmdEntry);
     } finally {
       Application.RegisterLogCallback(null);
     }
