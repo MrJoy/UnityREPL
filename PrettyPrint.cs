@@ -65,9 +65,21 @@ public class PrettyPrint {
         // Raw, no escaping or quoting.
         output.Append(((REPLMessage)result).msg);
       } else if(result is Component) {
-        output.Append(((Component)result).name);
+        string n;
+        try {
+          n = ((Component)result).name;
+        } catch(MissingReferenceException) {
+          n = "<destroyed>";
+        }
+        output.Append(n);
       } else if(result is GameObject) {
-        output.Append(((GameObject)result).name);
+        string n;
+        try {
+          n = ((GameObject)result).name;
+        } catch(MissingReferenceException) {
+          n = "<destroyed>";
+        }
+        output.Append(n);
       } else if(result is Array) {
         Array a = (Array) result;
         OpenInline(output);
