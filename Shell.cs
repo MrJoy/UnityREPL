@@ -377,7 +377,7 @@ public class Shell : EditorWindow {
   private NumberedEditorState lnEditorState = new NumberedEditorState();
   private void ShowEditor() {
     GUILayout.BeginHorizontal();
-      GUILayout.Label(useContinuationPrompt ? Shell.CONTINUATION_PROMPT : Shell.MAIN_PROMPT, EditorStyles.wordWrappedLabel, GUILayout.Width(35));
+      GUILayout.Label(useContinuationPrompt ? Shell.CONTINUATION_PROMPT : Shell.MAIN_PROMPT, EditorStyles.wordWrappedLabel, GUILayout.Width(37));
 
       lnEditorState.text = codeToProcess;
       lnEditorState = UnityREPLHelper.NumberedTextArea(editorControlName, lnEditorState);
