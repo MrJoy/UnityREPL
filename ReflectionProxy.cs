@@ -1,3 +1,11 @@
+//-----------------------------------------------------------------
+//  ReflectionProxy
+//  Copyright 2009-2012 MrJoy, Inc.
+//  All rights reserved
+//
+//-----------------------------------------------------------------
+// Base class for utility classes to make reflection less cumbersome to use.
+//-----------------------------------------------------------------
 using System;
 using System.Reflection;
 

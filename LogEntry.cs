@@ -1,3 +1,11 @@
+//-----------------------------------------------------------------
+//  LogEntry
+//  Copyright 2009-2012 MrJoy, Inc.
+//  All rights reserved
+//
+//-----------------------------------------------------------------
+// Models for the execution/result log, and editor history.
+//-----------------------------------------------------------------
 using UnityEditor;
 using UnityEngine;
 using System;

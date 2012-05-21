@@ -50,7 +50,7 @@ From this window you can enter C# code and run it.  You should have access to al
 
 h1. COMPATIBILITY
 
-Tested on Unity 3.1.0, but should work on Unity 3.0.0 as well.
+Tested on Unity 3.1.0 through 3.5.2, but should work on Unity 3.0.0 as well.
 
 Will not work on older versions of Unity (2.5.x, 2.6.x, or Unity/iPhone 1.x).
 
@@ -62,7 +62,7 @@ Full documentation is available from within UnityREPL by clicking the '?' button
 
 h1. LICENSE
 
-All original/novel code is Copyright (c) 2009-2011 MrJoy, Inc.  All other code is the property of the respective authors.
+All original/novel code is Copyright (c) 2009-2012 MrJoy, Inc.  All other code is the property of the respective authors.
 
 Dual licensed under the terms of the MIT X11 or GNU GPL, as per the original code.
 
@@ -85,4 +85,4 @@ h1. TODO
 [Wikipedia]http://en.wikipedia.org/wiki/Read_Eval_Print_Loop
 [CSharpRepl]http://www.mono-project.com/CsharpRepl
 [Unity]http://Unity3D.com
-[Package]http://github.com/downloads/MrJoy/UnityREPL/UnityREPL_0.8.unitypackage
+[Package]http://github.com/downloads/MrJoy/UnityREPL/UnityREPL_1.0.0.unitypackage
