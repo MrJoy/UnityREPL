@@ -121,7 +121,7 @@ public class PrettyPrint {
         EscapeChar(output, (char)result);
       } else if(result is Type || result.GetType().Name == "MonoType") {
         if(_depth > 0 || !expandTypes)
-          output.Append("typeof(" + ((Type)result).Name + ")");
+          output.Append("typeof(" + ((Type)result).Namespace + "." + ((Type)result).Name + ")");
         else
           output.Append(InteractiveBase.Describe(result));
       } else {
