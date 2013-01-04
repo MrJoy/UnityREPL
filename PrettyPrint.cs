@@ -52,12 +52,12 @@ public class PrettyPrint {
   private static void Open(StringBuilder output) { output.Append("{"); _depth++; }
   private static void Close(StringBuilder output) { output.Append("}"); _depth--; }
 
-  public static void PP(StringBuilder output, object result) {
+  public static void PP(StringBuilder output, object result, bool expandTypes = false) {
     _depth = 0;
-    InternalPP(output, result);
+    InternalPP(output, result, expandTypes);
   }
 
-  protected static void InternalPP(StringBuilder output, object result) {
+  protected static void InternalPP(StringBuilder output, object result, bool expandTypes = false) {
     if(result == null) {
       output.Append("null");
     } else {
@@ -115,9 +115,9 @@ public class PrettyPrint {
         CloseInline(output);
       } else if(result is char) {
         EscapeChar(output, (char)result);
-      } else if(result is Type) {
-        if(_depth > 0)
-          output.Append(((Type)result).Name);
+      } else if(result is Type || result.GetType().Name == "MonoType") {
+        if(_depth > 0 || !expandTypes)
+          output.Append("typeof(" + ((Type)result).Name + ")");
         else
           output.Append(InteractiveBase.Describe(result));
       } else {

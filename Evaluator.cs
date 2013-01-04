@@ -200,10 +200,10 @@ class EvaluationHelper {
       status = false;
     }
 
-    if(hasOutput && (isExpression || output is REPLMessage)) {
+    if(hasOutput) {
       if(status) {
         outputBuffer.Length = 0;
-        PrettyPrint.PP(outputBuffer, output);
+        PrettyPrint.PP(outputBuffer, output, true);
         cmdEntry.Add(new LogEntry() {
           logEntryType = LogEntryType.Output,
           output = outputBuffer.ToString().Trim()
