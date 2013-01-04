@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------
 //  Shell
-//  Copyright 2009-2010 MrJoy, Inc.
+//  Copyright 2009-2012 Jon Frisby
 //  All rights reserved
 //
 //-----------------------------------------------------------------
@@ -34,7 +34,7 @@ public class Shell : EditorWindow {
   // Constants, specified here to keep things DRY.
   //----------------------------------------------------------------------------
   public const string VERSION="1.0.0",
-                      COPYRIGHT="(C) Copyright 2009-2011 MrJoy, Inc.\nAll rights reserved",
+                      COPYRIGHT="(C) Copyright 2009-2012 Jon Frisby\nAll rights reserved",
 
                       MAIN_PROMPT = "---->",
                       CONTINUATION_PROMPT = "cont>";

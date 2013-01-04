@@ -1,11 +1,11 @@
 //-----------------------------------------------------------------
 //  PrettyPrint
-//  Copyright 2009-2012 MrJoy, Inc.
+//  Copyright 2009-2012 Jon Frisby
 //  All rights reserved
 //
 //-----------------------------------------------------------------
 // Adapted from repl.cs:
-// http://anonsvn.mono-project.com/viewvc/trunk/mcs/tools/csharp/
+// https://github.com/mono/mono/tree/master/mcs/tools/csharp
 //
 //-----------------------------------------------------------------
 using System;
