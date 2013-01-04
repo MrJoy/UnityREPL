@@ -140,8 +140,8 @@ public class LogEntry {
           if(isExpandable) {
             GUILayout.BeginHorizontal();
               isExpanded = GUILayout.Toggle(isExpanded, (isExpanded) ? command: shortCommand, LogEntryStyles.FoldoutCommandStyle, GUILayout.ExpandWidth(false));
-              GUILayout.FlexibleSpace();
-              retVal = GUILayout.Button("+", GUILayout.ExpandWidth(false));
+              GUILayout.FlexibleSpace(); // HelpBox, minibutton, OL Plus
+              retVal = GUILayout.Button("", LogEntryStyles.FoldoutCopyContentStyle);
             GUILayout.EndHorizontal();
             if(isExpanded && hasChildren) {
               GUILayout.BeginHorizontal();
@@ -157,7 +157,7 @@ public class LogEntry {
               GUILayout.Space(15);
               GUILayout.Label(command, LogEntryStyles.DefaultCommandStyle);
               GUILayout.FlexibleSpace();
-              retVal = GUILayout.Button("+", GUILayout.ExpandWidth(false));
+              retVal = GUILayout.Button("", LogEntryStyles.FoldoutCopyContentStyle);
             GUILayout.EndHorizontal();
           }
         break;
