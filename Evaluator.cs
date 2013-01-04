@@ -167,9 +167,6 @@ class EvaluationHelper {
         });
       });
       status = Evaluator.Evaluate(tmpCode, out output, out hasOutput) == null;
-      if(hasOutput) {
-        Debug.Log(output);
-      }
       if(status)
         logEntries.Add(cmdEntry);
     } catch(Exception e) {
