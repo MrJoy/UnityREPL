@@ -45,9 +45,9 @@ public class PrettyPrint {
   }
 
   private static int _depth = 0;
-  private static void OpenInline(StringBuilder output) { output.Append("{ "); _depth++; }
-  private static void CloseInline(StringBuilder output) { output.Append(" }"); _depth--; }
-  private static void NextItem(StringBuilder output) { output.Append(", "); }
+  private static void OpenInline(StringBuilder output, int listLength) { output.Append(listLength < 10 ? "{ " : "{\n\t"); _depth++; }
+  private static void CloseInline(StringBuilder output, int listLength) { output.Append(listLength < 10 ? " }" : "\n}"); _depth--; }
+  private static void NextItem(StringBuilder output, int listLength) { output.Append(listLength < 10 ? ", " : ",\n\t"); }
 
   private static void Open(StringBuilder output) { output.Append("{"); _depth++; }
   private static void Close(StringBuilder output) { output.Append("}"); _depth--; }
@@ -82,13 +82,13 @@ public class PrettyPrint {
         output.Append(n);
       } else if(result is Array) {
         Array a = (Array) result;
-        OpenInline(output);
-        int top = a.GetUpperBound(0);
-        for(int i = a.GetLowerBound(0); i <= top; i++) {
+        int top = a.GetUpperBound(0), bottom = a.GetLowerBound(0);
+        OpenInline(output, top - bottom);
+        for(int i = bottom; i <= top; i++) {
           InternalPP(output, a.GetValue(i));
-          if(i != top) NextItem(output);
+          if(i != top) NextItem(output, top - bottom);
         }
-        CloseInline(output);
+        CloseInline(output, top - bottom);
       } else if(result is bool) {
         output.Append(((bool) result) ? "true" : "false");
       } else if(result is string) {
@@ -102,17 +102,21 @@ public class PrettyPrint {
           InternalPP(output, entry.Key);
           output.Append(": ");
           InternalPP(output, entry.Value);
-          if(count != top) NextItem(output);
+          if(count != top) NextItem(output, 0);
         }
         Close(output);
       } else if(result is IEnumerable) {
         int i = 0;
-        OpenInline(output);
+        ArrayList tmp = new ArrayList();
         foreach(object item in (IEnumerable)result) {
-          if(i++ != 0) NextItem(output);
+          tmp.Add(item);
+        }
+        OpenInline(output, tmp.Count);
+        foreach(object item in tmp) {
+          if(i++ != 0) NextItem(output, tmp.Count);
           InternalPP(output, item);
         }
-        CloseInline(output);
+        CloseInline(output, tmp.Count);
       } else if(result is char) {
         EscapeChar(output, (char)result);
       } else if(result is Type || result.GetType().Name == "MonoType") {
