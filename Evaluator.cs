@@ -155,6 +155,9 @@ class EvaluationHelper {
     bool isExpression = false;
     try {
       if(tmpCode.StartsWith("=")) {
+        // Special case handling of calculator mode.  The problem is that
+        // expressions involving multiplication are grammatically ambiguous
+        // without a var declaration or some other grammatical construct.
         tmpCode = "(" + tmpCode.Substring(1, tmpCode.Length-1) + ");";
         isExpression = true;
       }
