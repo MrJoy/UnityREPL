@@ -243,137 +243,172 @@ public class NumberedEditorStyles {
 }
 
 public class LogEntryStyles {
-  private static GUIStyle _Default = null;
+  private static GUIStyle[] styles = new GUIStyle[_Count];
+
+  private const int _Default = 0;
   public static GUIStyle Default {
     get {
-      if(_Default == null) {
-        _Default = new GUIStyle(EditorStyles.label)
+      EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
+      if(styles[_Default] == null) {
+        styles[_Default] = new GUIStyle(EditorStyles.label)
           .Named("DefaultLogEntry")
           .ResetBoxModel()
           .Padding(2, 2, 2, 2)
           .Size(0, 0, true, false);
       }
-      return _Default;
+      return styles[_Default];
     }
   }
 
-  private static GUIStyle _DefaultCommandStyle = null;
+  private const int _DefaultCommandStyle = 1;
   public static GUIStyle DefaultCommandStyle {
     get {
-      if(_DefaultCommandStyle == null) {
-        _DefaultCommandStyle = new GUIStyle(Default)
+      EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
+      if(styles[_DefaultCommandStyle] == null) {
+        styles[_DefaultCommandStyle] = new GUIStyle(Default)
           .Named("DefaultCommandStyle");
       }
-      return _DefaultCommandStyle;
+      return styles[_DefaultCommandStyle];
     }
   }
 
-  private static GUIStyle _FoldoutCommandStyle = null;
+  private const int _FoldoutCommandStyle = 2;
   public static GUIStyle FoldoutCommandStyle {
     get {
-      if(_FoldoutCommandStyle == null) {
-        _FoldoutCommandStyle = new GUIStyle(EditorStyles.foldout)
+      EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
+      if(styles[_FoldoutCommandStyle] == null) {
+        styles[_FoldoutCommandStyle] = new GUIStyle(EditorStyles.foldout)
           .Named("FoldoutCommandStyle")
           .BaseTextColor(DefaultCommandStyle.active.textColor);
       }
-      return _FoldoutCommandStyle;
+      return styles[_FoldoutCommandStyle];
     }
   }
 
-  private static GUIStyle _OutputStyle = null;
+  private const int _FoldoutCopyContentStyle = 3;
+  public static GUIStyle FoldoutCopyContentStyle {
+    get {
+      EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
+      if(styles[_FoldoutCopyContentStyle] == null) {
+        styles[_FoldoutCopyContentStyle] = new GUIStyle(EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).GetStyle("OL Plus"));
+      }
+      return styles[_FoldoutCopyContentStyle];
+    }
+  }
+
+  private const int PLAIN_TEXT = 0,
+                    ERROR_TEXT = 1,
+                    WARNING_TEXT = 2;
+
+  private static Color[,] COLORS = new Color[,] {
+    { new Color(0f, 0f, 0f, 1f), new Color(0.75f, 0.75f, 0.75f, 1f) },
+    { new Color(0.5f, 0f, 0f, 1f), new Color(1f, 0.25f, 0.25f, 1f) },
+    { new Color(0.4f, 0.3f, 0f, 1f), new Color(1f, 0.7f, 0f, 1f) }
+  };
+
+  private const int _OutputStyle = 4;
   public static GUIStyle OutputStyle {
     get {
-      if(_OutputStyle == null) {
-        _OutputStyle = new GUIStyle(Default)
+      EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
+      if(styles[_OutputStyle] == null) {
+        styles[_OutputStyle] = new GUIStyle(Default)
           .Named("OutputStyle")
-          .BaseTextColor(new Color(0f, 0.5f, 0f, 1f), new Color(0f, 0.75f, 0f, 1f));
+          .BaseTextColor(COLORS[PLAIN_TEXT, 0], COLORS[PLAIN_TEXT, 1]);
       }
-      return _OutputStyle;
+      return styles[_OutputStyle];
     }
   }
 
-  private static GUIStyle _EvaluationErrorStyle = null;
+  private const int _EvaluationErrorStyle = 5;
   public static GUIStyle EvaluationErrorStyle {
     get {
-      if(_EvaluationErrorStyle == null) {
-        _EvaluationErrorStyle = new GUIStyle(Default)
+      EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
+      if(styles[_EvaluationErrorStyle] == null) {
+        styles[_EvaluationErrorStyle] = new GUIStyle(Default)
           .Named("EvaluationErrorStyle")
-          .BaseTextColor(new Color(0.5f, 0f, 0f, 1f), new Color(0.75f, 0.25f, 0.25f, 1f));
+          .BaseTextColor(COLORS[ERROR_TEXT, 0], COLORS[ERROR_TEXT, 1]);
       }
-      return _EvaluationErrorStyle;
+      return styles[_EvaluationErrorStyle];
     }
   }
 
-  private static GUIStyle _SystemConsoleStyle = null;
+  private const int _SystemConsoleStyle = 6;
   public static GUIStyle SystemConsoleStyle {
     get {
-      if(_SystemConsoleStyle == null) {
-        _SystemConsoleStyle = new GUIStyle(Default)
+      EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
+      if(styles[_SystemConsoleStyle] == null) {
+        styles[_SystemConsoleStyle] = new GUIStyle(Default)
           .Named("SystemConsoleStyle")
-          .BaseTextColor(new Color(0.5f, 0.5f, 0f, 1f), new Color(0.75f, 0.75f, 0f, 1f));
+          .BaseTextColor(COLORS[WARNING_TEXT, 0], COLORS[WARNING_TEXT, 1]);
       }
-      return _SystemConsoleStyle;
+      return styles[_SystemConsoleStyle];
     }
   }
 
-  private static GUIStyle _ConsoleLogStyle = null;
+  private const int _ConsoleLogStyle = 7;
   public static GUIStyle ConsoleLogStyle {
     get {
-      if(_ConsoleLogStyle == null) {
-        _ConsoleLogStyle = new GUIStyle(Default)
+      EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
+      if(styles[_ConsoleLogStyle] == null) {
+        styles[_ConsoleLogStyle] = new GUIStyle(Default)
           .Named("ConsoleLogStyle");
       }
-      return _ConsoleLogStyle;
+      return styles[_ConsoleLogStyle];
     }
   }
 
-  private static GUIStyle _ConsoleLogNormalStyle = null;
+  private const int _ConsoleLogNormalStyle = 8;
   public static GUIStyle ConsoleLogNormalStyle {
     get {
-      if(_ConsoleLogNormalStyle == null) {
-        _ConsoleLogNormalStyle = new GUIStyle(ConsoleLogStyle)
+      EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
+      if(styles[_ConsoleLogNormalStyle] == null) {
+        styles[_ConsoleLogNormalStyle] = new GUIStyle(ConsoleLogStyle)
           .Named("ConsoleLogNormalStyle");
       }
-      return _ConsoleLogNormalStyle;
+      return styles[_ConsoleLogNormalStyle];
     }
   }
 
-  private static GUIStyle _ConsoleLogWarningStyle = null;
+  private const int _ConsoleLogWarningStyle = 9;
   public static GUIStyle ConsoleLogWarningStyle {
     get {
-      if(_ConsoleLogWarningStyle == null) {
-        _ConsoleLogWarningStyle = new GUIStyle(ConsoleLogStyle)
+      EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
+      if(styles[_ConsoleLogWarningStyle] == null) {
+        styles[_ConsoleLogWarningStyle] = new GUIStyle(ConsoleLogStyle)
           .Named("ConsoleLogWarningStyle")
-          .BaseTextColor(new Color(0.5f, 0.5f, 0f, 1f), new Color(0.75f, 0.75f, 0f, 1f));
+          .BaseTextColor(COLORS[WARNING_TEXT, 0], COLORS[WARNING_TEXT, 1]);
       }
-      return _ConsoleLogWarningStyle;
+      return styles[_ConsoleLogWarningStyle];
     }
   }
 
-  private static GUIStyle _ConsoleLogErrorStyle = null;
+  private const int _ConsoleLogErrorStyle = 10;
   public static GUIStyle ConsoleLogErrorStyle {
     get {
-      if(_ConsoleLogErrorStyle == null) {
-        _ConsoleLogErrorStyle = new GUIStyle(ConsoleLogStyle)
+      EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
+      if(styles[_ConsoleLogErrorStyle] == null) {
+        styles[_ConsoleLogErrorStyle] = new GUIStyle(ConsoleLogStyle)
           .Named("ConsoleLogErrorStyle")
-          .BaseTextColor(new Color(0.5f, 0f, 0f, 1f), new Color(0.75f, 0.25f, 0.25f, 1f));
+          .BaseTextColor(COLORS[ERROR_TEXT, 0], COLORS[ERROR_TEXT, 1]);
       }
-      return _ConsoleLogErrorStyle;
+      return styles[_ConsoleLogErrorStyle];
     }
   }
 
-  private static GUIStyle _ConsoleLogStackTraceStyle = null;
+  private const int _ConsoleLogStackTraceStyle = 11;
   public static GUIStyle ConsoleLogStackTraceStyle {
     get {
-      if(_ConsoleLogStackTraceStyle == null) {
-        _ConsoleLogStackTraceStyle = new GUIStyle(ConsoleLogStyle)
+      EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
+      if(styles[_ConsoleLogStackTraceStyle] == null) {
+        styles[_ConsoleLogStackTraceStyle] = new GUIStyle(ConsoleLogStyle)
           .Named("ConsoleLogStackTraceStyle")
-          .BaseTextColor(new Color(0.25f, 0.25f, 0.25f, 1f), new Color(0.5f, 0.5f, 0.5f, 1f));
+          .BaseTextColor(COLORS[PLAIN_TEXT, 0], COLORS[PLAIN_TEXT, 1]);
       }
-      return _ConsoleLogStackTraceStyle;
+      return styles[_ConsoleLogStackTraceStyle];
     }
   }
 
+  private const int _Count = 12;
 }
 
 [System.Serializable]
