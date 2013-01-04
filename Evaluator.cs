@@ -27,14 +27,10 @@ class EvaluationHelper {
 
   protected StringBuilder FluffReporter() {
     Evaluator.MessageOutput = reportWriter;
-      // In case the brutal assembly reloading Unity does caused an old instance
-      // of our StringWriter to stick around, we resurrect it to avoid the
-      // chance that someone's holding a reference to it and writing to THAT
-      // instead of what we assign to Report.Stderr.
     // Commenting this out to see if we can reliably get ONLY output from the
     // compiler...
-    InteractiveBase.Error = reportWriter;
-    InteractiveBase.Output = reportWriter;
+    //InteractiveBase.Error = reportWriter;
+    //InteractiveBase.Output = reportWriter;
     return reportWriter.GetStringBuilder();
   }
 
