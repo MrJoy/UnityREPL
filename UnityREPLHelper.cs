@@ -332,20 +332,32 @@ public class LogEntryStyles {
     }
   }
 
-  private const int _SystemConsoleStyle = 6;
-  public static GUIStyle SystemConsoleStyle {
+  private const int _SystemConsoleOutStyle = 6;
+  public static GUIStyle SystemConsoleOutStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
-      if(styles[_SystemConsoleStyle] == null) {
-        styles[_SystemConsoleStyle] = new GUIStyle(Default)
-          .Named("SystemConsoleStyle")
+      if(styles[_SystemConsoleOutStyle] == null) {
+        styles[_SystemConsoleOutStyle] = new GUIStyle(Default)
+          .Named("SystemConsoleOutStyle")
           .BaseTextColor(COLORS[WARNING_TEXT, 0], COLORS[WARNING_TEXT, 1]);
       }
-      return styles[_SystemConsoleStyle];
+      return styles[_SystemConsoleOutStyle];
     }
   }
 
-  private const int _ConsoleLogStyle = 7;
+  private const int _SystemConsoleErrStyle = 7;
+  public static GUIStyle SystemConsoleErrStyle {
+    get {
+      EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
+      if(styles[_SystemConsoleErrStyle] == null) {
+        styles[_SystemConsoleErrStyle] = new GUIStyle(Default)
+          .Named("SystemConsoleErrStyle")
+          .BaseTextColor(COLORS[ERROR_TEXT, 0], COLORS[ERROR_TEXT, 1]);
+      }
+      return styles[_SystemConsoleErrStyle];
+    }
+  }
+  private const int _ConsoleLogStyle = 8;
   public static GUIStyle ConsoleLogStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -357,7 +369,7 @@ public class LogEntryStyles {
     }
   }
 
-  private const int _ConsoleLogNormalStyle = 8;
+  private const int _ConsoleLogNormalStyle = 9;
   public static GUIStyle ConsoleLogNormalStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -369,7 +381,7 @@ public class LogEntryStyles {
     }
   }
 
-  private const int _ConsoleLogWarningStyle = 9;
+  private const int _ConsoleLogWarningStyle = 10;
   public static GUIStyle ConsoleLogWarningStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -382,7 +394,7 @@ public class LogEntryStyles {
     }
   }
 
-  private const int _ConsoleLogErrorStyle = 10;
+  private const int _ConsoleLogErrorStyle = 11;
   public static GUIStyle ConsoleLogErrorStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -395,7 +407,7 @@ public class LogEntryStyles {
     }
   }
 
-  private const int _ConsoleLogStackTraceStyle = 11;
+  private const int _ConsoleLogStackTraceStyle = 12;
   public static GUIStyle ConsoleLogStackTraceStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -408,7 +420,7 @@ public class LogEntryStyles {
     }
   }
 
-  private const int _Count = 12;
+  private const int _Count = 13;
 }
 
 [System.Serializable]

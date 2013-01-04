@@ -18,20 +18,86 @@ using System.IO;
 using Mono.CSharp;
 
 class EvaluationHelper {
-  private StringWriter reportWriter = new StringWriter();
+  private TextWriter outWriter, errWriter;
+  private StringWriter reportOutWriter = new StringWriter(),
+                       reportErrorWriter = new StringWriter();
   public EvaluationHelper() {
-    StringBuilder buffer = FluffReporter();
+    FluffReporter();
     TryLoadingAssemblies();
-    buffer.Length = 0;
+    FlushMessages();
   }
 
-  protected StringBuilder FluffReporter() {
-    Evaluator.MessageOutput = reportWriter;
-    // Commenting this out to see if we can reliably get ONLY output from the
-    // compiler...
-    //InteractiveBase.Error = reportWriter;
-    //InteractiveBase.Output = reportWriter;
-    return reportWriter.GetStringBuilder();
+  private bool CatchMessages(LogEntry cmdEntry, bool status) {
+    StringBuilder outBuffer = reportOutWriter.GetStringBuilder();
+    StringBuilder errBuffer = reportErrorWriter.GetStringBuilder();
+
+    string tmpOut = outBuffer.ToString().Trim(),
+           tmpErr = errBuffer.ToString().Trim();
+
+    outBuffer.Length = 0;
+    errBuffer.Length = 0;
+
+    if(outWriter != null)
+      System.Console.SetOut(outWriter);
+    if(errWriter != null)
+      System.Console.SetError(errWriter);
+
+    if(!String.IsNullOrEmpty(tmpOut)) {
+      cmdEntry.Add(new LogEntry() {
+        logEntryType = LogEntryType.SystemConsoleOut,
+        error = tmpOut
+      });
+      status = false;
+    }
+    if(!String.IsNullOrEmpty(tmpErr)) {
+      cmdEntry.Add(new LogEntry() {
+        logEntryType = LogEntryType.SystemConsoleErr,
+        error = tmpErr
+      });
+      status = false;
+    }
+    return status;
+  }
+
+  private bool CatchMessages(bool status) {
+    StringBuilder outBuffer = reportOutWriter.GetStringBuilder(),
+                  errBuffer = reportErrorWriter.GetStringBuilder();
+
+    string tmpOut = outBuffer.ToString().Trim(),
+           tmpErr = errBuffer.ToString().Trim();
+
+    outBuffer.Length = 0;
+    errBuffer.Length = 0;
+
+    if(outWriter != null)
+      System.Console.SetOut(outWriter);
+    if(errWriter != null)
+      System.Console.SetError(errWriter);
+
+    if(!String.IsNullOrEmpty(tmpOut) || !String.IsNullOrEmpty(tmpErr)) {
+      status = false;
+    }
+    return status;
+  }
+
+  protected void FlushMessages() {
+    StringBuilder outBuffer = reportOutWriter.GetStringBuilder(),
+                  errBuffer = reportErrorWriter.GetStringBuilder();
+
+    outBuffer.Length = 0;
+    errBuffer.Length = 0;
+  }
+
+  protected void FluffReporter() {
+    if(outWriter == null)
+      outWriter = System.Console.Out;
+    if(errWriter == null)
+      errWriter = System.Console.Error;
+
+    System.Console.SetOut(reportOutWriter);
+    System.Console.SetError(reportErrorWriter);
+
+    FlushMessages();
   }
 
   protected void TryLoadingAssemblies() {
@@ -42,6 +108,7 @@ class EvaluationHelper {
         Evaluator.ReferenceAssembly(b);
       }
     }
+
 
     // These won't work the first time through after an assembly reload.  No
     // clue why, but the Unity* namespaces don't get found.  Perhaps they're
@@ -62,9 +129,7 @@ class EvaluationHelper {
     // actually needed but seems prudent to be wary of it.
     if(EditorApplication.isCompiling) return false;
 
-    StringBuilder buffer = FluffReporter();
-    buffer.Length = 0;
-
+    FluffReporter();
     /*
     We need to tell the evaluator to reference stuff we care about.  Since
     there's a lot of dynamically named stuff that we might want, we just pull
@@ -107,16 +172,13 @@ class EvaluationHelper {
     if(!isInitialized) {
       TryLoadingAssemblies();
 
-      if(buffer.Length > 0) {
-        // Whoops!  Something didn't go right!
-        //Console.WriteLine("Got some (hopefully transient) static while initializing:");
-        //Console.WriteLine(buffer);
-        buffer.Length = 0;
-        retVal = false;
-      } else {
+      LogEntry cmdEntry = new LogEntry() {
+        logEntryType = LogEntryType.MetaCommand,
+        command = "Attempting to load assemblies..."
+      };
+      retVal = CatchMessages(cmdEntry, true);
+      if(!retVal)
         isInitialized = true;
-        retVal = true;
-      }
     } else {
       retVal = true;
     }
@@ -133,20 +195,21 @@ class EvaluationHelper {
   public bool Eval(List<LogEntry> logEntries, string code) {
     EditorApplication.LockReloadAssemblies();
 
-    bool status = false;
-    bool hasOutput = false;
+    bool status = false,
+         hasOutput = false,
+         isExpression = false,
+         hasAddedLogToEntries = false;
     object output = null;
-    LogEntry cmdEntry = null;
-
-    string tmpCode = code.Trim();
-
-    cmdEntry = new LogEntry() {
+    string res = null,
+           tmpCode = code.Trim();
+    LogEntry cmdEntry = new LogEntry() {
       logEntryType = LogEntryType.Command,
       command = tmpCode
     };
 
-    bool isExpression = false;
     try {
+      FluffReporter();
+
       if(tmpCode.StartsWith("=")) {
         // Special case handling of calculator mode.  The problem is that
         // expressions involving multiplication are grammatically ambiguous
@@ -162,9 +225,9 @@ class EvaluationHelper {
           consoleLogType = lType
         });
       });
-      status = Evaluator.Evaluate(tmpCode, out output, out hasOutput) == null;
-      if(status)
-        logEntries.Add(cmdEntry);
+      res = Evaluator.Evaluate(tmpCode, out output, out hasOutput);
+      //if(res == tmpCode)
+      //  Debug.Log("Unfinished input...");
     } catch(Exception e) {
       cmdEntry.Add(new LogEntry() {
         logEntryType = LogEntryType.EvaluationError,
@@ -175,32 +238,51 @@ class EvaluationHelper {
       hasOutput = false;
       status = true; // Need this to avoid 'stickiness' where we let user
                      // continue editing due to incomplete code.
-      logEntries.Add(cmdEntry);
     } finally {
+      status = res == null;
       Application.RegisterLogCallback(null);
-    }
-
-    // Catch compile errors that are not dismissed as a product of interactive
-    // editing by Mono.CSharp.Evaluator...
-    StringBuilder buffer = FluffReporter();
-    string tmp = buffer.ToString().Trim();
-    buffer.Length = 0;
-    if(!String.IsNullOrEmpty(tmp)) {
-      cmdEntry.Add(new LogEntry() {
-        logEntryType = LogEntryType.SystemConsole,
-        error = tmp
-      });
-      status = false;
+      if(res != tmpCode) {
+        logEntries.Add(cmdEntry);
+        hasAddedLogToEntries = true;
+      }
+      status = CatchMessages(cmdEntry, status);
     }
 
     if(hasOutput) {
       if(status) {
         outputBuffer.Length = 0;
-        PrettyPrint.PP(outputBuffer, output, true);
-        cmdEntry.Add(new LogEntry() {
-          logEntryType = LogEntryType.Output,
-          output = outputBuffer.ToString().Trim()
-        });
+
+        try {
+          FluffReporter();
+          PrettyPrint.PP(outputBuffer, output, true);
+        } catch(Exception e) {
+          cmdEntry.Add(new LogEntry() {
+            logEntryType = LogEntryType.EvaluationError,
+            error = e.ToString().Trim() // TODO: Produce a stack trace a la Debug, and put it in stackTrace so we can filter it.
+          });
+          if(!hasAddedLogToEntries) {
+            logEntries.Add(cmdEntry);
+            hasAddedLogToEntries = true;
+          }
+        } finally {
+          bool result = CatchMessages(cmdEntry, true);
+          if(!result && !hasAddedLogToEntries) {
+            logEntries.Add(cmdEntry);
+            hasAddedLogToEntries = true;
+          }
+        }
+
+        string tmp = outputBuffer.ToString().Trim();
+        if(!String.IsNullOrEmpty(tmp)) {
+          cmdEntry.Add(new LogEntry() {
+            logEntryType = LogEntryType.Output,
+            output = outputBuffer.ToString().Trim()
+          });
+          if(!hasAddedLogToEntries) {
+            logEntries.Add(cmdEntry);
+            hasAddedLogToEntries = true;
+          }
+        }
       }
     }
 

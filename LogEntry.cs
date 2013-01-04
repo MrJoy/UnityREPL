@@ -15,10 +15,12 @@ using System.Text;
 
 [Serializable]
 public enum LogEntryType : int {
-  Command = 0,
-  Output = 1,
-  EvaluationError = 2,
-  SystemConsole = 3,
+  MetaCommand = 0,
+  Command = 1,
+  Output = 2,
+  EvaluationError = 3,
+  SystemConsoleOut = 4,
+  SystemConsoleErr = 5,
 
   ConsoleLog = 10
 }
@@ -125,6 +127,7 @@ public class LogEntry {
   public bool OnGUI(bool filterTraces) {
     bool retVal = false;
     switch(logEntryType) {
+      case LogEntryType.MetaCommand:
       case LogEntryType.Command:
           if(children != null && children.Count > 0) {
               hasChildren = true;
@@ -154,7 +157,7 @@ public class LogEntry {
             }
           } else {
             GUILayout.BeginHorizontal();
-              GUILayout.Space(15);
+              GUILayout.Space(13);
               GUILayout.Label(command, LogEntryStyles.DefaultCommandStyle);
               GUILayout.FlexibleSpace();
               retVal = GUILayout.Button("", LogEntryStyles.FoldoutCopyContentStyle);
@@ -171,9 +174,14 @@ public class LogEntry {
           GUILayout.Label(error, LogEntryStyles.EvaluationErrorStyle);
         GUILayout.EndHorizontal();
         break;
-      case LogEntryType.SystemConsole:
+      case LogEntryType.SystemConsoleOut:
         GUILayout.BeginHorizontal(GUI.skin.box);
-          GUILayout.Label(error, LogEntryStyles.SystemConsoleStyle);
+          GUILayout.Label(error, LogEntryStyles.SystemConsoleOutStyle);
+        GUILayout.EndHorizontal();
+        break;
+      case LogEntryType.SystemConsoleErr:
+        GUILayout.BeginHorizontal(GUI.skin.box);
+          GUILayout.Label(error, LogEntryStyles.SystemConsoleErrStyle);
         GUILayout.EndHorizontal();
         break;
       case LogEntryType.ConsoleLog:
