@@ -197,7 +197,6 @@ class EvaluationHelper {
 
     bool status = false,
          hasOutput = false,
-         isExpression = false,
          hasAddedLogToEntries = false;
     object output = null;
     string res = null,
@@ -215,7 +214,6 @@ class EvaluationHelper {
         // expressions involving multiplication are grammatically ambiguous
         // without a var declaration or some other grammatical construct.
         tmpCode = "(" + tmpCode.Substring(1, tmpCode.Length-1) + ");";
-        isExpression = true;
       }
       Application.RegisterLogCallback(delegate(string cond, string sTrace, LogType lType) {
         cmdEntry.Add(new LogEntry() {
