@@ -29,6 +29,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
+
+// TODO:
+//  static string[] Evaluator.GetCompletions(string input, out string prefix) <-----
+
 public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   // Constants, specified here to keep things DRY.
