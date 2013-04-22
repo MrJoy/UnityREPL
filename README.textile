@@ -62,7 +62,7 @@ Full documentation is available from within UnityREPL by clicking the '?' button
 
 h1. LICENSE
 
-All original/novel code is Copyright (c) 2009-2012 MrJoy, Inc.  All other code is the property of the respective authors.
+All original/novel code is Copyright (c) 2009-2013 Jon Frisby.  All other code is the property of the respective authors.
 
 Dual licensed under the terms of the MIT X11 or GNU GPL, as per the original code.
 
