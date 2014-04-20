@@ -103,7 +103,7 @@ class EvaluationHelper {
   protected void TryLoadingAssemblies() {
     foreach(Assembly b in AppDomain.CurrentDomain.GetAssemblies()) {
       string assemblyShortName = b.GetName().Name;
-      if(!(assemblyShortName.StartsWith("Mono.CSharp") || assemblyShortName.StartsWith("UnityDomainLoad") || assemblyShortName.StartsWith("interactive"))) {
+      if(!(assemblyShortName.StartsWith("nunit.framework") || assemblyShortName.StartsWith("mscorlib") || assemblyShortName.StartsWith("Mono.CSharp") || assemblyShortName.StartsWith("UnityDomainLoad") || assemblyShortName.StartsWith("interactive"))) {
         //System.Console.WriteLine("Giving Mono.CSharp a reference to " + assemblyShortName);
         Evaluator.ReferenceAssembly(b);
       }
