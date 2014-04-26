@@ -349,9 +349,7 @@ internal class TypeManagerProxy : ReflectionProxy {
 // Dummy class so we can output a string and bypass pretty-printing of it.
 public struct REPLMessage {
   public string msg;
-  public REPLMessage(string m) {
-    msg = m;
-  }
+  public REPLMessage(string m) { msg = m; }
 }
 
 
