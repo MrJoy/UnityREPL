@@ -340,7 +340,6 @@ internal class TypeManagerProxy : ReflectionProxy {
   // Save an allocation per access here...
   private static readonly object[] _CSharpNameParams = new object[] { new List<TypeSpec>() };
   internal static string CSharpName(TypeSpec t) {
-    // TODO: What am I doing wrong here that this throws on generics??
     string name = "";
     try {
       var list = (List<TypeSpec>)_CSharpNameParams[0];

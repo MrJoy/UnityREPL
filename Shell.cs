@@ -38,7 +38,7 @@ public class Shell : EditorWindow {
   // Constants, specified here to keep things DRY.
   //----------------------------------------------------------------------------
   public const string VERSION="1.1.0",
-                      COPYRIGHT="(C) Copyright 2009-2013 Jon Frisby\nAll rights reserved",
+                      COPYRIGHT="(C) Copyright 2009-2014 Jon Frisby\nAll rights reserved",
 
                       MAIN_PROMPT = "---->",
                       CONTINUATION_PROMPT = "cont>";
@@ -455,7 +455,7 @@ public class Shell : EditorWindow {
   public Vector2 helpScrollPosition = Vector2.zero;
   private bool showQuickStart = true, showEditing = true, showLogging = true,
                showShortcuts = true, showLocals = true, showKnownIssues = true,
-               showExpressions = true, showLanguageFeatures = true;
+               showExpressions = true;
   public void ShowHelp() {
     helpScrollPosition = EditorGUILayout.BeginScrollView(helpScrollPosition);
       GUILayout.Label("UnityREPL v." + Shell.VERSION, HelpStyles.Header);
@@ -487,29 +487,6 @@ public class Shell : EditorWindow {
         GUILayout.Label("= 4 * 20", HelpStyles.Code);
         GUILayout.Label("= typeof(EditorApplication)", HelpStyles.Code);
 
-        GUILayout.Label("", HelpStyles.Content);
-      }
-
-      showLanguageFeatures = EditorGUILayout.Foldout(showLanguageFeatures, "Language Features", HelpStyles.SubHeader);
-      if(showLanguageFeatures) {
-        GUILayout.Label("UnityREPL implements a newer version of the C# language than Unity itself supports, unless" +
-          " you are using Unity 3.0 or newer.  You get a couple nifty features for code entered into the interactive" +
-          " editor...", HelpStyles.Content);
-        GUILayout.Label("", HelpStyles.Content);
-        GUILayout.Label("The 'var' keyword:", HelpStyles.Content);
-        GUILayout.Label("var i = 3;", HelpStyles.Code);
-        GUILayout.Label("", HelpStyles.Content);
-        GUILayout.Label("Linq:", HelpStyles.Content);
-        GUILayout.Label("= from f in Directory.GetFiles(Application.dataPath)\n" +
-          "  let fi = new FileInfo(f)\n" +
-          "  where fi.LastWriteTime > DateTime.Now - TimeSpan.FromDays(7)\n" +
-          "  select f", HelpStyles.Code);
-        GUILayout.Label("", HelpStyles.Content);
-        GUILayout.Label("Anonymous Types:", HelpStyles.Content);
-        GUILayout.Label("var x = new { foo = \"blah\", bar = 123 };", HelpStyles.Code);
-        GUILayout.Space(4);
-        GUILayout.Label("... which you can access like so:", HelpStyles.Content);
-        GUILayout.Label("= x.foo", HelpStyles.Code);
         GUILayout.Label("", HelpStyles.Content);
       }
 
