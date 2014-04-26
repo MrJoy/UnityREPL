@@ -25,10 +25,7 @@ class EvaluationHelper {
   private static ReportPrinter reporter = new ConsoleReportPrinter();
   private static CompilerSettings settings = new CompilerSettings();
   private static CompilerContext context = new CompilerContext(settings, reporter);
-  private static Evaluator _evaluator = new Evaluator(context);
-  public static Evaluator evaluator {
-    get { return _evaluator; }
-  }
+  public static readonly Evaluator evaluator = new Evaluator(context);
 
   public EvaluationHelper() {
     FluffReporter();
@@ -47,9 +44,9 @@ class EvaluationHelper {
     errBuffer.Length = 0;
 
     if(outWriter != null)
-      System.Console.SetOut(outWriter);
+      Console.SetOut(outWriter);
     if(errWriter != null)
-      System.Console.SetError(errWriter);
+      Console.SetError(errWriter);
 
     if(!String.IsNullOrEmpty(tmpOut)) {
       cmdEntry.Add(new LogEntry() {
@@ -79,9 +76,9 @@ class EvaluationHelper {
     errBuffer.Length = 0;
 
     if(outWriter != null)
-      System.Console.SetOut(outWriter);
+      Console.SetOut(outWriter);
     if(errWriter != null)
-      System.Console.SetError(errWriter);
+      Console.SetError(errWriter);
 
     if(!String.IsNullOrEmpty(tmpOut) || !String.IsNullOrEmpty(tmpErr)) {
       status = false;
@@ -99,12 +96,12 @@ class EvaluationHelper {
 
   protected void FluffReporter() {
     if(outWriter == null)
-      outWriter = System.Console.Out;
+      outWriter = Console.Out;
     if(errWriter == null)
-      errWriter = System.Console.Error;
+      errWriter = Console.Error;
 
-    System.Console.SetOut(reportOutWriter);
-    System.Console.SetError(reportErrorWriter);
+    Console.SetOut(reportOutWriter);
+    Console.SetError(reportErrorWriter);
 
     FlushMessages();
   }
@@ -114,19 +111,18 @@ class EvaluationHelper {
     "interactive", "eval-"
   };
   protected void TryLoadingAssemblies() {
-    foreach(Assembly b in AppDomain.CurrentDomain.GetAssemblies()) {
-      string assemblyShortName = b.GetName().Name;
-
-      bool isProhibited = false;
-      foreach(string prohibitedName in PROHIBITED_FRAMEWORKS) {
-        if(assemblyShortName.StartsWith(prohibitedName)) {
+    foreach(var b in AppDomain.CurrentDomain.GetAssemblies()) {
+      var isProhibited = false;
+      var assemblyShortName = b.GetName().Name;
+      foreach(var prohibitedName in PROHIBITED_FRAMEWORKS) {
+        if(assemblyShortName.StartsWith(prohibitedName, StringComparison.Ordinal)) {
           isProhibited = true;
           break;
         }
       }
 
       if(!isProhibited) {
-        //System.Console.WriteLine("Giving Mono.CSharp a reference to " + assemblyShortName);
+        //Console.WriteLine("Giving Mono.CSharp a reference to " + assemblyShortName);
         evaluator.ReferenceAssembly(b);
       }
     }
@@ -194,7 +190,7 @@ class EvaluationHelper {
     if(!isInitialized) {
       TryLoadingAssemblies();
 
-      LogEntry cmdEntry = new LogEntry() {
+      var cmdEntry = new LogEntry() {
         logEntryType = LogEntryType.MetaCommand,
         command = "Attempting to load assemblies..."
       };
@@ -231,11 +227,11 @@ class EvaluationHelper {
     try {
       FluffReporter();
 
-      if(tmpCode.StartsWith("=")) {
+      if(tmpCode.StartsWith("=", StringComparison.Ordinal)) {
         // Special case handling of calculator mode.  The problem is that
         // expressions involving multiplication are grammatically ambiguous
         // without a var declaration or some other grammatical construct.
-        tmpCode = "(" + tmpCode.Substring(1, tmpCode.Length-1) + ");";
+        tmpCode = "(" + tmpCode.Substring(1, tmpCode.Length - 1) + ");";
       }
       Application.RegisterLogCallback(delegate(string cond, string sTrace, LogType lType) {
         cmdEntry.Add(new LogEntry() {
@@ -319,11 +315,7 @@ internal class EvaluatorProxy : ReflectionProxy {
 
   internal static Dictionary<string, Tuple<FieldSpec, FieldInfo>> fields {
     get {
-      if(_fields != null) {
-        return (Dictionary<string, Tuple<FieldSpec, FieldInfo>>)_fields.GetValue(EvaluationHelper.evaluator);
-      } else {
-        return null;
-      }
+      return (Dictionary<string, Tuple<FieldSpec, FieldInfo>>)_fields.GetValue(EvaluationHelper.evaluator);
     }
   }
 }
