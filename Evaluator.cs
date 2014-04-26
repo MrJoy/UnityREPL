@@ -324,15 +324,19 @@ internal class EvaluatorProxy : ReflectionProxy {
 // WARNING: Absolutely NOT thread-safe!
 internal class TypeManagerProxy : ReflectionProxy {
   private static readonly Type _TypeManager = typeof(Evaluator).Assembly.GetType("Mono.CSharp.TypeManager");
-  private static readonly MethodInfo _CSharpName = _TypeManager.GetMethod("CSharpName", PUBLIC_STATIC, null, Signature(typeof(Type)), null);
+  private static readonly MethodInfo _CSharpName = _TypeManager.GetMethod("CSharpName", PUBLIC_STATIC, null, Signature(typeof(List<TypeSpec>)), null);
 
   // Save an allocation per access here...
-  private static readonly object[] _CSharpNameParams = new object[] { null };
-  internal static string CSharpName(Type t) {
+  private static readonly object[] _CSharpNameParams = new object[] { new List<TypeSpec>() };
+  internal static string CSharpName(TypeSpec t) {
     // TODO: What am I doing wrong here that this throws on generics??
     string name = "";
     try {
-      _CSharpNameParams[0] = t;
+      var list = (List<TypeSpec>)_CSharpNameParams[0];
+      if(list.Count == 0) {
+        list.Add(null);
+      }
+      list[0] = t;
       name = (string)_CSharpName.Invoke(null, _CSharpNameParams);
     } catch(Exception) {
       name = "?";
@@ -361,17 +365,16 @@ vars;     -- Show the variables you've created this session, and their current v
 
   public static REPLMessage vars {
     get {
-      var fields = EvaluatorProxy.fields;
       var tmp = new StringBuilder();
       // TODO: Sort this list...
-      foreach(var kvp in fields) {
-        var field = kvp.Value.Item2;
+      foreach(var kvp in EvaluatorProxy.fields) {
+        var field = kvp.Value;
         tmp
-          .Append(TypeManagerProxy.CSharpName(field.FieldType))
+          .Append(TypeManagerProxy.CSharpName(field.Item1.MemberType))
           .Append(" ")
           .Append(kvp.Key)
           .Append(" = ");
-        PrettyPrint.PP(tmp, field.GetValue(null));
+        PrettyPrint.PP(tmp, field.Item2.GetValue(null));
         tmp.Append(";\n");
       }
       return new REPLMessage(tmp.ToString());

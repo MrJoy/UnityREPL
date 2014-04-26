@@ -412,13 +412,13 @@ public class Shell : EditorWindow {
           if(fields != null) {
             StringBuilder tmp = new StringBuilder();
             foreach(var kvp in fields) {
-              var field = kvp.Value.Item2;
+              var field = kvp.Value;
               GUILayout.BeginHorizontal();
-                GUILayout.Label(TypeManagerProxy.CSharpName(field.FieldType));
+                GUILayout.Label(TypeManagerProxy.CSharpName(field.Item1.MemberType));
                 GUILayout.Space(10);
-                GUILayout.Label((string)kvp.Key);
+                GUILayout.Label(kvp.Key);
                 GUILayout.FlexibleSpace();
-                PrettyPrint.PP(tmp, field.GetValue(null));
+                PrettyPrint.PP(tmp, field.Item2.GetValue(null));
                 GUILayout.Label(tmp.ToString());
                 tmp.Length = 0;
               GUILayout.EndHorizontal();
