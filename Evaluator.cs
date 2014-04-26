@@ -126,13 +126,24 @@ class EvaluationHelper {
         evaluator.ReferenceAssembly(b);
       }
     }
+    // TODO: Load app frameworks last, and in proper order, which I believe is:
+    // TODO: Assembly-CSharp-firstpass
+    // TODO: Assembly-UnityScript-firstpass
+    // TODO: Assembly-CSharp
+    // TODO: Assembly-UnityScript
+    // TODO: Assembly-CSharp-Editor
+    // TODO: Assembly-UnityScript-Editor
 
+    // TODO: Load Unity and other frameworks in proper order as well.
 
     // These won't work the first time through after an assembly reload.  No
     // clue why, but the Unity* namespaces don't get found.  Perhaps they're
     // being loaded into our AppDomain asynchronously and just aren't done yet?
     // Regardless, attempting to hit them early and then trying again later
     // seems to work fine.
+
+    // TODO: Figure out how to ignore this message:
+    // (1,2): warning CS0105: The using directive for `System.Collections.Generic' appeared previously in this namespace
     evaluator.Run("using System;");
     evaluator.Run("using System.IO;");
     evaluator.Run("using System.Linq;");
