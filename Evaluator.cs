@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------
 //  Evaluator
-//  Copyright 2009-2013 Jon Frisby
+//  Copyright 2009-2014 Jon Frisby
 //  All rights reserved
 //
 //-----------------------------------------------------------------
@@ -21,6 +21,15 @@ class EvaluationHelper {
   private TextWriter outWriter, errWriter;
   private StringWriter reportOutWriter = new StringWriter(),
                        reportErrorWriter = new StringWriter();
+
+  private static ReportPrinter reporter = new ConsoleReportPrinter();
+  private static CompilerSettings settings = new CompilerSettings();
+  private static CompilerContext context = new CompilerContext(settings, reporter);
+  private static Evaluator _evaluator = new Evaluator(context);
+  public static Evaluator evaluator {
+    get { return _evaluator; }
+  }
+
   public EvaluationHelper() {
     FluffReporter();
     TryLoadingAssemblies();
@@ -100,12 +109,25 @@ class EvaluationHelper {
     FlushMessages();
   }
 
+  private static string[] PROHIBITED_FRAMEWORKS = {
+    "nunit.framework", "mscorlib", "Mono.CSharp", "UnityDomainLoad",
+    "interactive", "eval-"
+  };
   protected void TryLoadingAssemblies() {
     foreach(Assembly b in AppDomain.CurrentDomain.GetAssemblies()) {
       string assemblyShortName = b.GetName().Name;
-      if(!(assemblyShortName.StartsWith("nunit.framework") || assemblyShortName.StartsWith("mscorlib") || assemblyShortName.StartsWith("Mono.CSharp") || assemblyShortName.StartsWith("UnityDomainLoad") || assemblyShortName.StartsWith("interactive"))) {
+
+      bool isProhibited = false;
+      foreach(string prohibitedName in PROHIBITED_FRAMEWORKS) {
+        if(assemblyShortName.StartsWith(prohibitedName)) {
+          isProhibited = true;
+          break;
+        }
+      }
+
+      if(!isProhibited) {
         //System.Console.WriteLine("Giving Mono.CSharp a reference to " + assemblyShortName);
-        Evaluator.ReferenceAssembly(b);
+        evaluator.ReferenceAssembly(b);
       }
     }
 
@@ -115,13 +137,13 @@ class EvaluationHelper {
     // being loaded into our AppDomain asynchronously and just aren't done yet?
     // Regardless, attempting to hit them early and then trying again later
     // seems to work fine.
-    Evaluator.Run("using System;");
-    Evaluator.Run("using System.IO;");
-    Evaluator.Run("using System.Linq;");
-    Evaluator.Run("using System.Collections;");
-    Evaluator.Run("using System.Collections.Generic;");
-    Evaluator.Run("using UnityEditor;");
-    Evaluator.Run("using UnityEngine;");
+    evaluator.Run("using System;");
+    evaluator.Run("using System.IO;");
+    evaluator.Run("using System.Linq;");
+    evaluator.Run("using System.Collections;");
+    evaluator.Run("using System.Collections.Generic;");
+    evaluator.Run("using UnityEditor;");
+    evaluator.Run("using UnityEngine;");
   }
 
   public bool Init(ref bool isInitialized) {
@@ -184,8 +206,8 @@ class EvaluationHelper {
     }
 
     if(retVal) {
-      if(Evaluator.InteractiveBaseClass != typeof(UnityBaseClass))
-        Evaluator.InteractiveBaseClass = typeof(UnityBaseClass);
+      if(evaluator.InteractiveBaseClass != typeof(UnityBaseClass))
+        evaluator.InteractiveBaseClass = typeof(UnityBaseClass);
     }
     return retVal;
   }
@@ -223,7 +245,7 @@ class EvaluationHelper {
           consoleLogType = lType
         });
       });
-      res = Evaluator.Evaluate(tmpCode, out output, out hasOutput);
+      res = evaluator.Evaluate(tmpCode, out output, out hasOutput);
       //if(res == tmpCode)
       //  Debug.Log("Unfinished input...");
     } catch(Exception e) {
@@ -232,7 +254,7 @@ class EvaluationHelper {
         error = e.ToString().Trim() // TODO: Produce a stack trace a la Debug, and put it in stackTrace so we can filter it.
       });
 
-      output = new Evaluator.NoValueSet();
+      output = null;
       hasOutput = false;
       status = true; // Need this to avoid 'stickiness' where we let user
                      // continue editing due to incomplete code.
@@ -289,12 +311,21 @@ class EvaluationHelper {
   }
 }
 
+
 // WARNING: Absolutely NOT thread-safe!
 internal class EvaluatorProxy : ReflectionProxy {
   private static readonly Type _Evaluator = typeof(Evaluator);
-  private static readonly FieldInfo _fields = _Evaluator.GetField("fields", NONPUBLIC_STATIC);
+  private static readonly FieldInfo _fields = _Evaluator.GetField("fields", NONPUBLIC_INSTANCE);
 
-  internal static Hashtable fields { get { return (Hashtable)_fields.GetValue(null); } }
+  internal static Dictionary<string, Tuple<FieldSpec, FieldInfo>> fields {
+    get {
+      if(_fields != null) {
+        return (Dictionary<string, Tuple<FieldSpec, FieldInfo>>)_fields.GetValue(EvaluationHelper.evaluator);
+      } else {
+        return null;
+      }
+    }
+  }
 }
 
 
@@ -318,6 +349,7 @@ internal class TypeManagerProxy : ReflectionProxy {
   }
 }
 
+
 // Dummy class so we can output a string and bypass pretty-printing of it.
 public struct REPLMessage {
   public string msg;
@@ -325,6 +357,7 @@ public struct REPLMessage {
     msg = m;
   }
 }
+
 
 public class UnityBaseClass {
   private static readonly REPLMessage _help = new REPLMessage(@"UnityREPL v." + Shell.VERSION + @":
@@ -336,11 +369,11 @@ vars;     -- Show the variables you've created this session, and their current v
 
   public static REPLMessage vars {
     get {
-      Hashtable fields = EvaluatorProxy.fields;
-      StringBuilder tmp = new StringBuilder();
+      var fields = EvaluatorProxy.fields;
+      var tmp = new StringBuilder();
       // TODO: Sort this list...
-      foreach(DictionaryEntry kvp in fields) {
-        FieldInfo field = (FieldInfo)kvp.Value;
+      foreach(var kvp in fields) {
+        var field = kvp.Value.Item2;
         tmp
           .Append(TypeManagerProxy.CSharpName(field.FieldType))
           .Append(" ")

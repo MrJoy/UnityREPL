@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------
 //  Shell
-//  Copyright 2009-2013 Jon Frisby
+//  Copyright 2009-2014 Jon Frisby
 //  All rights reserved
 //
 //-----------------------------------------------------------------
@@ -28,6 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Mono.CSharp;
 
 
 // TODO:
@@ -37,7 +38,7 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   // Constants, specified here to keep things DRY.
   //----------------------------------------------------------------------------
-  public const string VERSION="1.0.0",
+  public const string VERSION="1.1.0",
                       COPYRIGHT="(C) Copyright 2009-2013 Jon Frisby\nAll rights reserved",
 
                       MAIN_PROMPT = "---->",
@@ -244,7 +245,7 @@ public class Shell : EditorWindow {
   // events.  Basically lets us deal with copy & paste, etc which GUI.TextArea
   // ordinarily does not support.
   private void FilterEditorInputs() {
-    Event evt = Event.current;
+    UnityEngine.Event evt = UnityEngine.Event.current;
     if(focusedWindow == this) {
       // Only attempt to grab this if our window has focus in order to make
       // indent/unindent menu items behave sanely.
@@ -291,7 +292,7 @@ public class Shell : EditorWindow {
           // TODO: Do we only want to do this only when the cursor is at the
           // TODO: end of the input?  (Avoids unexpectedly putting newlines in
           // TODO: the middle of peoples' input...)
-          if(Event.current.shift)
+          if(UnityEngine.Event.current.shift)
             codeToProcess = Paste(editorState, "\n", false);
           else
             doProcess = true;
@@ -353,7 +354,8 @@ public class Shell : EditorWindow {
     // with the focus will cause it to get reset.  So we need to capture and
     // restore it.
     if(focusedWindow == this) {
-      if((Event.current != null) && (Event.current.type == EventType.Repaint)) {
+      UnityEngine.Event current = UnityEngine.Event.current;
+      if((current != null) && (current.type == EventType.Repaint)) {
         if(selectedControl != desiredControl) {
           int p = 0, sp = 0;
           if(editorState != null) {
@@ -393,7 +395,7 @@ public class Shell : EditorWindow {
     GUILayout.EndHorizontal();
   }
 
-  private Hashtable fields = null;
+  private Dictionary<string, Tuple<FieldSpec, FieldInfo>> fields = null;
   public Vector2 scrollPosition = Vector2.zero;
   private void ShowVars() {
     if(fields == null)
@@ -407,18 +409,20 @@ public class Shell : EditorWindow {
           // TODO: This is gonna be WAY inefficient *AND* ugly.  Need a better
           // TODO: way to handle tabular data, and need a way to track what
           // TODO: has/hasn't changed here.
-          StringBuilder tmp = new StringBuilder();
-          foreach(DictionaryEntry kvp in fields) {
-            FieldInfo field = (FieldInfo)kvp.Value;
-            GUILayout.BeginHorizontal();
-              GUILayout.Label(TypeManagerProxy.CSharpName(field.FieldType));
-              GUILayout.Space(10);
-              GUILayout.Label((string)kvp.Key);
-              GUILayout.FlexibleSpace();
-              PrettyPrint.PP(tmp, field.GetValue(null));
-              GUILayout.Label(tmp.ToString());
-              tmp.Length = 0;
-            GUILayout.EndHorizontal();
+          if(fields != null) {
+            StringBuilder tmp = new StringBuilder();
+            foreach(var kvp in fields) {
+              var field = kvp.Value.Item2;
+              GUILayout.BeginHorizontal();
+                GUILayout.Label(TypeManagerProxy.CSharpName(field.FieldType));
+                GUILayout.Space(10);
+                GUILayout.Label((string)kvp.Key);
+                GUILayout.FlexibleSpace();
+                PrettyPrint.PP(tmp, field.GetValue(null));
+                GUILayout.Label(tmp.ToString());
+                tmp.Length = 0;
+              GUILayout.EndHorizontal();
+            }
           }
         GUILayout.EndVertical();
       GUILayout.EndHorizontal();
