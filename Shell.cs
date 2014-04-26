@@ -24,7 +24,6 @@
 using UnityEditor;
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -462,7 +461,7 @@ public class Shell : EditorWindow {
       GUILayout.Label("UnityREPL v." + Shell.VERSION, HelpStyles.Header);
       GUILayout.Label(Shell.COPYRIGHT, HelpStyles.Header);
 
-      GUILayout.Label("", HelpStyles.Content);
+      GUILayout.Label(GUIContent.none, HelpStyles.Content);
 
       showQuickStart = EditorGUILayout.Foldout(showQuickStart, "Quick Start", HelpStyles.SubHeader);
       if(showQuickStart) {

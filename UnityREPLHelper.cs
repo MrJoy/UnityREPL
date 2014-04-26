@@ -22,8 +22,7 @@ public class UnityREPLHelper {
   public static NumberedEditorState NumberedTextArea(string controlName, NumberedEditorState editorState) {
     // This is a WAG about Unity's box model.  Seems to work though, so... yeah.
     float effectiveWidgetHeight = 7 * GUI.skin.label.lineHeight
-      + GUI.skin.label.padding.top + GUI.skin.label.padding.bottom
-    ;
+      + GUI.skin.label.padding.top + GUI.skin.label.padding.bottom;
     Rect r = EditorGUILayout.BeginVertical();
     if(r.width > 0) {
       editorState.scrollViewWidth = r.width;

@@ -47,7 +47,7 @@ public class LogEntry {
     get { return _stackTrace; }
     set {
       string tmp = value;
-      if(tmp.EndsWith("\n")) {
+      if(tmp.EndsWith("\n", StringComparison.Ordinal)) {
         tmp = tmp.Substring(0, tmp.Length - 1);
       }
       if(_stackTrace != tmp) {
@@ -70,7 +70,7 @@ public class LogEntry {
           foreach(string entry in traceEntries) {
             bool filter = false;
 
-            int i = entry.IndexOf(") (");
+            int i = entry.IndexOf(") (", StringComparison.Ordinal);
             string signature, position;
             if(i > 0) {
               signature = entry.Substring(0, i + 1);
@@ -87,13 +87,13 @@ public class LogEntry {
               string methodSignature = signaturePieces[1];
 
               if((classDesignation == "UnityEngine.Debug" && position == "") ||
-                 (classDesignation.StartsWith("Class") && methodSignature == "Host(Object&)" && position == "") ||
+                 (classDesignation.StartsWith("Class", StringComparison.Ordinal) && methodSignature == "Host(Object&)" && position == "") ||
                  (classDesignation == "Mono.CSharp.Evaluator" && methodSignature == "Evaluate(String, Object&, Boolean&)" && position == "") ||
-                 (classDesignation == "EvaluationHelper" && methodSignature == "Eval(List`1, String)" && position.IndexOf("UnityREPL/Evaluator.cs") >= 0) ||
-                 (classDesignation == "Shell" && methodSignature == "Update()" && position.IndexOf("UnityREPL/Shell.cs") >= 0) ||
-                 (classDesignation == "UnityEditor.EditorApplication" && methodSignature == "Internal_CallUpdateFunctions()" && position == "")
-                 )
+                 (classDesignation == "EvaluationHelper" && methodSignature == "Eval(List`1, String)" && position.IndexOf("UnityREPL/Evaluator.cs", StringComparison.Ordinal) >= 0) ||
+                 (classDesignation == "Shell" && methodSignature == "Update()" && position.IndexOf("UnityREPL/Shell.cs", StringComparison.Ordinal) >= 0) ||
+                 (classDesignation == "UnityEditor.EditorApplication" && methodSignature == "Internal_CallUpdateFunctions()" && position == "")) {
                 filter = true;
+              }
             } else {
               // WTF?!
             }
@@ -101,12 +101,14 @@ public class LogEntry {
             if(!filter)
               filteredTraceEntries.Add(entry);
           }
-          StringBuilder sb = new StringBuilder();
-          foreach(string s in filteredTraceEntries)
+          var sb = new StringBuilder();
+          foreach(var s in filteredTraceEntries) {
             sb.Append(s).Append("\n");
-          string tmp = sb.ToString();
-          if(tmp.Length > 0)
+          }
+          var tmp = sb.ToString();
+          if(tmp.Length > 0) {
             tmp = tmp.Substring(0, tmp.Length - 1);
+          }
           _filteredStackTrace = tmp;
         } else {
           _filteredStackTrace = null;
@@ -119,13 +121,12 @@ public class LogEntry {
   public LogType consoleLogType;
 
   public void Add(LogEntry child) {
-    if(children == null)
-      children = new List<LogEntry>();
+    children = children ?? new List<LogEntry>();
     children.Add(child);
   }
 
   public bool OnGUI(bool filterTraces) {
-    bool retVal = false;
+    var retVal = false;
     switch(logEntryType) {
       case LogEntryType.MetaCommand:
       case LogEntryType.Command:
@@ -134,7 +135,7 @@ public class LogEntry {
           }
           if(shortCommand == null) {
             command = command.TrimEnd();
-            string[] commandList = command.Split(newline, 2);
+            var commandList = command.Split(newline, 2);
             shortCommand = commandList[0];
             if(hasChildren || command != shortCommand) {
               isExpandable = true;
@@ -144,14 +145,15 @@ public class LogEntry {
             GUILayout.BeginHorizontal();
               isExpanded = GUILayout.Toggle(isExpanded, (isExpanded) ? command: shortCommand, LogEntryStyles.FoldoutCommandStyle, GUILayout.ExpandWidth(false));
               GUILayout.FlexibleSpace(); // HelpBox, minibutton, OL Plus
-              retVal = GUILayout.Button("", LogEntryStyles.FoldoutCopyContentStyle);
+              retVal = GUILayout.Button(GUIContent.none, LogEntryStyles.FoldoutCopyContentStyle);
             GUILayout.EndHorizontal();
             if(isExpanded && hasChildren) {
               GUILayout.BeginHorizontal();
                 GUILayout.Space(15);
                 GUILayout.BeginVertical();
-                  foreach(LogEntry le in children)
+                  foreach(LogEntry le in children) {
                     le.OnGUI(filterTraces);
+                  }
                 GUILayout.EndVertical();
               GUILayout.EndHorizontal();
             }
@@ -160,7 +162,7 @@ public class LogEntry {
               GUILayout.Space(13);
               GUILayout.Label(command, LogEntryStyles.DefaultCommandStyle);
               GUILayout.FlexibleSpace();
-              retVal = GUILayout.Button("", LogEntryStyles.FoldoutCopyContentStyle);
+              retVal = GUILayout.Button(GUIContent.none, LogEntryStyles.FoldoutCopyContentStyle);
             GUILayout.EndHorizontal();
           }
         break;
