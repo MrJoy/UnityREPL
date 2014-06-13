@@ -121,77 +121,134 @@ public class Shell : EditorWindow {
   public void OnLostFocus() { editorState = null; }
   public void OnDestroy()   { editorState = null; }
 
-  public string Indent(TextEditor editor) {
-    if(editor.hasSelection) {
-      string codeToIndent = editor.SelectedText;
-      string[] rawLines = codeToIndent.Split('\n');
-      for(int i = 0; i < rawLines.Length; i++) {
-        rawLines[i] = '\t' + rawLines[i];
+  protected void FindSelectionBounds(TextEditor editor, string[] rawLines, out int startLine, out int endLine, out bool startAtBOL, out bool endAtBOL) {
+    bool      selectingBackwards  = editor.pos < editor.selectPos;
+    int       selectionStart      = selectingBackwards ? editor.pos : editor.selectPos,
+              selectionEnd        = selectingBackwards ? editor.selectPos : editor.pos,
+              counter             = 0,
+              curLine             = 0;
+
+    startLine   = endLine   = -1;
+    startAtBOL  = endAtBOL  = false;
+    while((counter <= selectionEnd) && (curLine < rawLines.Length)) {
+      int curLineLen = rawLines[curLine].Length;
+Debug.Log(">>>" + startLine + ","+counter+","+selectionStart+","+curLine);
+      if(startLine == -1 && (counter + curLineLen) >= selectionStart) {
+// Debug.Log("Found BOS at "+curLine);
+        startLine   = curLine;
+        startAtBOL  = counter == selectionStart;
       }
-
-      // Eep!  We don't want to indent a trailing empty line because that means
-      // the user had a 'perfect' block selection and we're accidentally
-      // indenting the next line.  Yuck!
-      if(rawLines[rawLines.Length - 1] == "\t")
-        rawLines[rawLines.Length - 1] = "";
-
-      return Paste(editor, String.Join("\n", rawLines), true);
-    } else {
-      string[] rawLines = codeToProcess.Split('\n');
-      int counter = -1, curLine = 0;
-      while((counter < editor.pos) && (curLine < rawLines.Length))
-        counter += rawLines[curLine++].Length + 1; // The +1 is for the \n.
-
-      if(counter >= editor.pos) {
-        curLine--;
-        rawLines[curLine] = '\t' + rawLines[curLine];
-        editor.pos++;
-        editor.selectPos++;
-        codeToProcess = String.Join("\n", rawLines);
+      if(endLine == -1 && (counter + curLineLen) >= selectionEnd) {
+// Debug.Log("Found EOSat "+curLine);
+        endLine   = curLine;
+        endAtBOL  = counter == selectionEnd;
       }
-
-      return codeToProcess;
+      counter += rawLines[curLine++].Length + 1; // The +1 is for the \n.
     }
+    if(startLine == -1)     startLine = curLine - 1;
+    if(endLine == -1)       endLine   = curLine - 1;
+    if(endAtBOL)            endLine--; // Don't shift end of block-selection over on unindent.
+    if(endLine < startLine) endLine = startLine;
+Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selectionEnd + "; " + startLine + ".." + endLine);
+  }
+
+  // TODO: Need to handle multiple spaces as tabs...
+  // TODO: Make sure we're using a FIXED WIDTH FONT. >.<
+  // TODO: Indent/unindent whole lines only -- not in middle of string!
+  public string Indent(TextEditor editor) {
+    string[]  rawLines            = codeToProcess.Split('\n');
+    bool      selectingBackwards  = editor.pos < editor.selectPos,
+              startAtBOL,
+              endAtBOL;
+    int       startLine,
+              endLine;
+    FindSelectionBounds(editor, rawLines, out startLine, out endLine, out startAtBOL, out endAtBOL);
+
+    for(int i = startLine; i <= endLine; i++)
+      rawLines[i] = '\t' + rawLines[i]; // TODO: Make space vs. tab indentation configurable.
+
+    int endShift = endLine - startLine;
+    endShift++;
+    // Shift the selection to compensate for the tabs...
+    if(editor.pos != editor.selectPos) {
+      editor.pos         += selectingBackwards ? 1        : endShift;
+      editor.selectPos   += selectingBackwards ? endShift : 1;
+      if(startAtBOL) {
+        editor.pos       -= selectingBackwards ? 1 : 0;
+        editor.selectPos -= selectingBackwards ? 0 : 1;
+      }
+      if(!endAtBOL) {
+        editor.pos       += selectingBackwards ? 0 : 1;
+        editor.selectPos += selectingBackwards ? 1 : 0;
+      }
+    } else {
+      editor.pos        += endShift;
+      editor.selectPos  += endShift;
+    }
+
+
+    codeToProcess       = String.Join("\n", rawLines);
+    return codeToProcess;
   }
 
   public string Unindent(TextEditor editor) {
-    if(editor.hasSelection) {
-      string codeToIndent = editor.SelectedText;
-      string[] rawLines = codeToIndent.Split('\n');
-      for(int i = 0; i < rawLines.Length; i++) {
-        if(rawLines[i].StartsWith("\t"))
-          rawLines[i] = rawLines[i].Substring(1);
-      }
-      return Paste(editor, String.Join("\n", rawLines), true);
-    } else {
-      string[] rawLines = codeToProcess.Split('\n');
-      int counter = 0, curLine = 0;
-      while((counter < editor.pos) && (curLine < rawLines.Length))
-        counter += rawLines[curLine++].Length + 1; // The +1 is for the \n.
+    string[]  rawLines            = codeToProcess.Split('\n');
+    bool      selectingBackwards  = editor.pos < editor.selectPos,
+              startAtBOL,
+              endAtBOL;
+    int       startLine,
+              endLine;
+    FindSelectionBounds(editor, rawLines, out startLine, out endLine, out startAtBOL, out endAtBOL);
 
-      if(counter >= editor.pos) {
-        // If counter == editor.pos, then the cursor is at the beginning of a
-        // line and we run into a couple annoying issues where the logic here
-        // acts as though it should be operating on the previous line (OY!).
-        // SO.  To that end, we treat that as a bit of a special-case.  We
-        // don't decrement the current line counter if cursor is at start of
-        // line:
-        if(counter > editor.pos) curLine--;
-        if(rawLines[curLine].StartsWith("\t")) {
-          rawLines[curLine] = rawLines[curLine].Substring(1);
-          // AAAAAAAAAND, we don't try to unindent the cursor.  Although, truth
-          // be told, we should probably preserve the TextMate-esaue edit
-          // behavior of having the cursor not move when changing indentation.
-          if(counter > editor.pos) {
-            editor.pos--;
-            editor.selectPos--;
+    int startDeletions = 0, endDeletions = 0;
+    for(int i = startLine; i <= endLine; i++) {
+      if(rawLines[i].StartsWith("\t")) {
+        rawLines[i] = rawLines[i].Substring(1);
+        if(i == 0 && !startAtBOL) startDeletions++;
+        endDeletions++;
+      } else {
+        for(int j = 0; j < 4; j++) { // TODO: make spaces-per-tab configurable!
+          if(rawLines[i].StartsWith(" ")) {
+            rawLines[i] = rawLines[i].Substring(1);
+            if(i == 0 && !startAtBOL) startDeletions++;
+            endDeletions++;
+          } else {
+            j = 4; // Don't eat a space after a non-space.
           }
-          codeToProcess = String.Join("\n", rawLines);
         }
       }
-
-      return codeToProcess;
     }
+
+    // Shift the selection to compensate for the tabs...
+    if(editor.pos != editor.selectPos) {
+      // if(!startAtBOL) {
+        // editor.pos         -= selectingBackwards ? deleted : 0;
+        // editor.selectPos   -= selectingBackwards ? 0 : deleted;
+        editor.pos       -= selectingBackwards ? startDeletions : endDeletions;
+        editor.selectPos -= selectingBackwards ? endDeletions : startDeletions;
+        // editor.pos       += selectingBackwards ? deleted : 0;
+        // editor.selectPos += selectingBackwards ? 0 : deleted;
+      // }
+      // if(endAtBOL) {
+        // editor.pos       -= selectingBackwards ? 0 : 1;
+        // editor.selectPos -= selectingBackwards ? 1 : 0;
+        // editor.pos       -= selectingBackwards ? 0 : endDeletions;
+        // editor.selectPos -= selectingBackwards ? endDeletions : 0;
+      // }
+    } else {
+      if(!startAtBOL) {
+        if(endAtBOL) {
+          editor.pos        -= startDeletions;
+          editor.selectPos  -= startDeletions;
+        } else {
+          editor.pos        -= endDeletions;
+          editor.selectPos  -= endDeletions;
+        }
+      }
+    }
+
+    codeToProcess       = String.Join("\n", rawLines);
+    return codeToProcess;
   }
 
   public string Paste(TextEditor editor, string textToPaste, bool continueSelection) {
@@ -564,10 +621,8 @@ public class Shell : EditorWindow {
     HandleInputFocusAndStateForEditor();
 
     EditorGUILayoutToolbar.Begin();
-      if(GUILayout.Button("Clear Log", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false)))
-        Debug.ClearDeveloperConsole();
-
-      EditorGUILayoutToolbar.Space();
+      // if(GUILayout.Button("Clear Log", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false)))
+      //   Debug.ClearDeveloperConsole();
 
       showVars = GUILayout.Toggle(showVars, "Locals", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
 
