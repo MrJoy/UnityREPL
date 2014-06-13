@@ -102,9 +102,6 @@ public class EvaluationHelper {
     "UnityEditor.Graphs",
 
     "@@EXTENSIONS@@",
-    // "UnityEditor.BB10.Extensions",
-    // "UnityEditor.iOS.Extensions",
-    // "UnityEditor.Android.Extensions",
 
     "Assembly-CSharp-firstpass",
     "Assembly-UnityScript-firstpass",
@@ -282,15 +279,15 @@ public class EvaluationHelper {
       }
       res = evaluator.Evaluate(tmpCode, out output, out hasOutput);
     } catch(Exception e) {
-      Debug.Log("Ooga booga");
+      // Store this to use below...
       ex = e;
     } finally {
       // TODO: Add a debugging button to the UI. >.<
-      Debug.Log(
-        tmpCode + "\n\n" +
-        "Output (hasOutput == " + (hasOutput) + ", null? == " + (output == null) + "):\n" + output + "\n\n" +
-        "Res (null? == " + (res == null) + "):\n" + res
-      );
+      // Debug.Log(
+      //   tmpCode + "\n\n" +
+      //   "Output (hasOutput == " + (hasOutput) + ", null? == " + (output == null) + "):\n" + output + "\n\n" +
+      //   "Res (null? == " + (res == null) + "):\n" + res
+      // );
     }
 
     //  hasOutput,  output==null, res==null,  throws?,  error-output?,  use-case                                    outcome
@@ -307,7 +304,8 @@ public class EvaluationHelper {
 
     if(hasOutput)                   logOutput     = true;   // Apparently, we has OUTPUT!
     if(ex != null)                  logException  = true;   // Always log any exceptions we get.
-    if(res != null && !logReports)  resetInput    = false;  // Incomplete input
+    if(res != null && !logReports)  resetInput    = false;  // Incomplete input.
+    if(logReports)                  resetInput    = false;  // Syntax error.
 
     // Handle Outcomes...
     if(resetInput)      Debug.Log(code);
@@ -315,12 +313,9 @@ public class EvaluationHelper {
     if(logException)    Debug.LogException(ex);
     if(logReports) {
       foreach(var msg in reporter.Messages) {
-        Debug.Log(msg.MessageType);
         // TODO: Handle msg.RelatedSymbols...
         if(msg.IsWarning)
           Debug.LogWarning(msg.Text);
-        // else if(msg.IsError)
-        //   Debug.LogError(msg.Text);
         else
           Debug.LogError(msg.Text);
       }
