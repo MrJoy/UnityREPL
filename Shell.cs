@@ -37,7 +37,7 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   // Constants, specified here to keep things DRY.
   //----------------------------------------------------------------------------
-  public const string VERSION="1.1.0",
+  public const string VERSION="2.0.0",
                       COPYRIGHT="(C) Copyright 2009-2014 Jon Frisby\nAll rights reserved",
 
                       MAIN_PROMPT = "---->",
@@ -48,8 +48,6 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   private EvaluationHelper helper = new EvaluationHelper();
 
-  public List<LogEntry> logEntries = new List<LogEntry>();
-
 
   [System.NonSerialized]
   private bool isInitialized = false;
@@ -58,10 +56,8 @@ public class Shell : EditorWindow {
     if(doProcess) {
       if(helper.Init(ref isInitialized)) {
         doProcess = false;
-        bool compiledCorrectly = helper.Eval(logEntries, codeToProcess);
-        if(compiledCorrectly) {
-          resetCommand = true;
-        } else {
+        resetCommand = helper.Eval(codeToProcess);
+        if(!resetCommand) {
           // Continue with that enter the user pressed...  Yes, this is an ugly
           // way to handle it.
           codeToProcess = Paste(editorState, "\n", false);
@@ -78,11 +74,13 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   // Code Editor Functionality
   //----------------------------------------------------------------------------
-  private bool doProcess = false, useContinuationPrompt = false, resetCommand = false;
-  private string codeToProcess = "";
-
-  // WARNING: Undocumented spookiness from deep within the bowels of Unity!
-  public TextEditor editorState = null;
+  private bool      doProcess             = false,
+                    useContinuationPrompt = false,
+                    resetCommand          = false;
+  private string    codeToProcess         = "";
+  public TextEditor editorState           = null; // WARNING: Undocumented spookiness
+                                                  // from deep within the bowels
+                                                  // of Unity!
 
   // Need to use menu items because otherwise we don't receive events for cmd-]
   // and cmd-[.
@@ -119,9 +117,9 @@ public class Shell : EditorWindow {
   // Make our state object go away if we do, or if we lose focus, or whatnot
   // to ensure menu items disable properly regardless of possible dangling
   // references, etc.
-  public void OnDisable() { editorState = null; }
+  public void OnDisable()   { editorState = null; }
   public void OnLostFocus() { editorState = null; }
-  public void OnDestroy() { editorState = null; }
+  public void OnDestroy()   { editorState = null; }
 
   public string Indent(TextEditor editor) {
     if(editor.hasSelection) {
@@ -354,18 +352,20 @@ public class Shell : EditorWindow {
     // restore it.
     if(focusedWindow == this) {
       UnityEngine.Event current = UnityEngine.Event.current;
-      if((current != null) && (current.type == EventType.Repaint)) {
-        if(selectedControl != desiredControl) {
-          int p = 0, sp = 0;
-          if(editorState != null) {
-            p = editorState.pos;
-            sp = editorState.selectPos;
-          }
-          GUI.FocusControl(desiredControl);
-          if(editorState != null) {
-            editorState.pos = p;
-            editorState.selectPos = sp;
-          }
+      if(current == null) return;
+      if(current.type != EventType.Repaint) return;
+
+      if(selectedControl != desiredControl) {
+        int p   = 0,
+            sp  = 0;
+        if(editorState != null) {
+          p   = editorState.pos;
+          sp  = editorState.selectPos;
+        }
+        GUI.FocusControl(desiredControl);
+        if(editorState != null) {
+          editorState.pos = p;
+          editorState.selectPos = sp;
         }
       }
     }
@@ -429,23 +429,6 @@ public class Shell : EditorWindow {
     EditorGUILayout.EndScrollView();
   }
 
-  public Vector2 logScrollPos;
-  private int numEntriesLastSeen = -1;
-  private void ShowLog() {
-    // TODO: Auto-scroll to the end if a message comes in and we're already at
-    // TODO: the end...
-    logScrollPos = EditorGUILayout.BeginScrollView(logScrollPos);
-    if(numEntriesLastSeen != logEntries.Count) {
-      numEntriesLastSeen = logEntries.Count;
-      logScrollPos.y = float.MaxValue;
-    }
-    foreach(LogEntry le in logEntries) {
-      if(le.OnGUI(filterTraces)) {
-        codeToProcess = le.command;
-      }
-    }
-    EditorGUILayout.EndScrollView();
-  }
   private const string editorControlName = "REPLEditor";
   //----------------------------------------------------------------------------
 
@@ -571,29 +554,22 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   // Tying It All Together...
   //----------------------------------------------------------------------------
-  public bool showVars = true, showLog = true, filterTraces = true, showHelp = false;
+  public bool showVars = true, filterTraces = true, showHelp = false;
   // TODO: Save pane sizing states...
-  private VerticalPaneState paneConfiguration = new VerticalPaneState() {
-    minPaneHeightTop = 65,
-    minPaneHeightBottom = 100
-  };
+  // private VerticalPaneState paneConfiguration = new VerticalPaneState() {
+  //   minPaneHeightTop = 65,
+  //   minPaneHeightBottom = 100
+  // };
   public void OnGUI() {
     HandleInputFocusAndStateForEditor();
 
     EditorGUILayoutToolbar.Begin();
       if(GUILayout.Button("Clear Log", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false)))
-        logEntries.Clear();
+        Debug.ClearDeveloperConsole();
 
       EditorGUILayoutToolbar.Space();
 
       showVars = GUILayout.Toggle(showVars, "Locals", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
-      showLog = GUILayout.Toggle(showLog, "Log", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
-
-      if(showLog) {
-        EditorGUILayoutToolbar.Space();
-
-        filterTraces = GUILayout.Toggle(filterTraces, "Filter", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
-      }
 
       EditorGUILayoutToolbar.FlexibleSpace();
 
@@ -605,19 +581,7 @@ public class Shell : EditorWindow {
       ShowHelp();
     } else {
       ShowEditor();
-
-      if(showVars && showLog) {
-        EditorGUILayoutVerticalPanes.Begin(paneConfiguration);
-          ShowVars();
-        EditorGUILayoutVerticalPanes.Splitter();
-          ShowLog();
-        EditorGUILayoutVerticalPanes.End();
-      } else {
-        if(showVars)
-          ShowVars();
-        else if(showLog)
-          ShowLog();
-      }
+      if(showVars) ShowVars();
     }
   }
 

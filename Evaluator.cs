@@ -17,138 +17,187 @@ using System.Text;
 using System.IO;
 using Mono.CSharp;
 
-class EvaluationHelper {
-  private TextWriter outWriter, errWriter;
-  private StringWriter reportOutWriter = new StringWriter(),
-                       reportErrorWriter = new StringWriter();
+class DebugReportPrinter : ReportPrinter {
+  List<AbstractMessage> messages = new List<AbstractMessage>();
+  public List<AbstractMessage> Messages { get { return messages; } }
 
-  private static ReportPrinter reporter = new ConsoleReportPrinter();
-  private static CompilerSettings settings = new CompilerSettings();
-  private static CompilerContext context = new CompilerContext(settings, reporter);
-  public static readonly Evaluator evaluator = new Evaluator(context);
+  // public bool MissingTypeReported (ITypeDefinition typeDefinition) {
+  //   if (this.reported_missing_definitions == null)
+  //     this.reported_missing_definitions = new HashSet<ITypeDefinition> ();
+  //   if (this.reported_missing_definitions.Contains (typeDefinition))
+  //     return true;
+  //   this.reported_missing_definitions.Add (typeDefinition);
+  //   return false;
+  // }
 
-  public EvaluationHelper() {
-    FluffReporter();
-    TryLoadingAssemblies();
-    FlushMessages();
+  // protected void Print (AbstractMessage msg, TextWriter output, bool showFullPath) {
+  //   StringBuilder stringBuilder = new StringBuilder ();
+  //   if (!msg.Location.IsNull) {
+  //     if (showFullPath)
+  //       stringBuilder.Append (msg.Location.ToStringFullName ());
+  //     else
+  //       stringBuilder.Append (msg.Location.ToString ());
+  //     stringBuilder.Append (" ");
+  //   }
+  //   stringBuilder.AppendFormat ("{0} CS{1:0000}: {2}", msg.MessageType, msg.Code, msg.Text);
+  //   if (!msg.IsWarning)
+  //     output.WriteLine (this.FormatText (stringBuilder.ToString ()));
+  //   else
+  //     output.WriteLine (stringBuilder.ToString ());
+  //   if (msg.RelatedSymbols != null) {
+  //     string[] relatedSymbols = msg.RelatedSymbols;
+  //     for (int i = 0; i < relatedSymbols.Length; i++) {
+  //       string str = relatedSymbols [i];
+  //       output.WriteLine (str + msg.MessageType + ")");
+  //     }
+  //   }
+  // }
+
+  public override void Print(AbstractMessage msg, bool showFullPath) {
+    base.Print(msg, showFullPath);
+    messages.Add(msg);
   }
 
-  private bool CatchMessages(LogEntry cmdEntry, bool status) {
-    StringBuilder outBuffer = reportOutWriter.GetStringBuilder();
-    StringBuilder errBuffer = reportErrorWriter.GetStringBuilder();
-
-    string tmpOut = outBuffer.ToString().Trim(),
-           tmpErr = errBuffer.ToString().Trim();
-
-    outBuffer.Length = 0;
-    errBuffer.Length = 0;
-
-    if(outWriter != null)
-      Console.SetOut(outWriter);
-    if(errWriter != null)
-      Console.SetError(errWriter);
-
-    if(!String.IsNullOrEmpty(tmpOut)) {
-      cmdEntry.Add(new LogEntry() {
-        logEntryType = LogEntryType.SystemConsoleOut,
-        error = tmpOut
-      });
-      status = false;
-    }
-    if(!String.IsNullOrEmpty(tmpErr)) {
-      cmdEntry.Add(new LogEntry() {
-        logEntryType = LogEntryType.SystemConsoleErr,
-        error = tmpErr
-      });
-      status = false;
-    }
-    return status;
+  public new void Reset() {
+    base.Reset();
+    messages.Clear();
   }
+}
 
-  private bool CatchMessages(bool status) {
-    StringBuilder outBuffer = reportOutWriter.GetStringBuilder(),
-                  errBuffer = reportErrorWriter.GetStringBuilder();
+public class EvaluationHelper {
+  private static DebugReportPrinter reporter  = new DebugReportPrinter();
+  private static CompilerSettings   settings  = new CompilerSettings();
+  private static CompilerContext    context   = new CompilerContext(settings, reporter);
+  public static readonly Evaluator  evaluator = new Evaluator(context);
 
-    string tmpOut = outBuffer.ToString().Trim(),
-           tmpErr = errBuffer.ToString().Trim();
-
-    outBuffer.Length = 0;
-    errBuffer.Length = 0;
-
-    if(outWriter != null)
-      Console.SetOut(outWriter);
-    if(errWriter != null)
-      Console.SetError(errWriter);
-
-    if(!String.IsNullOrEmpty(tmpOut) || !String.IsNullOrEmpty(tmpErr)) {
-      status = false;
-    }
-    return status;
-  }
-
-  protected void FlushMessages() {
-    StringBuilder outBuffer = reportOutWriter.GetStringBuilder(),
-                  errBuffer = reportErrorWriter.GetStringBuilder();
-
-    outBuffer.Length = 0;
-    errBuffer.Length = 0;
-  }
-
-  protected void FluffReporter() {
-    if(outWriter == null)
-      outWriter = Console.Out;
-    if(errWriter == null)
-      errWriter = Console.Error;
-
-    Console.SetOut(reportOutWriter);
-    Console.SetError(reportErrorWriter);
-
-    FlushMessages();
-  }
-
-  private static string[] PROHIBITED_FRAMEWORKS = {
-    "nunit.framework", "mscorlib", "Mono.CSharp", "UnityDomainLoad",
-    "interactive", "eval-"
+  private static string[] ASSEMBLIES_TO_IGNORE = {
+    "mscorlib",
+    "System",
+    "System.Core",
+    "Mono.CSharp"
   };
-  protected void TryLoadingAssemblies() {
-    foreach(var b in AppDomain.CurrentDomain.GetAssemblies()) {
-      var isProhibited = false;
-      var assemblyShortName = b.GetName().Name;
-      foreach(var prohibitedName in PROHIBITED_FRAMEWORKS) {
-        if(assemblyShortName.StartsWith(prohibitedName, StringComparison.Ordinal)) {
-          isProhibited = true;
-          break;
-        }
-      }
+  private static string[] ASSEMBLIES_TO_REFERENCE = {
+    "System.Configuration",
+    "System.Xml",
 
-      if(!isProhibited) {
-        //Console.WriteLine("Giving Mono.CSharp a reference to " + assemblyShortName);
-        evaluator.ReferenceAssembly(b);
+    "Mono.Security",
+    "Mono.Cecil",
+
+    "nunit.framework",
+    "ICSharpCode.NRefactory",
+
+    "UnityScript",
+    "UnityScript.Lang",
+    "Boo.Lang",
+    "Boo.Lang.Parser",
+    "Boo.Lang.Compiler",
+    "Unity.IvyParser",
+    "Unity.DataContract",
+    "Unity.PackageManager",
+    "Unity.Locator",
+
+    "UnityEngine",
+
+    "UnityEditor",
+    "UnityEditor.Graphs",
+
+    "@@EXTENSIONS@@",
+    // "UnityEditor.BB10.Extensions",
+    // "UnityEditor.iOS.Extensions",
+    // "UnityEditor.Android.Extensions",
+
+    "Assembly-CSharp-firstpass",
+    "Assembly-UnityScript-firstpass",
+    "Assembly-Boo-firstpass",
+    "Assembly-CSharp",
+    "Assembly-UnityScript",
+    "Assembly-Boo",
+    "Assembly-CSharp-Editor-firstpass",
+    "Assembly-UnityScript-Editor-firstpass",
+    "Assembly-Boo-Editor-firstpass",
+    "Assembly-CSharp-Editor",
+    "Assembly-UnityScript-Editor",
+    "Assembly-Boo-Editor"
+  };
+
+  private bool IsPlatformSupportAssembly(string shortName) {
+    return shortName.StartsWith("UnityEditor.") &&
+           shortName.EndsWith(".Extensions");
+  }
+
+  private bool IsExpected(string shortName) {
+    foreach(var name in ASSEMBLIES_TO_REFERENCE)
+      if(shortName == name) return true;
+    return false;
+  }
+
+  private bool IsIgnored(string shortName) {
+    foreach(var name in ASSEMBLIES_TO_IGNORE)
+      if(shortName == name) return true;
+    return false;
+  }
+
+  // public static Assembly channel;
+  protected void TryLoadingAssemblies() {
+    Dictionary<string,Assembly> assemblyMap = new Dictionary<string,Assembly>();
+    HashSet<string> extensionAssemblies = new HashSet<string>();
+    HashSet<string> unknownAssemblies = new HashSet<string>();
+    foreach(var b in AppDomain.CurrentDomain.GetAssemblies()) {
+      string  shortName   = b.GetName().Name;
+      bool    isExpected  = IsExpected(shortName),
+              isSupport   = IsPlatformSupportAssembly(shortName),
+              isIgnored   = IsIgnored(shortName);
+      if(isSupport)
+        extensionAssemblies.Add(shortName);
+      if(!isIgnored) {
+        if(!isExpected && !isSupport)
+          unknownAssemblies.Add(shortName);
+        assemblyMap[shortName] = b;
       }
     }
-    // TODO: Load app frameworks last, and in proper order, which I believe is:
-    // TODO: Assembly-CSharp-firstpass
-    // TODO: Assembly-UnityScript-firstpass
-    // TODO: Assembly-CSharp
-    // TODO: Assembly-UnityScript
-    // TODO: Assembly-CSharp-Editor
-    // TODO: Assembly-UnityScript-Editor
+    foreach(var name in ASSEMBLIES_TO_REFERENCE) {
+      if(name == "@@EXTENSIONS@@") {
+        foreach(var extName in extensionAssemblies) {
+          // Debug.Log("Loading Platform Support Assembly: " + extName);
+          try { evaluator.ReferenceAssembly(assemblyMap[extName]); }
+          catch {}
+        }
+        foreach(var unkName in unknownAssemblies) {
+          // Debug.Log("Loading Plugin(?) Assembly: " + unkName);
+          try { evaluator.ReferenceAssembly(assemblyMap[unkName]); }
+          catch {}
+        }
+      } else {
+        // Debug.Log("Loading Assembly: " + name);
+        try { evaluator.ReferenceAssembly(assemblyMap[name]); }
+        catch {}
+      }
+    }
 
-    // TODO: Load Unity and other frameworks in proper order as well.
+    // int i = 0;
+    // foreach(var b in AppDomain.CurrentDomain.GetAssemblies()) {
+    //   string  shortName   = b.GetName().Name;
+    //   bool    isExpected  = IsExpected(shortName),
+    //           isSupport   = IsPlatformSupportAssembly(shortName),
+    //           isIgnored   = IsIgnored(shortName);
 
-    // These won't work the first time through after an assembly reload.  No
-    // clue why, but the Unity* namespaces don't get found.  Perhaps they're
-    // being loaded into our AppDomain asynchronously and just aren't done yet?
-    // Regardless, attempting to hit them early and then trying again later
-    // seems to work fine.
+    //   if(!isIgnored && !isExpected && !isSupport) {
+    //     channel = b;
+    //     i += 1;
+    //     evaluator.Run("var assembly" + i.ToString() + " = EvaluationHelper.channel;");
+    //   }
+    // }
 
-    // TODO: Figure out how to ignore this message:
-    // (1,2): warning CS0105: The using directive for `System.Collections.Generic' appeared previously in this namespace
+    // TODO: Anything else we should toss in here?
     evaluator.Run("using System;");
     evaluator.Run("using System.IO;");
+    // evaluator.Run("using System.IO.Pipes;");
     evaluator.Run("using System.Linq;");
+    evaluator.Run("using System.Linq.Expressions;");
     evaluator.Run("using System.Collections;");
     evaluator.Run("using System.Collections.Generic;");
+    evaluator.Run("using System.Reflection;");
+    evaluator.Run("using System.Text;");
     evaluator.Run("using UnityEditor;");
     evaluator.Run("using UnityEngine;");
   }
@@ -158,7 +207,6 @@ class EvaluationHelper {
     // actually needed but seems prudent to be wary of it.
     if(EditorApplication.isCompiling) return false;
 
-    FluffReporter();
     /*
     We need to tell the evaluator to reference stuff we care about.  Since
     there's a lot of dynamically named stuff that we might want, we just pull
@@ -201,13 +249,7 @@ class EvaluationHelper {
     if(!isInitialized) {
       TryLoadingAssemblies();
 
-      var cmdEntry = new LogEntry() {
-        logEntryType = LogEntryType.MetaCommand,
-        command = "Attempting to load assemblies..."
-      };
-      retVal = CatchMessages(cmdEntry, true);
-      if(!retVal)
-        isInitialized = true;
+      isInitialized = true;
     } else {
       retVal = true;
     }
@@ -219,102 +261,81 @@ class EvaluationHelper {
     return retVal;
   }
 
+  [System.NonSerialized]
   private StringBuilder outputBuffer = new StringBuilder();
 
-  public bool Eval(List<LogEntry> logEntries, string code) {
+  public bool Eval(string code, bool isRetry = false) {
     EditorApplication.LockReloadAssemblies();
 
-    bool status = false,
-         hasOutput = false,
-         hasAddedLogToEntries = false;
-    object output = null;
-    string res = null,
-           tmpCode = code.Trim();
-    LogEntry cmdEntry = new LogEntry() {
-      logEntryType = LogEntryType.Command,
-      command = tmpCode
-    };
+    bool      hasOutput       = false;
+    object    output          = null;
+    string    res             = null,
+              tmpCode         = code.Trim();
+    Exception ex              = null;
 
     try {
-      FluffReporter();
-
       if(tmpCode.StartsWith("=", StringComparison.Ordinal)) {
         // Special case handling of calculator mode.  The problem is that
         // expressions involving multiplication are grammatically ambiguous
         // without a var declaration or some other grammatical construct.
         tmpCode = "(" + tmpCode.Substring(1, tmpCode.Length - 1) + ");";
       }
-      Application.RegisterLogCallback(delegate(string cond, string sTrace, LogType lType) {
-        cmdEntry.Add(new LogEntry() {
-          logEntryType = LogEntryType.ConsoleLog,
-          condition = cond,
-          stackTrace = sTrace,
-          consoleLogType = lType
-        });
-      });
       res = evaluator.Evaluate(tmpCode, out output, out hasOutput);
-      //if(res == tmpCode)
-      //  Debug.Log("Unfinished input...");
     } catch(Exception e) {
-      cmdEntry.Add(new LogEntry() {
-        logEntryType = LogEntryType.EvaluationError,
-        error = e.ToString().Trim() // TODO: Produce a stack trace a la Debug, and put it in stackTrace so we can filter it.
-      });
-
-      output = null;
-      hasOutput = false;
-      status = true; // Need this to avoid 'stickiness' where we let user
-                     // continue editing due to incomplete code.
+      Debug.Log("Ooga booga");
+      ex = e;
     } finally {
-      status = res == null;
-      Application.RegisterLogCallback(null);
-      if(res != tmpCode) {
-        logEntries.Add(cmdEntry);
-        hasAddedLogToEntries = true;
-      }
-      status = CatchMessages(cmdEntry, status);
+      // TODO: Add a debugging button to the UI. >.<
+      Debug.Log(
+        tmpCode + "\n\n" +
+        "Output (hasOutput == " + (hasOutput) + ", null? == " + (output == null) + "):\n" + output + "\n\n" +
+        "Res (null? == " + (res == null) + "):\n" + res
+      );
     }
 
-    if(hasOutput) {
-      if(status) {
-        outputBuffer.Length = 0;
+    //  hasOutput,  output==null, res==null,  throws?,  error-output?,  use-case                                    outcome
+    //  ---------   ------------  ---------   --------  --------------  -----------------------------------------   ----------------------------------
+    //  true,       false?,       true?,      false?,   false?,         Complete input, output, no exception.       log code, log output,                 reset input
+    //  false,      true,         true,       false,    false?,         Complete input, no output, no exception.    log code,                             reset input
+    //  false,      true,         true,       true,     false?,         Runtime error.                              log code,             log exception,  reset input
+    //  false,      true,         true,       false,    true,           Syntax error.                                                     log exception
+    //  false,      true,         false,      false,    false?,         Incomplete input.                           N/A
+    bool  logOutput     = false,
+          logException  = false,
+          logReports    = (reporter.WarningsCount > 0) || (reporter.ErrorsCount > 0),
+          resetInput    = true;
 
-        try {
-          FluffReporter();
-          PrettyPrint.PP(outputBuffer, output, true);
-        } catch(Exception e) {
-          cmdEntry.Add(new LogEntry() {
-            logEntryType = LogEntryType.EvaluationError,
-            error = e.ToString().Trim() // TODO: Produce a stack trace a la Debug, and put it in stackTrace so we can filter it.
-          });
-          if(!hasAddedLogToEntries) {
-            logEntries.Add(cmdEntry);
-            hasAddedLogToEntries = true;
-          }
-        } finally {
-          bool result = CatchMessages(cmdEntry, true);
-          if(!result && !hasAddedLogToEntries) {
-            logEntries.Add(cmdEntry);
-            hasAddedLogToEntries = true;
-          }
-        }
+    if(hasOutput)                   logOutput     = true;   // Apparently, we has OUTPUT!
+    if(ex != null)                  logException  = true;   // Always log any exceptions we get.
+    if(res != null && !logReports)  resetInput    = false;  // Incomplete input
 
-        string tmp = outputBuffer.ToString().Trim();
-        if(!String.IsNullOrEmpty(tmp)) {
-          cmdEntry.Add(new LogEntry() {
-            logEntryType = LogEntryType.Output,
-            output = outputBuffer.ToString().Trim()
-          });
-          if(!hasAddedLogToEntries) {
-            logEntries.Add(cmdEntry);
-            hasAddedLogToEntries = true;
-          }
-        }
+    // Handle Outcomes...
+    if(resetInput)      Debug.Log(code);
+    if(logOutput)       Debug.Log(FormatObject(output));
+    if(logException)    Debug.LogException(ex);
+    if(logReports) {
+      foreach(var msg in reporter.Messages) {
+        Debug.Log(msg.MessageType);
+        // TODO: Handle msg.RelatedSymbols...
+        if(msg.IsWarning)
+          Debug.LogWarning(msg.Text);
+        // else if(msg.IsError)
+        //   Debug.LogError(msg.Text);
+        else
+          Debug.LogError(msg.Text);
       }
+      reporter.Reset();
     }
 
     EditorApplication.UnlockReloadAssemblies();
-    return status;
+    return resetInput;
+  }
+
+  private string FormatObject(object output) {
+    outputBuffer.Length = 0;
+    PrettyPrint.PP(outputBuffer, output, true);
+
+    return outputBuffer.ToString();
   }
 }
 

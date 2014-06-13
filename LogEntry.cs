@@ -1,215 +1,193 @@
-//-----------------------------------------------------------------
-//  LogEntry
-//  Copyright 2009-2014 Jon Frisby
-//  All rights reserved
-//
-//-----------------------------------------------------------------
-// Models for the execution/result log, and editor history.
-//-----------------------------------------------------------------
-using UnityEditor;
-using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
+// //-----------------------------------------------------------------
+// //  LogEntry
+// //  Copyright 2009-2014 Jon Frisby
+// //  All rights reserved
+// //
+// //-----------------------------------------------------------------
+// // Models for the execution/result log, and editor history.
+// //-----------------------------------------------------------------
+// using UnityEditor;
+// using UnityEngine;
+// using System;
+// using System.Collections;
+// using System.Collections.Generic;
+// using System.Text;
 
-[Serializable]
-public enum LogEntryType : int {
-  MetaCommand = 0,
-  Command = 1,
-  Output = 2,
-  EvaluationError = 3,
-  SystemConsoleOut = 4,
-  SystemConsoleErr = 5,
+// [Serializable]
+// public enum LogEntryType : int {
+//   Output            = 0,
+//   EvaluationError   = 1,
+//   SystemConsoleOut  = 2,
+//   SystemConsoleErr  = 3
+// }
 
-  ConsoleLog = 10
-}
+// [Serializable]
+// public class LogEntry {
+//   public LogEntryType logEntryType;
 
-[Serializable]
-public class LogEntry {
-  public LogEntryType logEntryType;
+//   public string message,
+//                 stackTrace;
 
-  public string command;
-  public string shortCommand = null;
-  public bool isExpanded = true;
-  public bool hasChildren = false;
-  public bool isExpandable = false;
-  public List<LogEntry> children;
+//   public bool isExpanded = true;
 
-  private char[] newline = new char[] {'\n'};
+//   protected static char[] NEWLINE = new char[] { '\n' },
+//                           COLON   = new char[] { ':' };
 
-  public string output;
 
-  public string error;
+//   [System.NonSerialized]
+//   private string _shortMessage = null;
+//   public string DisplayMessage {
+//     get {
+//       if(_shortMessage == null) _shortMessage  = (message.Split(NEWLINE, 2))[0];
+//       return isExpanded ? message : _shortMessage;
+//     }
+//   }
 
-  private string _stackTrace = null;
-  public string stackTrace {
-    get { return _stackTrace; }
-    set {
-      string tmp = value;
-      if(tmp.EndsWith("\n", StringComparison.Ordinal)) {
-        tmp = tmp.Substring(0, tmp.Length - 1);
-      }
-      if(_stackTrace != tmp) {
-        _filteredStackTrace = null;
-        _stackTrace = tmp;
-      }
-    }
-  }
+//   public bool HasLongMessage { get { return _shortMessage != message; } }
 
-  private static char[] NEWLINE = new char[] { '\n' },
-                        COLON = new char[] { ':' };
+//   [System.NonSerialized]
+//   private string _filteredStackTrace = null;
+//   public string filteredStackTrace {
+//     get {
+//       if(stackTrace == null) return null;
+//       if(_filteredStackTrace != null) return _filteredStackTrace;
 
-  public string _filteredStackTrace = null;
-  public string filteredStackTrace {
-    get {
-      if(_filteredStackTrace == null) {
-        if(_stackTrace != null) {
-          string[] traceEntries = _stackTrace.Split(NEWLINE);
-          List<string> filteredTraceEntries = new List<string>();
-          foreach(string entry in traceEntries) {
-            bool filter = false;
+//       string[] traceEntries = stackTrace.Split(NEWLINE);
+//       List<string> filteredTraceEntries = new List<string>();
+//       foreach(string entry in traceEntries) {
+//         bool filter = false;
 
-            int i = entry.IndexOf(") (", StringComparison.Ordinal);
-            string signature, position;
-            if(i > 0) {
-              signature = entry.Substring(0, i + 1);
-              position = entry.Substring(i + 2, entry.Length - (i + 2));
-            } else {
-              // Nada.
-              signature = entry;
-              position = "";
-            }
+//         int i = entry.IndexOf(") (", StringComparison.Ordinal);
+//         string signature, position;
+//         if(i > 0) {
+//           signature = entry.Substring(0, i + 1);
+//           position = entry.Substring(i + 2, entry.Length - (i + 2));
+//         } else {
+//           // Nada.
+//           signature = entry;
+//           position = "";
+//         }
 
-            string[] signaturePieces = signature.Split(COLON, 2);
-            if(signaturePieces.Length > 1) {
-              string classDesignation = signaturePieces[0];
-              string methodSignature = signaturePieces[1];
+//         string[] signaturePieces = signature.Split(COLON, 2);
+//         if(signaturePieces.Length > 1) {
+//           string classDesignation = signaturePieces[0];
+//           string methodSignature = signaturePieces[1];
 
-              if((classDesignation == "UnityEngine.Debug" && position == "") ||
-                 (classDesignation.StartsWith("Class", StringComparison.Ordinal) && methodSignature == "Host(Object&)" && position == "") ||
-                 (classDesignation == "Mono.CSharp.Evaluator" && methodSignature == "Evaluate(String, Object&, Boolean&)" && position == "") ||
-                 (classDesignation == "EvaluationHelper" && methodSignature == "Eval(List`1, String)" && position.IndexOf("UnityREPL/Evaluator.cs", StringComparison.Ordinal) >= 0) ||
-                 (classDesignation == "Shell" && methodSignature == "Update()" && position.IndexOf("UnityREPL/Shell.cs", StringComparison.Ordinal) >= 0) ||
-                 (classDesignation == "UnityEditor.EditorApplication" && methodSignature == "Internal_CallUpdateFunctions()" && position == "")) {
-                filter = true;
-              }
-            } else {
-              // WTF?!
-            }
+//           if((classDesignation == "UnityEngine.Debug" && position == "") ||
+//              (classDesignation.StartsWith("Class", StringComparison.Ordinal) && methodSignature == "Host(Object&)" && position == "") ||
+//              (classDesignation == "Mono.CSharp.Evaluator" && methodSignature == "Evaluate(String, Object&, Boolean&)" && position == "") ||
+//              (position.IndexOf("/UnityREPL/", StringComparison.Ordinal) >= 0) ||
+//              (classDesignation == "UnityEditor.EditorApplication" && methodSignature == "Internal_CallUpdateFunctions()" && position == "")) {
+//             filter = true;
+//           }
+//         } else {
+//           Debug.Log("WAT.");
+//           // WTF?!
+//         }
 
-            if(!filter)
-              filteredTraceEntries.Add(entry);
-          }
-          var sb = new StringBuilder();
-          foreach(var s in filteredTraceEntries) {
-            sb.Append(s).Append("\n");
-          }
-          var tmp = sb.ToString();
-          if(tmp.Length > 0) {
-            tmp = tmp.Substring(0, tmp.Length - 1);
-          }
-          _filteredStackTrace = tmp;
-        } else {
-          _filteredStackTrace = null;
-        }
-      }
-      return _filteredStackTrace;
-    }
-  }
-  public string condition;
-  public LogType consoleLogType;
+//         if(!filter)
+//           filteredTraceEntries.Add(entry);
+//       }
+//       var sb = new StringBuilder();
+//       foreach(var s in filteredTraceEntries)
+//         sb.Append(s).Append("\n");
+//       _filteredStackTrace = sb.ToString();
+//       return _filteredStackTrace;
+//     }
+//   }
 
-  public void Add(LogEntry child) {
-    children = children ?? new List<LogEntry>();
-    children.Add(child);
-  }
+//   public virtual void OnGUI(bool filterTraces) {
+//     GUIStyle style = GUIStyle.none;
 
-  public bool OnGUI(bool filterTraces) {
-    var retVal = false;
-    switch(logEntryType) {
-      case LogEntryType.MetaCommand:
-      case LogEntryType.Command:
-          if(children != null && children.Count > 0) {
-              hasChildren = true;
-          }
-          if(shortCommand == null) {
-            command = command.TrimEnd();
-            var commandList = command.Split(newline, 2);
-            shortCommand = commandList[0];
-            if(hasChildren || command != shortCommand) {
-              isExpandable = true;
-            }
-          }
-          if(isExpandable) {
-            GUILayout.BeginHorizontal();
-              isExpanded = GUILayout.Toggle(isExpanded, (isExpanded) ? command: shortCommand, LogEntryStyles.FoldoutCommandStyle, GUILayout.ExpandWidth(false));
-              GUILayout.FlexibleSpace(); // HelpBox, minibutton, OL Plus
-              retVal = GUILayout.Button(GUIContent.none, LogEntryStyles.FoldoutCopyContentStyle);
-            GUILayout.EndHorizontal();
-            if(isExpanded && hasChildren) {
-              GUILayout.BeginHorizontal();
-                GUILayout.Space(15);
-                GUILayout.BeginVertical();
-                  foreach(LogEntry le in children) {
-                    le.OnGUI(filterTraces);
-                  }
-                GUILayout.EndVertical();
-              GUILayout.EndHorizontal();
-            }
-          } else {
-            GUILayout.BeginHorizontal();
-              GUILayout.Space(13);
-              GUILayout.Label(command, LogEntryStyles.DefaultCommandStyle);
-              GUILayout.FlexibleSpace();
-              retVal = GUILayout.Button(GUIContent.none, LogEntryStyles.FoldoutCopyContentStyle);
-            GUILayout.EndHorizontal();
-          }
-        break;
-      case LogEntryType.Output:
-        GUILayout.BeginHorizontal(GUI.skin.box);
-          GUILayout.Label(output, LogEntryStyles.OutputStyle);
-        GUILayout.EndHorizontal();
-        break;
-      case LogEntryType.EvaluationError:
-        GUILayout.BeginHorizontal(GUI.skin.box);
-          GUILayout.Label(error, LogEntryStyles.EvaluationErrorStyle);
-        GUILayout.EndHorizontal();
-        break;
-      case LogEntryType.SystemConsoleOut:
-        GUILayout.BeginHorizontal(GUI.skin.box);
-          GUILayout.Label(error, LogEntryStyles.SystemConsoleOutStyle);
-        GUILayout.EndHorizontal();
-        break;
-      case LogEntryType.SystemConsoleErr:
-        GUILayout.BeginHorizontal(GUI.skin.box);
-          GUILayout.Label(error, LogEntryStyles.SystemConsoleErrStyle);
-        GUILayout.EndHorizontal();
-        break;
-      case LogEntryType.ConsoleLog:
-        GUILayout.BeginHorizontal(GUI.skin.box);
-          GUILayout.BeginVertical();
-            GUIStyle logStyle = null;
-            switch(consoleLogType) {
-              case LogType.Error: // Debug.LogError(...).
-              case LogType.Assert: // Unity internal error.
-              case LogType.Exception: // Uncaught exception.
-                logStyle = LogEntryStyles.ConsoleLogErrorStyle;
-                break;
-              case LogType.Warning: // Debug.LogWarning(...).
-                logStyle = LogEntryStyles.ConsoleLogWarningStyle;
-                break;
-              case LogType.Log: // Debug.Log(...).
-                logStyle = LogEntryStyles.ConsoleLogNormalStyle;
-                break;
-            }
-            GUILayout.Label(condition, logStyle);
-            if(!String.IsNullOrEmpty(filterTraces ? filteredStackTrace : stackTrace))
-              GUILayout.Label(filterTraces ? filteredStackTrace : stackTrace, LogEntryStyles.ConsoleLogStackTraceStyle);
-          GUILayout.EndVertical();
-        GUILayout.EndHorizontal();
-        break;
-    }
-    return retVal;
-  }
-}
+//     switch(logEntryType) {
+//       case LogEntryType.Output:           style = LogEntryStyles.OutputStyle; break;
+//       case LogEntryType.EvaluationError:  style = LogEntryStyles.EvaluationErrorStyle; break;
+//       case LogEntryType.SystemConsoleOut: style = LogEntryStyles.SystemConsoleOutStyle; break;
+//       case LogEntryType.SystemConsoleErr: style = LogEntryStyles.SystemConsoleErrStyle; break;
+//     }
+//     if(style == GUIStyle.none) {
+//       Debug.Log("OY: " + logEntryType);
+//     }
+
+//     BeginContentBox();
+//       ShowMessage(message, style);
+//       OnSubGUI(filterTraces);
+//     EndContentBox();
+//   }
+
+//   public virtual bool IsExpandable { get { return HasLongMessage; } }
+//   public virtual void OnSubGUI(bool filterTraces) {}
+
+//   protected void BeginContentBox()  { GUILayout.BeginVertical(GUI.skin.box); }
+//   protected void EndContentBox()    { GUILayout.EndVertical(); }
+
+//   protected void BeginIndent() {
+//     GUILayout.BeginHorizontal();
+//       GUILayout.Space(15);
+//       GUILayout.BeginVertical();
+//   }
+
+//   protected void EndIndent() {
+//       GUILayout.EndVertical();
+//     GUILayout.EndHorizontal();
+//   }
+
+//   protected void ShowMessage(string msg, GUIStyle style) {
+//     GUILayout.Label(msg ?? "", style);
+//   }
+
+//   protected void ShowStackTrace(bool filterTraces, GUIStyle style) {
+//     if(!String.IsNullOrEmpty(filterTraces ? filteredStackTrace : stackTrace))
+//       ShowMessage(filterTraces ? filteredStackTrace : stackTrace, style);
+//   }
+// }
+
+// [Serializable]
+// public class ConsoleLogEntry : LogEntry {
+//   public LogType consoleLogType;
+
+//   public override void OnSubGUI(bool filterTraces) {
+//     BeginContentBox();
+//       // case LogType.Error: // Debug.LogError(...).
+//       // case LogType.Assert: // Unity internal error.
+//       // case LogType.Exception: // Uncaught exception.
+//       //   logStyle = LogEntryStyles.ConsoleLogErrorStyle;
+//       //   break;
+//       // case LogType.Warning: // Debug.LogWarning(...).
+//       //   logStyle = LogEntryStyles.ConsoleLogWarningStyle;
+//       //   break;
+//       // case LogType.Log: // Debug.Log(...).
+//       //   logStyle = LogEntryStyles.ConsoleLogNormalStyle;
+//       //   break;
+//       ShowStackTrace(filterTraces, LogEntryStyles.ConsoleLogStackTraceStyle);
+//     EndContentBox();
+//   }
+// }
+
+// [Serializable]
+// public class CommandLogEntry : LogEntry {
+//   public List<LogEntry> children;
+
+//   public void Add(LogEntry child) {
+//     if(child is CommandLogEntry) return;
+//     children = children ?? new List<LogEntry>();
+//     children.Add(child);
+//   }
+
+//   public override bool IsExpandable {
+//     get {
+//       if(children == null) children = new List<LogEntry>();
+//       return HasLongMessage || children.Count > 0;
+//     }
+//   }
+
+//   public override void OnSubGUI(bool filterTraces) {
+//     var hasChildren = false;
+//     if(isExpanded && hasChildren) {
+//       BeginIndent();
+//         foreach(LogEntry le in children)
+//           le.OnGUI(filterTraces);
+//       EndIndent();
+//     }
+//   }
+// }
