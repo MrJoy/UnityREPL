@@ -19,6 +19,7 @@ using Mono.CSharp;
 
 class DebugReportPrinter : ReportPrinter {
   List<AbstractMessage> messages = new List<AbstractMessage>();
+
   public List<AbstractMessage> Messages { get { return messages; } }
 
   // public bool MissingTypeReported (ITypeDefinition typeDefinition) {
@@ -69,7 +70,6 @@ public class EvaluationHelper {
   private static CompilerSettings   settings  = new CompilerSettings();
   private static CompilerContext    context   = new CompilerContext(settings, reporter);
   public static readonly Evaluator  evaluator = new Evaluator(context);
-
   private static string[] ASSEMBLIES_TO_IGNORE = {
     "mscorlib",
     "System",
@@ -124,13 +124,15 @@ public class EvaluationHelper {
 
   private bool IsExpected(string shortName) {
     foreach(var name in ASSEMBLIES_TO_REFERENCE)
-      if(shortName == name) return true;
+      if(shortName == name)
+        return true;
     return false;
   }
 
   private bool IsIgnored(string shortName) {
     foreach(var name in ASSEMBLIES_TO_IGNORE)
-      if(shortName == name) return true;
+      if(shortName == name)
+        return true;
     return false;
   }
 
@@ -156,18 +158,24 @@ public class EvaluationHelper {
       if(name == "@@EXTENSIONS@@") {
         foreach(var extName in extensionAssemblies) {
           // Debug.Log("Loading Platform Support Assembly: " + extName);
-          try { evaluator.ReferenceAssembly(assemblyMap[extName]); }
-          catch {}
+          try {
+            evaluator.ReferenceAssembly(assemblyMap[extName]);
+          } catch {
+          }
         }
         foreach(var unkName in unknownAssemblies) {
           // Debug.Log("Loading Plugin(?) Assembly: " + unkName);
-          try { evaluator.ReferenceAssembly(assemblyMap[unkName]); }
-          catch {}
+          try {
+            evaluator.ReferenceAssembly(assemblyMap[unkName]);
+          } catch {
+          }
         }
       } else {
         // Debug.Log("Loading Assembly: " + name);
-        try { evaluator.ReferenceAssembly(assemblyMap[name]); }
-        catch {}
+        try {
+          evaluator.ReferenceAssembly(assemblyMap[name]);
+        } catch {
+        }
       }
     }
 
@@ -202,7 +210,8 @@ public class EvaluationHelper {
   public bool Init(ref bool isInitialized) {
     // Don't be executing code when we're about to reload it.  Not sure this is
     // actually needed but seems prudent to be wary of it.
-    if(EditorApplication.isCompiling) return false;
+    if(EditorApplication.isCompiling)
+      return false;
 
     /*
     We need to tell the evaluator to reference stuff we care about.  Since
@@ -355,6 +364,7 @@ internal class TypeManagerProxy : ReflectionProxy {
 
   // Save an allocation per access here...
   private static readonly object[] _CSharpNameParams = new object[] { new List<TypeSpec>() };
+
   internal static string CSharpName(TypeSpec t) {
     string name = "";
     try {
@@ -375,9 +385,11 @@ internal class TypeManagerProxy : ReflectionProxy {
 // Dummy class so we can output a string and bypass pretty-printing of it.
 public struct REPLMessage {
   public string msg;
-  public REPLMessage(string m) { msg = m; }
-}
 
+  public REPLMessage (string m) {
+    msg = m;
+  }
+}
 
 public class UnityBaseClass {
   private static readonly REPLMessage _help = new REPLMessage(@"UnityREPL v." + Shell.VERSION + @":
@@ -385,6 +397,7 @@ public class UnityBaseClass {
 help;     -- This screen; help for helper commands.  Click the '?' icon on the toolbar for more comprehensive help.
 vars;     -- Show the variables you've created this session, and their current values.
 ");
+
   public static REPLMessage help { get { return _help; } }
 
   public static REPLMessage vars {

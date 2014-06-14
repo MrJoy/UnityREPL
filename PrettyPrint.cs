@@ -15,7 +15,9 @@ using Mono.CSharp;
 using UnityEngine;
 
 public class PrettyPrint {
-  static string EscapeString(string s) { return s.Replace ("\"", "\\\""); }
+  static string EscapeString(string s) {
+    return s.Replace("\"", "\\\"");
+  }
 
   static void EscapeChar(StringBuilder output, char c) {
     if(c == '\'')
@@ -23,34 +25,60 @@ public class PrettyPrint {
     else if(c > 32)
       output.AppendFormat("'{0}'", c);
     else {
-      switch (c) {
-        case '\a':
-          output.Append("'\\a'"); break;
-        case '\b':
-          output.Append("'\\b'"); break;
-        case '\n':
-          output.Append("'\\n'"); break;
-        case '\v':
-          output.Append("'\\v'"); break;
-        case '\r':
-          output.Append("'\\r'"); break;
-        case '\f':
-          output.Append("'\\f'"); break;
-        case '\t':
-          output.Append("'\\t"); break;
-        default:
-          output.AppendFormat("'\\x{0:x}", (int) c); break;
+      switch(c) {
+      case '\a':
+        output.Append("'\\a'");
+        break;
+      case '\b':
+        output.Append("'\\b'");
+        break;
+      case '\n':
+        output.Append("'\\n'");
+        break;
+      case '\v':
+        output.Append("'\\v'");
+        break;
+      case '\r':
+        output.Append("'\\r'");
+        break;
+      case '\f':
+        output.Append("'\\f'");
+        break;
+      case '\t':
+        output.Append("'\\t");
+        break;
+      default:
+        output.AppendFormat("'\\x{0:x}", (int)c);
+        break;
       }
     }
   }
 
   private static int _depth = 0;
-  private static void OpenInline(StringBuilder output, int listLength) { output.Append(listLength < 10 ? "{ " : "{\n\t"); _depth++; }
-  private static void CloseInline(StringBuilder output, int listLength) { output.Append(listLength < 10 ? " }" : "\n}"); _depth--; }
-  private static void NextItem(StringBuilder output, int listLength) { output.Append(listLength < 10 ? ", " : ",\n\t"); }
 
-  private static void Open(StringBuilder output) { output.Append("{"); _depth++; }
-  private static void Close(StringBuilder output) { output.Append("}"); _depth--; }
+  private static void OpenInline(StringBuilder output, int listLength) {
+    output.Append(listLength < 10 ? "{ " : "{\n\t");
+    _depth++;
+  }
+
+  private static void CloseInline(StringBuilder output, int listLength) {
+    output.Append(listLength < 10 ? " }" : "\n}");
+    _depth--;
+  }
+
+  private static void NextItem(StringBuilder output, int listLength) {
+    output.Append(listLength < 10 ? ", " : ",\n\t");
+  }
+
+  private static void Open(StringBuilder output) {
+    output.Append("{");
+    _depth++;
+  }
+
+  private static void Close(StringBuilder output) {
+    output.Append("}");
+    _depth--;
+  }
 
   public static void PP(StringBuilder output, object result, bool expandTypes = false) {
     _depth = 0;
@@ -81,16 +109,17 @@ public class PrettyPrint {
         }
         output.Append(n);
       } else if(result is Array) {
-        Array a = (Array) result;
+        Array a = (Array)result;
         int top = a.GetUpperBound(0), bottom = a.GetLowerBound(0);
         OpenInline(output, top - bottom);
         for(int i = bottom; i <= top; i++) {
           InternalPP(output, a.GetValue(i));
-          if(i != top) NextItem(output, top - bottom);
+          if(i != top)
+            NextItem(output, top - bottom);
         }
         CloseInline(output, top - bottom);
       } else if(result is bool) {
-        output.Append(((bool) result) ? "true" : "false");
+        output.Append(((bool)result) ? "true" : "false");
       } else if(result is string) {
         output.Append('"').Append(EscapeString((string)result)).Append('"');
       } else if(result is IDictionary) {
@@ -102,7 +131,8 @@ public class PrettyPrint {
           InternalPP(output, entry.Key);
           output.Append(": ");
           InternalPP(output, entry.Value);
-          if(count != top) NextItem(output, 0);
+          if(count != top)
+            NextItem(output, 0);
         }
         Close(output);
       } else if(result is IEnumerable) {
@@ -113,7 +143,8 @@ public class PrettyPrint {
         }
         OpenInline(output, tmp.Count);
         foreach(object item in tmp) {
-          if(i++ != 0) NextItem(output, tmp.Count);
+          if(i++ != 0)
+            NextItem(output, tmp.Count);
           InternalPP(output, item);
         }
         CloseInline(output, tmp.Count);

@@ -29,7 +29,6 @@ using System.Reflection;
 using System.Text;
 using Mono.CSharp;
 
-
 // TODO:
 //  static string[] Evaluator.GetCompletions(string input, out string prefix) <-----
 
@@ -47,7 +46,6 @@ public class Shell : EditorWindow {
   // Code Execution Functionality
   //----------------------------------------------------------------------------
   private EvaluationHelper helper = new EvaluationHelper();
-
 
   [System.NonSerialized]
   private bool isInitialized = false;
@@ -117,9 +115,17 @@ public class Shell : EditorWindow {
   // Make our state object go away if we do, or if we lose focus, or whatnot
   // to ensure menu items disable properly regardless of possible dangling
   // references, etc.
-  public void OnDisable()   { editorState = null; }
-  public void OnLostFocus() { editorState = null; }
-  public void OnDestroy()   { editorState = null; }
+  public void OnDisable() {
+    editorState = null;
+  }
+
+  public void OnLostFocus() {
+    editorState = null;
+  }
+
+  public void OnDestroy() {
+    editorState = null;
+  }
 
   protected void FindSelectionBounds(TextEditor editor, string[] rawLines, out int startLine, out int endLine, out bool startAtBOL, out bool endAtBOL) {
     bool      selectingBackwards  = editor.pos < editor.selectPos;
@@ -204,13 +210,15 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
     for(int i = startLine; i <= endLine; i++) {
       if(rawLines[i].StartsWith("\t")) {
         rawLines[i] = rawLines[i].Substring(1);
-        if(i == 0 && !startAtBOL) startDeletions++;
+        if(i == 0 && !startAtBOL)
+          startDeletions++;
         endDeletions++;
       } else {
         for(int j = 0; j < 4; j++) { // TODO: make spaces-per-tab configurable!
           if(rawLines[i].StartsWith(" ")) {
             rawLines[i] = rawLines[i].Substring(1);
-            if(i == 0 && !startAtBOL) startDeletions++;
+            if(i == 0 && !startAtBOL)
+              startDeletions++;
             endDeletions++;
           } else {
             j = 4; // Don't eat a space after a non-space.
@@ -297,7 +305,8 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
       } catch(KeyNotFoundException) {
         // This can happen if the code is reloaded out from under us.
       }
-      if(editorState == null) return;
+      if(editorState == null)
+        return;
     } else {
       return;
     }
@@ -348,38 +357,43 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
       }
     } else if(evt.type == EventType.ValidateCommand) {
       switch(evt.commandName) {
-        case "SelectAll":
-        case "Paste":
+      case "SelectAll":
+      case "Paste":
           // Always allowed to muck with selection or paste stuff...
-          evt.Use();
-          break;
-        case "Copy":
-        case "Cut":
+        evt.Use();
+        break;
+      case "Copy":
+      case "Cut":
           // ... but can only copy & cut when we have a selection.
-          if(editorState.hasSelection) evt.Use();
-          break;
-        default:
+        if(editorState.hasSelection)
+          evt.Use();
+        break;
+      default:
           // If we need to suss out other commands to support...
 //          Debug.Log("Validate: " + evt.commandName);
-          break;
+        break;
       }
     } else if(evt.type == EventType.ExecuteCommand) {
       switch(evt.commandName) {
-        // A couple TextEditor functions actually work, so use them...
-        case "SelectAll": editorState.SelectAll(); break;
-        case "Copy": editorState.Copy(); break;
-        // But some don't.
-        case "Paste":
+      // A couple TextEditor functions actually work, so use them...
+      case "SelectAll":
+        editorState.SelectAll();
+        break;
+      case "Copy":
+        editorState.Copy();
+        break;
+      // But some don't.
+      case "Paste":
           // Manually paste.  Keeping Use() out of the Paste() method so we can
           // re-use the functionality elsewhere.
-          codeToProcess = Paste(editorState, EditorGUIUtility.systemCopyBuffer, false);
-          evt.Use();
-          break;
-        case "Cut":
+        codeToProcess = Paste(editorState, EditorGUIUtility.systemCopyBuffer, false);
+        evt.Use();
+        break;
+      case "Cut":
           // Ditto -- manual cut.
-          codeToProcess = Cut(editorState);
-          evt.Use();
-          break;
+        codeToProcess = Cut(editorState);
+        evt.Use();
+        break;
       }
     }
   }
@@ -397,8 +411,10 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
     // restore it.
     if(focusedWindow == this) {
       UnityEngine.Event current = UnityEngine.Event.current;
-      if(current == null) return;
-      if(current.type != EventType.Repaint) return;
+      if(current == null)
+        return;
+      if(current.type != EventType.Repaint)
+        return;
 
       if(selectedControl != desiredControl) {
         int p   = 0,
@@ -429,6 +445,7 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
   }
 
   private NumberedEditorState lnEditorState = new NumberedEditorState();
+
   private void ShowEditor() {
     GUILayout.BeginHorizontal();
       GUILayout.Label(useContinuationPrompt ? Shell.CONTINUATION_PROMPT : Shell.MAIN_PROMPT, EditorStyles.wordWrappedLabel, GUILayout.Width(37));
@@ -441,6 +458,7 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
 
   private Dictionary<string, Tuple<FieldSpec, FieldInfo>> fields = null;
   public Vector2 scrollPosition = Vector2.zero;
+
   private void ShowVars() {
     if(fields == null)
       fields = EvaluatorProxy.fields;
@@ -624,7 +642,8 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
       ShowHelp();
     } else {
       ShowEditor();
-      if(showVars) ShowVars();
+      if(showVars)
+        ShowVars();
     }
   }
 

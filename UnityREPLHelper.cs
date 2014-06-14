@@ -13,6 +13,7 @@ using System.Collections;
 
 public class UnityREPLHelper {
   private static Hashtable styleCache = new Hashtable();
+
   public static GUIStyle CachedStyle(string name) {
     if(!styleCache.ContainsKey(name))
       styleCache[name] = GUI.skin.GetStyle(name);
@@ -82,6 +83,7 @@ public class UnityREPLHelper {
 
 public class HelpStyles {
   private static GUIStyle _Header = null;
+
   public static GUIStyle Header {
     get {
       if(_Header == null) {
@@ -102,6 +104,7 @@ public class HelpStyles {
   }
 
   private static GUIStyle _SubHeader = null;
+
   public static GUIStyle SubHeader {
     get {
       if(_SubHeader == null) {
@@ -120,6 +123,7 @@ public class HelpStyles {
   }
 
   private static GUIStyle _Content = null;
+
   public static GUIStyle Content {
     get {
       if(_Content == null) {
@@ -132,7 +136,7 @@ public class HelpStyles {
           .Size(0, 0, false, false)
           .NoBackgroundImages()
           .ResetBoxModel()
-          .Margin(4+14, 4, 0, 0)
+          .Margin(4 + 14, 4, 0, 0)
           .ClipText();
       }
       return _Content;
@@ -140,6 +144,7 @@ public class HelpStyles {
   }
 
   private static GUIStyle _Code = null;
+
   public static GUIStyle Code {
     get {
       if(_Code == null) {
@@ -152,7 +157,7 @@ public class HelpStyles {
           .Size(0, 0, false, false)
           .NoBackgroundImages()
           .ResetBoxModel()
-          .Margin(4+14+10, 4, 4, 0)
+          .Margin(4 + 14 + 10, 4, 4, 0)
           .ClipText();
       }
       return _Code;
@@ -160,6 +165,7 @@ public class HelpStyles {
   }
 
   private static GUIStyle _Shortcut = null;
+
   public static GUIStyle Shortcut {
     get {
       if(_Shortcut == null) {
@@ -172,7 +178,7 @@ public class HelpStyles {
           .Size(120, 0, false, false)
           .NoBackgroundImages()
           .ResetBoxModel()
-          .Margin(4+14+10, 0, 0, 0)
+          .Margin(4 + 14 + 10, 0, 0, 0)
           .ClipText();
       }
       return _Shortcut;
@@ -180,6 +186,7 @@ public class HelpStyles {
   }
 
   private static GUIStyle _Explanation = null;
+
   public static GUIStyle Explanation {
     get {
       if(_Explanation == null) {
@@ -203,6 +210,7 @@ public class HelpStyles {
 
 public class NumberedEditorStyles {
   private static GUIStyle _NumberedEditor = null;
+
   public static GUIStyle NumberedEditor {
     get {
       if(_NumberedEditor == null) {
@@ -224,6 +232,7 @@ public class NumberedEditorStyles {
   }
 
   private static GUIStyle _LineNumbering = null;
+
   public static GUIStyle LineNumbering {
     get {
       if(_LineNumbering == null) {
@@ -243,8 +252,8 @@ public class NumberedEditorStyles {
 
 public class LogEntryStyles {
   private static GUIStyle[] styles = new GUIStyle[_Count];
-
   private const int _Default = 0;
+
   public static GUIStyle Default {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -260,6 +269,7 @@ public class LogEntryStyles {
   }
 
   private const int _DefaultCommandStyle = 1;
+
   public static GUIStyle DefaultCommandStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -272,6 +282,7 @@ public class LogEntryStyles {
   }
 
   private const int _FoldoutCommandStyle = 2;
+
   public static GUIStyle FoldoutCommandStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -285,6 +296,7 @@ public class LogEntryStyles {
   }
 
   private const int _FoldoutCopyContentStyle = 3;
+
   public static GUIStyle FoldoutCopyContentStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -304,8 +316,8 @@ public class LogEntryStyles {
     { new Color(0.5f, 0f, 0f, 1f), new Color(1f, 0.25f, 0.25f, 1f) },
     { new Color(0.4f, 0.3f, 0f, 1f), new Color(1f, 0.7f, 0f, 1f) }
   };
-
   private const int _OutputStyle = 4;
+
   public static GUIStyle OutputStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -319,6 +331,7 @@ public class LogEntryStyles {
   }
 
   private const int _EvaluationErrorStyle = 5;
+
   public static GUIStyle EvaluationErrorStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -332,6 +345,7 @@ public class LogEntryStyles {
   }
 
   private const int _SystemConsoleOutStyle = 6;
+
   public static GUIStyle SystemConsoleOutStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -345,6 +359,7 @@ public class LogEntryStyles {
   }
 
   private const int _SystemConsoleErrStyle = 7;
+
   public static GUIStyle SystemConsoleErrStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -356,7 +371,9 @@ public class LogEntryStyles {
       return styles[_SystemConsoleErrStyle];
     }
   }
+
   private const int _ConsoleLogStyle = 8;
+
   public static GUIStyle ConsoleLogStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -369,6 +386,7 @@ public class LogEntryStyles {
   }
 
   private const int _ConsoleLogNormalStyle = 9;
+
   public static GUIStyle ConsoleLogNormalStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -381,6 +399,7 @@ public class LogEntryStyles {
   }
 
   private const int _ConsoleLogWarningStyle = 10;
+
   public static GUIStyle ConsoleLogWarningStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -394,6 +413,7 @@ public class LogEntryStyles {
   }
 
   private const int _ConsoleLogErrorStyle = 11;
+
   public static GUIStyle ConsoleLogErrorStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -407,6 +427,7 @@ public class LogEntryStyles {
   }
 
   private const int _ConsoleLogStackTraceStyle = 12;
+
   public static GUIStyle ConsoleLogStackTraceStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
@@ -429,6 +450,7 @@ public class NumberedEditorState {
   public int lastPos;
   public bool textChanged = false;
   private string _text = "";
+
   public string text {
     get { return _text; }
     set {
@@ -443,6 +465,7 @@ public class NumberedEditorState {
   }
 
   private GUIContent _textContent = null;
+
   public GUIContent textContent {
     get {
       if(_textContent == null)
@@ -452,6 +475,7 @@ public class NumberedEditorState {
   }
 
   private string _dummyText = null;
+
   public string dummyText {
     get {
       return _dummyText;
@@ -459,6 +483,7 @@ public class NumberedEditorState {
   }
 
   private GUIContent _lineNumberingContent = null;
+
   public GUIContent lineNumberingContent {
     get {
       // Unity likes to ignore trailing space when sizing content, which is a
@@ -478,7 +503,7 @@ public class NumberedEditorState {
         // While we're at it, build a single string with all our line numbers.
         sb.Length = 0;
         for(int j = 0; j < lines; j++)
-          sb.Append(j+1).Append('\n');
+          sb.Append(j + 1).Append('\n');
 
         _lineNumberingContent = new GUIContent(sb.ToString());
       }

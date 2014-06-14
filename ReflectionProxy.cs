@@ -14,5 +14,7 @@ internal class ReflectionProxy {
   internal const BindingFlags NONPUBLIC_STATIC = BindingFlags.NonPublic | BindingFlags.Static;
   internal const BindingFlags NONPUBLIC_INSTANCE = BindingFlags.NonPublic | BindingFlags.Instance;
 
-  protected static Type[] Signature(params Type[] sig) { return sig; }
+  protected static Type[] Signature(params Type[] sig) {
+    return sig;
+  }
 }
