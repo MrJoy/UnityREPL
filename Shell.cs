@@ -221,20 +221,8 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
 
     // Shift the selection to compensate for the tabs...
     if(editor.pos != editor.selectPos) {
-      // if(!startAtBOL) {
-        // editor.pos         -= selectingBackwards ? deleted : 0;
-        // editor.selectPos   -= selectingBackwards ? 0 : deleted;
-        editor.pos       -= selectingBackwards ? startDeletions : endDeletions;
-        editor.selectPos -= selectingBackwards ? endDeletions : startDeletions;
-        // editor.pos       += selectingBackwards ? deleted : 0;
-        // editor.selectPos += selectingBackwards ? 0 : deleted;
-      // }
-      // if(endAtBOL) {
-        // editor.pos       -= selectingBackwards ? 0 : 1;
-        // editor.selectPos -= selectingBackwards ? 1 : 0;
-        // editor.pos       -= selectingBackwards ? 0 : endDeletions;
-        // editor.selectPos -= selectingBackwards ? endDeletions : 0;
-      // }
+      editor.pos       -= selectingBackwards ? startDeletions : endDeletions;
+      editor.selectPos -= selectingBackwards ? endDeletions : startDeletions;
     } else {
       if(!startAtBOL) {
         if(endAtBOL) {
