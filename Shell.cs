@@ -1,9 +1,9 @@
-//-----------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 //  Shell
 //  Copyright 2009-2014 Jon Frisby
 //  All rights reserved
 //
-//-----------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 // C#-based REPL tool.
 //
 // TODO: Make sure this plays nice with assembly reloads by:
@@ -20,7 +20,7 @@
 // TODO: Suss out undo and wrap code execution accordingly.
 // TODO: Suss out undo and wrap editor accordingly.
 // TODO: Make use of EditorWindow.minSize/EditorWindow.maxSize.
-//-----------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 using UnityEditor;
 using UnityEngine;
 using System;
@@ -30,21 +30,20 @@ using System.Text;
 using Mono.CSharp;
 
 // TODO:
-//  static string[] Evaluator.GetCompletions(string input, out string prefix) <-----
+//  static string[] Evaluator.GetCompletions(string input, out string prefix) <-----------------------------------------
 
 public class Shell : EditorWindow {
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
   // Constants, specified here to keep things DRY.
-  //----------------------------------------------------------------------------
-  public const string VERSION="2.0.0",
-                      COPYRIGHT="(C) Copyright 2009-2014 Jon Frisby\nAll rights reserved",
-
-                      MAIN_PROMPT = "---->",
+  //--------------------------------------------------------------------------------------------------------------------
+  public const string VERSION             = "2.0.0",
+                      COPYRIGHT           = "(C) Copyright 2009-2014 Jon Frisby\nAll rights reserved",
+                      MAIN_PROMPT         = "---->",
                       CONTINUATION_PROMPT = "cont>";
 
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
   // Code Execution Functionality
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
   private EvaluationHelper helper = new EvaluationHelper();
 
   [System.NonSerialized]
@@ -66,22 +65,20 @@ public class Shell : EditorWindow {
       }
     }
   }
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
 
 
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
   // Code Editor Functionality
-  //----------------------------------------------------------------------------
-  private bool      doProcess             = false,
-                    useContinuationPrompt = false,
-                    resetCommand          = false;
-  private string    codeToProcess         = "";
-  public TextEditor editorState           = null; // WARNING: Undocumented spookiness
-                                                  // from deep within the bowels
-                                                  // of Unity!
+  //--------------------------------------------------------------------------------------------------------------------
+  private bool        doProcess             = false,
+                      useContinuationPrompt = false,
+                      resetCommand          = false;
+  private string      codeToProcess         = "";
+  public  TextEditor  editorState           = null; // WARNING: Undocumented spookiness from deep within the bowels
+                                                    // of Unity!
 
-  // Need to use menu items because otherwise we don't receive events for cmd-]
-  // and cmd-[.
+  // Need to use menu items because otherwise we don't receive events for cmd-] and cmd-[.
   [MenuItem("Edit/Indent %]", false, 256)]
   public static void IndentCommand() {
     Shell w = focusedWindow as Shell;
@@ -112,22 +109,14 @@ public class Shell : EditorWindow {
     return (w != null) && (w.editorState != null);
   }
 
-  // Make our state object go away if we do, or if we lose focus, or whatnot
-  // to ensure menu items disable properly regardless of possible dangling
-  // references, etc.
-  public void OnDisable() {
-    editorState = null;
-  }
+  // Make our state object go away if we do, or if we lose focus, or whatnot to ensure menu items disable properly
+  // regardless of possible dangling references, etc.
+  public void OnDisable()   { editorState = null; }
+  public void OnLostFocus() { editorState = null; }
+  public void OnDestroy()   { editorState = null; }
 
-  public void OnLostFocus() {
-    editorState = null;
-  }
-
-  public void OnDestroy() {
-    editorState = null;
-  }
-
-  protected void FindSelectionBounds(TextEditor editor, string[] rawLines, out int startLine, out int endLine, out bool startAtBOL, out bool endAtBOL) {
+  protected void FindSelectionBounds(TextEditor editor, string[] rawLines, out int startLine, out int endLine, 
+                                     out bool startAtBOL, out bool endAtBOL) {
     bool      selectingBackwards  = editor.pos < editor.selectPos;
     int       selectionStart      = selectingBackwards ? editor.pos : editor.selectPos,
               selectionEnd        = selectingBackwards ? editor.selectPos : editor.pos,
@@ -138,14 +127,12 @@ public class Shell : EditorWindow {
     startAtBOL  = endAtBOL  = false;
     while((counter <= selectionEnd) && (curLine < rawLines.Length)) {
       int curLineLen = rawLines[curLine].Length;
-Debug.Log(">>>" + startLine + ","+counter+","+selectionStart+","+curLine);
+//Debug.Log(">>>" + startLine + ","+counter+","+selectionStart+","+curLine);
       if(startLine == -1 && (counter + curLineLen) >= selectionStart) {
-// Debug.Log("Found BOS at "+curLine);
         startLine   = curLine;
         startAtBOL  = counter == selectionStart;
       }
       if(endLine == -1 && (counter + curLineLen) >= selectionEnd) {
-// Debug.Log("Found EOSat "+curLine);
         endLine   = curLine;
         endAtBOL  = counter == selectionEnd;
       }
@@ -155,11 +142,13 @@ Debug.Log(">>>" + startLine + ","+counter+","+selectionStart+","+curLine);
     if(endLine == -1)       endLine   = curLine - 1;
     if(endAtBOL)            endLine--; // Don't shift end of block-selection over on unindent.
     if(endLine < startLine) endLine = startLine;
-Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selectionEnd + "; " + startLine + ".." + endLine);
+//Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selectionEnd + "; " + startLine + ".." + endLine);
   }
 
   // TODO: Need to handle multiple spaces as tabs...
+  //
   // TODO: Make sure we're using a FIXED WIDTH FONT. >.<
+  //
   // TODO: Indent/unindent whole lines only -- not in middle of string!
   public string Indent(TextEditor editor) {
     string[]  rawLines            = codeToProcess.Split('\n');
@@ -188,12 +177,12 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
         editor.selectPos += selectingBackwards ? 1 : 0;
       }
     } else {
-      editor.pos        += endShift;
-      editor.selectPos  += endShift;
+      editor.pos         += endShift;
+      editor.selectPos   += endShift;
     }
 
 
-    codeToProcess       = String.Join("\n", rawLines);
+    codeToProcess         = String.Join("\n", rawLines);
     return codeToProcess;
   }
 
@@ -229,31 +218,31 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
 
     // Shift the selection to compensate for the tabs...
     if(editor.pos != editor.selectPos) {
-      editor.pos       -= selectingBackwards ? startDeletions : endDeletions;
-      editor.selectPos -= selectingBackwards ? endDeletions : startDeletions;
+      editor.pos             -= selectingBackwards ? startDeletions : endDeletions;
+      editor.selectPos       -= selectingBackwards ? endDeletions : startDeletions;
     } else {
       if(!startAtBOL) {
         if(endAtBOL) {
-          editor.pos        -= startDeletions;
-          editor.selectPos  -= startDeletions;
+          editor.pos         -= startDeletions;
+          editor.selectPos   -= startDeletions;
         } else {
-          editor.pos        -= endDeletions;
-          editor.selectPos  -= endDeletions;
+          editor.pos         -= endDeletions;
+          editor.selectPos   -= endDeletions;
         }
       }
     }
 
-    codeToProcess       = String.Join("\n", rawLines);
+    codeToProcess             = String.Join("\n", rawLines);
     return codeToProcess;
   }
 
   public string Paste(TextEditor editor, string textToPaste, bool continueSelection) {
-    // The user can select from right-to-left and Unity gives us data that's
-    // different than if they selected left-to-right.  That can be handy, but
-    // here we just want to know substring indexes to slice out.
-    int startAt = Mathf.Min(editor.pos, editor.selectPos);
-    int endAt = Mathf.Max(editor.pos, editor.selectPos);
-    string prefix = "", suffix = "";
+    // The user can select from right-to-left and Unity gives us data that's different than if they selected
+    // left-to-right.  That can be handy, but here we just want to know substring indexes to slice out.
+    int     startAt = Mathf.Min(editor.pos, editor.selectPos);
+    int     endAt   = Mathf.Max(editor.pos, editor.selectPos);
+    string  prefix  = "",
+            suffix  = "";
     if(startAt > 0)
       prefix = editor.content.text.Substring(0, startAt);
     if(endAt < editor.content.text.Length)
@@ -263,9 +252,9 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
     editor.content.text = newCorpus;
     if(continueSelection) {
       if(editor.pos > editor.selectPos)
-        editor.pos = prefix.Length + textToPaste.Length;
+        editor.pos        = prefix.Length + textToPaste.Length;
       else
-        editor.selectPos = prefix.Length + textToPaste.Length;
+        editor.selectPos  = prefix.Length + textToPaste.Length;
     } else
       editor.pos = editor.selectPos = prefix.Length + textToPaste.Length;
     return newCorpus;
@@ -274,12 +263,12 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
   public string Cut(TextEditor editor) {
     EditorGUIUtility.systemCopyBuffer = editor.SelectedText;
 
-    // The user can select from right-to-left and Unity gives us data that's
-    // different than if they selected left-to-right.  That can be handy, but
-    // here we just want to know substring indexes to slice out.
-    int startAt = Mathf.Min(editor.pos, editor.selectPos);
-    int endAt = Mathf.Max(editor.pos, editor.selectPos);
-    string prefix = "", suffix = "";
+    // The user can select from right-to-left and Unity gives us data that's different than if they selected
+    // left-to-right.  That can be handy, but here we just want to know substring indexes to slice out.
+    int     startAt = Mathf.Min(editor.pos, editor.selectPos),
+            endAt   = Mathf.Max(editor.pos, editor.selectPos);
+    string  prefix  = "",
+            suffix  = "";
     if(startAt > 0)
       prefix = editor.content.text.Substring(0, startAt);
     if(endAt < editor.content.text.Length)
@@ -287,18 +276,16 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
     string newCorpus = prefix + suffix;
 
     editor.content.text = newCorpus;
-    editor.pos = editor.selectPos = prefix.Length;
+    editor.pos          = editor.selectPos = prefix.Length;
     return newCorpus;
   }
 
-  // Handy-dandy method to deal with keyboard inputs which we get as actual
-  // events.  Basically lets us deal with copy & paste, etc which GUI.TextArea
-  // ordinarily does not support.
+  // Handy-dandy method to deal with keyboard inputs which we get as actual events.  Basically lets us deal with copy
+  // & paste, etc which GUI.TextArea ordinarily does not support.
   private void FilterEditorInputs() {
     UnityEngine.Event evt = UnityEngine.Event.current;
     if(focusedWindow == this) {
-      // Only attempt to grab this if our window has focus in order to make
-      // indent/unindent menu items behave sanely.
+      // Only attempt to grab this if our window has focus in order to make indent/unindent menu items behave sanely.
       int editorId = GUIUtility.keyboardControl;
       try {
         editorState = GUIUtility.QueryStateObject(typeof(System.Object), editorId) as TextEditor;
@@ -320,38 +307,29 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
 
     if(evt.isKey) {
       if(evt.type == EventType.KeyDown) {
-        // KeyDown gets the key press + repeating.  We only care about a few
-        // things...
+        // KeyDown gets the key press + repeating.  We only care about a few things...
         if(evt.functionKey) {
           // TODO: Make sure we don't have modifier keys pressed...
 
           // TODO: Proper edit-history support!
           if(evt.keyCode == KeyCode.UpArrow) {
-            // TODO: If we're at the top of the input, move to the previous
-            // TODO: history item.  If the current item is the last history item,
-            // TODO: update the history with changes?
-//            Debug.Log("UP");
+            // TODO: If we're at the top of the input, move to the previous history item.  If the current item is the
+            // TODO: last history item, update the history with changes?
           } else if(evt.keyCode == KeyCode.DownArrow) {
-            // TODO: If we're at the bottom of the input, move to the previous
-            // TODO: history item.  If the current item is the last history item,
-            // TODO: update the history with changes?
-//            Debug.Log("DOWN");
-//          } else {
-//            Debug.Log("{OTHER:" + evt.keyCode + "}");
+            // TODO: If we're at the bottom of the input, move to the previous history item.  If the current item is the
+            // TODO: last history item, update the history with changes?
           }
         } else if(evt.keyCode == KeyCode.Return) {
-          // TODO: Do we only want to do this only when the cursor is at the
-          // TODO: end of the input?  (Avoids unexpectedly putting newlines in
-          // TODO: the middle of peoples' input...)
-          if(UnityEngine.Event.current.shift)
+          // TODO: Do we only want to do this only when the cursor is at the end of the input?  (Avoids unexpectedly
+          // TODO: putting newlines in the middle of peoples' input...)
+          if(evt.shift)
             codeToProcess = Paste(editorState, "\n", false);
           else
             doProcess = true;
           useContinuationPrompt = true; // In case we fail.
         } else if(evt.keyCode == KeyCode.Tab) {
-          // Unity doesn't like using tab for actual editing.  We're gonna
-          // change that.  So here we inject a tab, and later we'll deal with
-          // focus issues.
+          // Unity doesn't like using tab for actual editing.  We're gonna change that.  So here we inject a tab, and
+          // later we'll deal with focus issues.
           codeToProcess = Paste(editorState, "\t", false);
         }
       }
@@ -359,18 +337,14 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
       switch(evt.commandName) {
       case "SelectAll":
       case "Paste":
-          // Always allowed to muck with selection or paste stuff...
+        // Always allowed to muck with selection or paste stuff...
         evt.Use();
         break;
       case "Copy":
       case "Cut":
-          // ... but can only copy & cut when we have a selection.
+        // ... but can only copy & cut when we have a selection.
         if(editorState.hasSelection)
           evt.Use();
-        break;
-      default:
-          // If we need to suss out other commands to support...
-//          Debug.Log("Validate: " + evt.commandName);
         break;
       }
     } else if(evt.type == EventType.ExecuteCommand) {
@@ -384,13 +358,12 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
         break;
       // But some don't.
       case "Paste":
-          // Manually paste.  Keeping Use() out of the Paste() method so we can
-          // re-use the functionality elsewhere.
+        // Manually paste.  Keeping Use() out of the Paste() method so we can re-use the functionality elsewhere.
         codeToProcess = Paste(editorState, EditorGUIUtility.systemCopyBuffer, false);
         evt.Use();
         break;
       case "Cut":
-          // Ditto -- manual cut.
+        // Ditto -- manual cut.
         codeToProcess = Cut(editorState);
         evt.Use();
         break;
@@ -399,16 +372,13 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
   }
 
   private void ForceFocus(string selectedControl, string desiredControl) {
-    // Now here's how we deal with tabbing and hitting enter and whatnot.
-    // Basically, if we're the current editor window we assume that we always
-    // want the editor to have focus.  BUT there's a gotcha!  If we just blindly
-    // plow through with this, we'll wind up interfering with copy/paste/etc.
-    // It SEEMS to be the case that if we constrain mucking with the focus until
-    // the repaint event that stuff Just Works<tm>.
+    // Now here's how we deal with tabbing and hitting enter and whatnot.  Basically, if we're the current editor window
+    // we assume that we always want the editor to have focus.  BUT there's a gotcha!  If we just blindly plow through
+    // with this, we'll wind up interfering with copy/paste/etc.  It SEEMS to be the case that if we constrain mucking
+    // with the focus until the repaint event that stuff Just Works<tm>.
     //
-    // The only issue remaining after that is the actual selection -- mucking
-    // with the focus will cause it to get reset.  So we need to capture and
-    // restore it.
+    // The only issue remaining after that is the actual selection -- mucking with the focus will cause it to get reset.
+    // So we need to capture and restore it.
     if(focusedWindow == this) {
       UnityEngine.Event current = UnityEngine.Event.current;
       if(current == null)
@@ -425,7 +395,7 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
         }
         GUI.FocusControl(desiredControl);
         if(editorState != null) {
-          editorState.pos = p;
+          editorState.pos       = p;
           editorState.selectPos = sp;
         }
       }
@@ -438,9 +408,9 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
     if(selectedControl == editorControlName)
       FilterEditorInputs();
     if(resetCommand) {
-      resetCommand = false;
+      resetCommand          = false;
       useContinuationPrompt = false;
-      codeToProcess = "";
+      codeToProcess         = "";
     }
   }
 
@@ -450,14 +420,14 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
     GUILayout.BeginHorizontal();
       GUILayout.Label(useContinuationPrompt ? Shell.CONTINUATION_PROMPT : Shell.MAIN_PROMPT, EditorStyles.wordWrappedLabel, GUILayout.Width(37));
 
-      lnEditorState.text = codeToProcess;
-      lnEditorState = UnityREPLHelper.NumberedTextArea(editorControlName, lnEditorState);
-      codeToProcess = lnEditorState.text;
+      lnEditorState.text  = codeToProcess;
+      lnEditorState       = UnityREPLHelper.NumberedTextArea(editorControlName, lnEditorState);
+      codeToProcess       = lnEditorState.text;
     GUILayout.EndHorizontal();
   }
 
-  private Dictionary<string, Tuple<FieldSpec, FieldInfo>> fields = null;
-  public Vector2 scrollPosition = Vector2.zero;
+  private Dictionary<string, Tuple<FieldSpec, FieldInfo>> fields          = null;
+  public Vector2                                          scrollPosition  = Vector2.zero;
 
   private void ShowVars() {
     if(fields == null)
@@ -468,9 +438,8 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
       GUILayout.BeginHorizontal();
         GUILayout.Space(EditorGUI.indentLevel * 14);
         GUILayout.BeginVertical();
-          // TODO: This is gonna be WAY inefficient *AND* ugly.  Need a better
-          // TODO: way to handle tabular data, and need a way to track what
-          // TODO: has/hasn't changed here.
+          // TODO: This is gonna be WAY inefficient *AND* ugly.  Need a better way to handle tabular data, and need a
+          // TODO: way to track what has/hasn't changed here.
           if(fields != null) {
             StringBuilder tmp = new StringBuilder();
             foreach(var kvp in fields) {
@@ -493,11 +462,11 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
   }
 
   private const string editorControlName = "REPLEditor";
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
 
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
   // Help Screen
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
   public Vector2 helpScrollPosition = Vector2.zero;
   private bool showQuickStart = true, showEditing = true, showLogging = true,
                showShortcuts = true, showLocals = true, showKnownIssues = true,
@@ -612,11 +581,11 @@ Debug.Log(startAtBOL + "/" + endAtBOL + "; " + selectionStart + ".." + selection
       GUILayout.Space(4);
     EditorGUILayout.EndScrollView();
   }
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
 
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
   // Tying It All Together...
-  //----------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
   public bool showVars = true, filterTraces = true, showHelp = false;
   // TODO: Save pane sizing states...
   // private VerticalPaneState paneConfiguration = new VerticalPaneState() {
