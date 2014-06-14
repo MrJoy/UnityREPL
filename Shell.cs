@@ -162,8 +162,7 @@ public class Shell : EditorWindow {
     for(int i = startLine; i <= endLine; i++)
       rawLines[i] = '\t' + rawLines[i]; // TODO: Make space vs. tab indentation configurable.
 
-    int endShift = endLine - startLine;
-    endShift++;
+    int endShift = (endLine - startLine) + 1;
     // Shift the selection to compensate for the tabs...
     if(editor.pos != editor.selectPos) {
       editor.pos         += selectingBackwards ? 1        : endShift;
@@ -387,12 +386,8 @@ public class Shell : EditorWindow {
         return;
 
       if(selectedControl != desiredControl) {
-        int p   = 0,
-            sp  = 0;
-        if(editorState != null) {
-          p   = editorState.pos;
-          sp  = editorState.selectPos;
-        }
+        int p   = (editorState != null) ? editorState.pos       : 0,
+            sp  = (editorState != null) ? editorState.selectPos : 0;
         GUI.FocusControl(desiredControl);
         if(editorState != null) {
           editorState.pos       = p;
