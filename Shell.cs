@@ -593,6 +593,9 @@ public class Shell : EditorWindow {
     EditorGUILayoutToolbar.Begin();
       // if(GUILayout.Button("Clear Log", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false)))
       //   Debug.ClearDeveloperConsole();
+      if(editorState != null) {
+        GUILayout.Label(editorState.pos + " / " + editorState.selectPos);
+      }
 
       showVars = GUILayout.Toggle(showVars, "Locals", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
 
