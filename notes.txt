@@ -1,0 +1,53 @@
+  public bool CanPaste ();
+  public void Copy ();
+  public bool Cut ();
+  public bool Paste ();
+
+  public void ClampPos ();
+  public bool HandleKeyEvent (Event e);
+  public void Insert (char c);
+
+
+  public void ExpandSelectGraphicalLineEnd ();
+  public void ExpandSelectGraphicalLineStart ();
+  public void ReplaceSelection (string replace);
+  public void SelectGraphicalLineEnd ();
+  public void SelectGraphicalLineStart ();
+  public void SelectLeft ();
+  public void SelectRight ();
+
+  public void OnFocus ();
+  public void OnLostFocus ();
+
+
+  public bool hasSelection {
+    get;
+  }
+  public string SelectedText {
+    get;
+  }
+
+  public int pos;
+  public int selectPos;
+  public int controlID;
+  public GUIContent content;
+  public GUIStyle style;
+  public Rect position;
+  public bool multiline;
+  public bool hasHorizontalCursorPos;
+  public bool isPasswordField;
+  public Vector2 scrollOffset;
+  public Vector2 graphicalCursorPos;
+  public Vector2 graphicalSelectCursorPos;
+
+  [Serializable]
+  public enum DblClickSnapping : byte {
+    WORDS,
+    PARAGRAPHS
+  }
+}
+
+UnityEngine.Debug:Log(Object)
+EvaluationHelper:Eval(String, Boolean) (at Assets/Editor/UnityREPL/Evaluator.cs:312)
+Shell:Update() (at Assets/Editor/UnityREPL/Shell.cs:59)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions()
