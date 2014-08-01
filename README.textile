@@ -1,5 +1,7 @@
 h1. OVERVIEW
 
+[![Gitter Chat](https://badges.gitter.im/MrJoy/UnityREPL.png)](https://gitter.im/MrJoy/UnityREPL)
+
 UnityREPL is a REPL (Read, Eval, Print, Loop) tool based on "Miguel's CSharpRepl":CSharpRepl but for "Unity":Unity.
 
 What's a REPL?  See the "Wikipedia article.":Wikipedia or the "demo videos":Wiki on the Wiki.
