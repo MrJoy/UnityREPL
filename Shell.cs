@@ -249,7 +249,11 @@ public class Shell : EditorWindow {
       // Only attempt to grab this if our window has focus in order to make
       // indent/unindent menu items behave sanely.
       int editorId = GUIUtility.keyboardControl;
-      editorState = GUIUtility.QueryStateObject(typeof(System.Object), editorId) as TextEditor;
+			try {
+				editorState = GUIUtility.QueryStateObject(typeof(System.Object), editorId) as TextEditor;
+			} catch (KeyNotFoundException) {
+				// Ignoring because this seems to only mean that no such object was found.
+			};
       if(editorState == null) return;
     } else {
       return;
