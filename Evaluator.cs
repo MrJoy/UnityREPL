@@ -17,120 +17,130 @@ using System.Text;
 using System.IO;
 using Mono.CSharp;
 
-class EvaluationHelper {
-  private TextWriter outWriter, errWriter;
-  private StringWriter reportOutWriter = new StringWriter(),
-                       reportErrorWriter = new StringWriter();
-  public EvaluationHelper() {
-    FluffReporter();
-    TryLoadingAssemblies();
-    FlushMessages();
-  }
+class EvaluationHelper
+{
+	private TextWriter outWriter, errWriter;
+	private StringWriter reportOutWriter = new StringWriter (),
+		reportErrorWriter = new StringWriter ();
 
-  private bool CatchMessages(LogEntry cmdEntry, bool status) {
-    StringBuilder outBuffer = reportOutWriter.GetStringBuilder();
-    StringBuilder errBuffer = reportErrorWriter.GetStringBuilder();
+	public EvaluationHelper ()
+	{
+		FluffReporter ();
+		TryLoadingAssemblies ();
+		FlushMessages ();
+	}
 
-    string tmpOut = outBuffer.ToString().Trim(),
-           tmpErr = errBuffer.ToString().Trim();
+	private bool CatchMessages (LogEntry cmdEntry, bool status)
+	{
+		StringBuilder outBuffer = reportOutWriter.GetStringBuilder ();
+		StringBuilder errBuffer = reportErrorWriter.GetStringBuilder ();
 
-    outBuffer.Length = 0;
-    errBuffer.Length = 0;
+		string tmpOut = outBuffer.ToString ().Trim (),
+		tmpErr = errBuffer.ToString ().Trim ();
 
-    if(outWriter != null)
-      System.Console.SetOut(outWriter);
-    if(errWriter != null)
-      System.Console.SetError(errWriter);
+		outBuffer.Length = 0;
+		errBuffer.Length = 0;
 
-    if(!String.IsNullOrEmpty(tmpOut)) {
-      cmdEntry.Add(new LogEntry() {
+		if (outWriter != null)
+			System.Console.SetOut (outWriter);
+		if (errWriter != null)
+			System.Console.SetError (errWriter);
+
+		if (!String.IsNullOrEmpty (tmpOut)) {
+			cmdEntry.Add (new LogEntry () {
         logEntryType = LogEntryType.SystemConsoleOut,
         error = tmpOut
       });
-      status = false;
-    }
-    if(!String.IsNullOrEmpty(tmpErr)) {
-      cmdEntry.Add(new LogEntry() {
+			status = false;
+		}
+		if (!String.IsNullOrEmpty (tmpErr)) {
+			cmdEntry.Add (new LogEntry () {
         logEntryType = LogEntryType.SystemConsoleErr,
         error = tmpErr
       });
-      status = false;
-    }
-    return status;
-  }
+			status = false;
+		}
+		return status;
+	}
 
-  private bool CatchMessages(bool status) {
-    StringBuilder outBuffer = reportOutWriter.GetStringBuilder(),
-                  errBuffer = reportErrorWriter.GetStringBuilder();
+	private bool CatchMessages (bool status)
+	{
+		StringBuilder outBuffer = reportOutWriter.GetStringBuilder (),
+		errBuffer = reportErrorWriter.GetStringBuilder ();
 
-    string tmpOut = outBuffer.ToString().Trim(),
-           tmpErr = errBuffer.ToString().Trim();
+		string tmpOut = outBuffer.ToString ().Trim (),
+		tmpErr = errBuffer.ToString ().Trim ();
 
-    outBuffer.Length = 0;
-    errBuffer.Length = 0;
+		outBuffer.Length = 0;
+		errBuffer.Length = 0;
 
-    if(outWriter != null)
-      System.Console.SetOut(outWriter);
-    if(errWriter != null)
-      System.Console.SetError(errWriter);
+		if (outWriter != null)
+			System.Console.SetOut (outWriter);
+		if (errWriter != null)
+			System.Console.SetError (errWriter);
 
-    if(!String.IsNullOrEmpty(tmpOut) || !String.IsNullOrEmpty(tmpErr)) {
-      status = false;
-    }
-    return status;
-  }
+		if (!String.IsNullOrEmpty (tmpOut) || !String.IsNullOrEmpty (tmpErr)) {
+			status = false;
+		}
+		return status;
+	}
 
-  protected void FlushMessages() {
-    StringBuilder outBuffer = reportOutWriter.GetStringBuilder(),
-                  errBuffer = reportErrorWriter.GetStringBuilder();
+	protected void FlushMessages ()
+	{
+		StringBuilder outBuffer = reportOutWriter.GetStringBuilder (),
+		errBuffer = reportErrorWriter.GetStringBuilder ();
 
-    outBuffer.Length = 0;
-    errBuffer.Length = 0;
-  }
+		outBuffer.Length = 0;
+		errBuffer.Length = 0;
+	}
 
-  protected void FluffReporter() {
-    if(outWriter == null)
-      outWriter = System.Console.Out;
-    if(errWriter == null)
-      errWriter = System.Console.Error;
+	protected void FluffReporter ()
+	{
+		if (outWriter == null)
+			outWriter = System.Console.Out;
+		if (errWriter == null)
+			errWriter = System.Console.Error;
 
-    System.Console.SetOut(reportOutWriter);
-    System.Console.SetError(reportErrorWriter);
+		System.Console.SetOut (reportOutWriter);
+		System.Console.SetError (reportErrorWriter);
 
-    FlushMessages();
-  }
+		FlushMessages ();
+	}
 
-  protected void TryLoadingAssemblies() {
-    foreach(Assembly b in AppDomain.CurrentDomain.GetAssemblies()) {
-      string assemblyShortName = b.GetName().Name;
-      if(!(assemblyShortName.StartsWith("Mono.CSharp") || assemblyShortName.StartsWith("UnityDomainLoad") || assemblyShortName.StartsWith("interactive"))) {
-        //System.Console.WriteLine("Giving Mono.CSharp a reference to " + assemblyShortName);
-        Evaluator.ReferenceAssembly(b);
-      }
-    }
+	protected void TryLoadingAssemblies ()
+	{
+		foreach (Assembly b in AppDomain.CurrentDomain.GetAssemblies()) {
+			string assemblyShortName = b.GetName ().Name;
+			if (!(assemblyShortName.StartsWith ("Mono.CSharp") || assemblyShortName.StartsWith ("UnityDomainLoad") || assemblyShortName.StartsWith ("interactive"))) {
+				//System.Console.WriteLine("Giving Mono.CSharp a reference to " + assemblyShortName);
+				Evaluator.ReferenceAssembly (b);
+			}
+		}
 
 
-    // These won't work the first time through after an assembly reload.  No
-    // clue why, but the Unity* namespaces don't get found.  Perhaps they're
-    // being loaded into our AppDomain asynchronously and just aren't done yet?
-    // Regardless, attempting to hit them early and then trying again later
-    // seems to work fine.
-    Evaluator.Run("using System;");
-    Evaluator.Run("using System.IO;");
-    Evaluator.Run("using System.Linq;");
-    Evaluator.Run("using System.Collections;");
-    Evaluator.Run("using System.Collections.Generic;");
-    Evaluator.Run("using UnityEditor;");
-    Evaluator.Run("using UnityEngine;");
-  }
+		// These won't work the first time through after an assembly reload.  No
+		// clue why, but the Unity* namespaces don't get found.  Perhaps they're
+		// being loaded into our AppDomain asynchronously and just aren't done yet?
+		// Regardless, attempting to hit them early and then trying again later
+		// seems to work fine.
+		Evaluator.Run ("using System;");
+		Evaluator.Run ("using System.IO;");
+		Evaluator.Run ("using System.Linq;");
+		Evaluator.Run ("using System.Collections;");
+		Evaluator.Run ("using System.Collections.Generic;");
+		Evaluator.Run ("using UnityEditor;");
+		Evaluator.Run ("using UnityEngine;");
+	}
 
-  public bool Init(ref bool isInitialized) {
-    // Don't be executing code when we're about to reload it.  Not sure this is
-    // actually needed but seems prudent to be wary of it.
-    if(EditorApplication.isCompiling) return false;
+	public bool Init (ref bool isInitialized)
+	{
+		// Don't be executing code when we're about to reload it.  Not sure this is
+		// actually needed but seems prudent to be wary of it.
+		if (EditorApplication.isCompiling)
+			return false;
 
-    FluffReporter();
-    /*
+		FluffReporter ();
+		/*
     We need to tell the evaluator to reference stuff we care about.  Since
     there's a lot of dynamically named stuff that we might want, we just pull
     the list of loaded assemblies and include them "all" (with the exception of
@@ -168,57 +178,58 @@ class EvaluationHelper {
       5025cb470ec5941b9b5afef2b57be7d4
       78b446ec0e1c748e3ba1927569415c6a
     */
-    bool retVal = false;
-    if(!isInitialized) {
-      TryLoadingAssemblies();
+		bool retVal = false;
+		if (!isInitialized) {
+			TryLoadingAssemblies ();
 
-      LogEntry cmdEntry = new LogEntry() {
+			LogEntry cmdEntry = new LogEntry () {
         logEntryType = LogEntryType.MetaCommand,
         command = "Attempting to load assemblies..."
       };
-      retVal = CatchMessages(cmdEntry, true);
-      if(!retVal)
-        isInitialized = true;
-    } else {
-      retVal = true;
-    }
+			retVal = CatchMessages (cmdEntry, true);
+			if (!retVal)
+				isInitialized = true;
+		} else {
+			retVal = true;
+		}
 
-    if(retVal) {
-      if(Evaluator.InteractiveBaseClass != typeof(UnityBaseClass))
-        Evaluator.InteractiveBaseClass = typeof(UnityBaseClass);
-    }
-    return retVal;
-  }
+		if (retVal) {
+			if (Evaluator.InteractiveBaseClass != typeof(UnityBaseClass))
+				Evaluator.InteractiveBaseClass = typeof(UnityBaseClass);
+		}
+		return retVal;
+	}
 
-  private StringBuilder outputBuffer = new StringBuilder();
+	private StringBuilder outputBuffer = new StringBuilder ();
 	private Application.LogCallback logMessageCallback;
 
-  public bool Eval(List<LogEntry> logEntries, string code) {
-    EditorApplication.LockReloadAssemblies();
+	public bool Eval (List<LogEntry> logEntries, string code)
+	{
+		EditorApplication.LockReloadAssemblies ();
 
-    bool status = false,
-         hasOutput = false,
-         hasAddedLogToEntries = false;
-    object output = null;
-    string res = null,
-           tmpCode = code.Trim();
-    LogEntry cmdEntry = new LogEntry() {
+		bool status = false,
+		hasOutput = false,
+		hasAddedLogToEntries = false;
+		object output = null;
+		string res = null,
+		tmpCode = code.Trim ();
+		LogEntry cmdEntry = new LogEntry () {
       logEntryType = LogEntryType.Command,
       command = tmpCode
     };
 
-    try {
-      FluffReporter();
+		try {
+			FluffReporter ();
 
-      if(tmpCode.StartsWith("=")) {
-        // Special case handling of calculator mode.  The problem is that
-        // expressions involving multiplication are grammatically ambiguous
-        // without a var declaration or some other grammatical construct.
-        tmpCode = "(" + tmpCode.Substring(1, tmpCode.Length-1) + ");";
-      }
-			if(logMessageCallback == null) {
+			if (tmpCode.StartsWith ("=")) {
+				// Special case handling of calculator mode.  The problem is that
+				// expressions involving multiplication are grammatically ambiguous
+				// without a var declaration or some other grammatical construct.
+				tmpCode = "(" + tmpCode.Substring (1, tmpCode.Length - 1) + ");";
+			}
+			if (logMessageCallback == null) {
 				logMessageCallback = delegate(string cond, string sTrace, LogType lType) {
-					cmdEntry.Add(new LogEntry() {
+					cmdEntry.Add (new LogEntry () {
 						logEntryType = LogEntryType.ConsoleLog,
 						condition = cond,
 						stackTrace = sTrace,
@@ -227,136 +238,145 @@ class EvaluationHelper {
 				};
 			}
 			Application.logMessageReceived += logMessageCallback;
-      res = Evaluator.Evaluate(tmpCode, out output, out hasOutput);
-      //if(res == tmpCode)
-      //  Debug.Log("Unfinished input...");
-    } catch(Exception e) {
-      cmdEntry.Add(new LogEntry() {
+			res = Evaluator.Evaluate (tmpCode, out output, out hasOutput);
+			//if(res == tmpCode)
+			//  Debug.Log("Unfinished input...");
+		} catch (Exception e) {
+			cmdEntry.Add (new LogEntry () {
         logEntryType = LogEntryType.EvaluationError,
         error = e.ToString().Trim() // TODO: Produce a stack trace a la Debug, and put it in stackTrace so we can filter it.
       });
 
-      output = new Evaluator.NoValueSet();
-      hasOutput = false;
-      status = true; // Need this to avoid 'stickiness' where we let user
-                     // continue editing due to incomplete code.
-    } finally {
-      status = res == null;
+			output = new Evaluator.NoValueSet ();
+			hasOutput = false;
+			status = true; // Need this to avoid 'stickiness' where we let user
+			// continue editing due to incomplete code.
+		} finally {
+			status = res == null;
 			if (logMessageCallback != null)
 				Application.logMessageReceived -= logMessageCallback;
 			else
-				Debug.LogError("logMessageCallback was null.  Uh-oh!");
-      if(res != tmpCode) {
-        logEntries.Add(cmdEntry);
-        hasAddedLogToEntries = true;
-      }
-      status = CatchMessages(cmdEntry, status);
-    }
+				Debug.LogError ("logMessageCallback was null.  Uh-oh!");
+			if (res != tmpCode) {
+				logEntries.Add (cmdEntry);
+				hasAddedLogToEntries = true;
+			}
+			status = CatchMessages (cmdEntry, status);
+		}
 
-    if(hasOutput) {
-      if(status) {
-        outputBuffer.Length = 0;
+		if (hasOutput) {
+			if (status) {
+				outputBuffer.Length = 0;
 
-        try {
-          FluffReporter();
-          PrettyPrint.PP(outputBuffer, output, true);
-        } catch(Exception e) {
-          cmdEntry.Add(new LogEntry() {
+				try {
+					FluffReporter ();
+					PrettyPrint.PP (outputBuffer, output, true);
+				} catch (Exception e) {
+					cmdEntry.Add (new LogEntry () {
             logEntryType = LogEntryType.EvaluationError,
             error = e.ToString().Trim() // TODO: Produce a stack trace a la Debug, and put it in stackTrace so we can filter it.
           });
-          if(!hasAddedLogToEntries) {
-            logEntries.Add(cmdEntry);
-            hasAddedLogToEntries = true;
-          }
-        } finally {
-          bool result = CatchMessages(cmdEntry, true);
-          if(!result && !hasAddedLogToEntries) {
-            logEntries.Add(cmdEntry);
-            hasAddedLogToEntries = true;
-          }
-        }
+					if (!hasAddedLogToEntries) {
+						logEntries.Add (cmdEntry);
+						hasAddedLogToEntries = true;
+					}
+				} finally {
+					bool result = CatchMessages (cmdEntry, true);
+					if (!result && !hasAddedLogToEntries) {
+						logEntries.Add (cmdEntry);
+						hasAddedLogToEntries = true;
+					}
+				}
 
-        string tmp = outputBuffer.ToString().Trim();
-        if(!String.IsNullOrEmpty(tmp)) {
-          cmdEntry.Add(new LogEntry() {
+				string tmp = outputBuffer.ToString ().Trim ();
+				if (!String.IsNullOrEmpty (tmp)) {
+					cmdEntry.Add (new LogEntry () {
             logEntryType = LogEntryType.Output,
             output = outputBuffer.ToString().Trim()
           });
-          if(!hasAddedLogToEntries) {
-            logEntries.Add(cmdEntry);
-            hasAddedLogToEntries = true;
-          }
-        }
-      }
-    }
+					if (!hasAddedLogToEntries) {
+						logEntries.Add (cmdEntry);
+						hasAddedLogToEntries = true;
+					}
+				}
+			}
+		}
 
-    EditorApplication.UnlockReloadAssemblies();
-    return status;
-  }
+		EditorApplication.UnlockReloadAssemblies ();
+		return status;
+	}
 }
 
 // WARNING: Absolutely NOT thread-safe!
-internal class EvaluatorProxy : ReflectionProxy {
-  private static readonly Type _Evaluator = typeof(Evaluator);
-  private static readonly FieldInfo _fields = _Evaluator.GetField("fields", NONPUBLIC_STATIC);
+internal class EvaluatorProxy : ReflectionProxy
+{
+	private static readonly Type _Evaluator = typeof(Evaluator);
+	private static readonly FieldInfo _fields = _Evaluator.GetField ("fields", NONPUBLIC_STATIC);
 
-  internal static Hashtable fields { get { return (Hashtable)_fields.GetValue(null); } }
+	internal static Hashtable fields { get { return (Hashtable)_fields.GetValue (null); } }
 }
 
 
 // WARNING: Absolutely NOT thread-safe!
-internal class TypeManagerProxy : ReflectionProxy {
-  private static readonly Type _TypeManager = typeof(Evaluator).Assembly.GetType("Mono.CSharp.TypeManager");
-  private static readonly MethodInfo _CSharpName = _TypeManager.GetMethod("CSharpName", PUBLIC_STATIC, null, Signature(typeof(Type)), null);
+internal class TypeManagerProxy : ReflectionProxy
+{
+	private static readonly Type _TypeManager = typeof(Evaluator).Assembly.GetType ("Mono.CSharp.TypeManager");
+	private static readonly MethodInfo _CSharpName = _TypeManager.GetMethod ("CSharpName", PUBLIC_STATIC, null, Signature (typeof(Type)), null);
 
-  // Save an allocation per access here...
-  private static readonly object[] _CSharpNameParams = new object[] { null };
-  internal static string CSharpName(Type t) {
-    // TODO: What am I doing wrong here that this throws on generics??
-    string name = "";
-    try {
-      _CSharpNameParams[0] = t;
-      name = (string)_CSharpName.Invoke(null, _CSharpNameParams);
-    } catch(Exception) {
-      name = "?";
-    }
-    return name;
-  }
+	// Save an allocation per access here...
+	private static readonly object[] _CSharpNameParams = new object[] { null };
+
+	internal static string CSharpName (Type t)
+	{
+		// TODO: What am I doing wrong here that this throws on generics??
+		string name = "";
+		try {
+			_CSharpNameParams [0] = t;
+			name = (string)_CSharpName.Invoke (null, _CSharpNameParams);
+		} catch (Exception) {
+			name = "?";
+		}
+		return name;
+	}
 }
 
 // Dummy class so we can output a string and bypass pretty-printing of it.
-public struct REPLMessage {
-  public string msg;
-  public REPLMessage(string m) {
-    msg = m;
-  }
+public struct REPLMessage
+{
+	public string msg;
+
+	public REPLMessage (string m)
+	{
+		msg = m;
+	}
 }
 
-public class UnityBaseClass {
-  private static readonly REPLMessage _help = new REPLMessage(@"UnityREPL v." + Shell.VERSION + @":
+public class UnityBaseClass
+{
+	private static readonly REPLMessage _help = new REPLMessage (@"UnityREPL v." + Shell.VERSION + @":
 
 help;     -- This screen; help for helper commands.  Click the '?' icon on the toolbar for more comprehensive help.
 vars;     -- Show the variables you've created this session, and their current values.
 ");
-  public static REPLMessage help { get { return _help; } }
 
-  public static REPLMessage vars {
-    get {
-      Hashtable fields = EvaluatorProxy.fields;
-      StringBuilder tmp = new StringBuilder();
-      // TODO: Sort this list...
-      foreach(DictionaryEntry kvp in fields) {
-        FieldInfo field = (FieldInfo)kvp.Value;
-        tmp
-          .Append(TypeManagerProxy.CSharpName(field.FieldType))
-          .Append(" ")
-          .Append(kvp.Key)
-          .Append(" = ");
-        PrettyPrint.PP(tmp, field.GetValue(null));
-        tmp.Append(";\n");
-      }
-      return new REPLMessage(tmp.ToString());
-    }
-  }
+	public static REPLMessage help { get { return _help; } }
+
+	public static REPLMessage vars {
+		get {
+			Hashtable fields = EvaluatorProxy.fields;
+			StringBuilder tmp = new StringBuilder ();
+			// TODO: Sort this list...
+			foreach (DictionaryEntry kvp in fields) {
+				FieldInfo field = (FieldInfo)kvp.Value;
+				tmp
+          .Append (TypeManagerProxy.CSharpName (field.FieldType))
+          .Append (" ")
+          .Append (kvp.Key)
+          .Append (" = ");
+				PrettyPrint.PP (tmp, field.GetValue (null));
+				tmp.Append (";\n");
+			}
+			return new REPLMessage (tmp.ToString ());
+		}
+	}
 }
