@@ -191,6 +191,7 @@ class EvaluationHelper {
   }
 
   private StringBuilder outputBuffer = new StringBuilder();
+	private Application.LogCallback logMessageCallback;
 
   public bool Eval(List<LogEntry> logEntries, string code) {
     EditorApplication.LockReloadAssemblies();
@@ -215,14 +216,17 @@ class EvaluationHelper {
         // without a var declaration or some other grammatical construct.
         tmpCode = "(" + tmpCode.Substring(1, tmpCode.Length-1) + ");";
       }
-      Application.RegisterLogCallback(delegate(string cond, string sTrace, LogType lType) {
-        cmdEntry.Add(new LogEntry() {
-          logEntryType = LogEntryType.ConsoleLog,
-          condition = cond,
-          stackTrace = sTrace,
-          consoleLogType = lType
-        });
-      });
+			if(logMessageCallback == null) {
+				logMessageCallback = delegate(string cond, string sTrace, LogType lType) {
+					cmdEntry.Add(new LogEntry() {
+						logEntryType = LogEntryType.ConsoleLog,
+						condition = cond,
+						stackTrace = sTrace,
+						consoleLogType = lType
+					});
+				};
+			}
+			Application.logMessageReceived += logMessageCallback;
       res = Evaluator.Evaluate(tmpCode, out output, out hasOutput);
       //if(res == tmpCode)
       //  Debug.Log("Unfinished input...");
@@ -238,7 +242,10 @@ class EvaluationHelper {
                      // continue editing due to incomplete code.
     } finally {
       status = res == null;
-      Application.RegisterLogCallback(null);
+			if (logMessageCallback != null)
+				Application.logMessageReceived -= logMessageCallback;
+			else
+				Debug.LogError("logMessageCallback was null.  Uh-oh!");
       if(res != tmpCode) {
         logEntries.Add(cmdEntry);
         hasAddedLogToEntries = true;

@@ -141,14 +141,14 @@ public class Shell : EditorWindow {
     } else {
       string[] rawLines = codeToProcess.Split('\n');
       int counter = -1, curLine = 0;
-      while((counter < editor.pos) && (curLine < rawLines.Length))
+			while((counter < editor.cursorIndex) && (curLine < rawLines.Length))
         counter += rawLines[curLine++].Length + 1; // The +1 is for the \n.
 
-      if(counter >= editor.pos) {
+			if(counter >= editor.cursorIndex) {
         curLine--;
         rawLines[curLine] = '\t' + rawLines[curLine];
-        editor.pos++;
-        editor.selectPos++;
+        editor.cursorIndex++;
+        editor.selectIndex++;
         codeToProcess = String.Join("\n", rawLines);
       }
 
@@ -168,25 +168,25 @@ public class Shell : EditorWindow {
     } else {
       string[] rawLines = codeToProcess.Split('\n');
       int counter = 0, curLine = 0;
-      while((counter < editor.pos) && (curLine < rawLines.Length))
+			while((counter < editor.cursorIndex) && (curLine < rawLines.Length))
         counter += rawLines[curLine++].Length + 1; // The +1 is for the \n.
 
-      if(counter >= editor.pos) {
+			if(counter >= editor.cursorIndex) {
         // If counter == editor.pos, then the cursor is at the beginning of a
         // line and we run into a couple annoying issues where the logic here
         // acts as though it should be operating on the previous line (OY!).
         // SO.  To that end, we treat that as a bit of a special-case.  We
         // don't decrement the current line counter if cursor is at start of
         // line:
-        if(counter > editor.pos) curLine--;
+				if(counter > editor.cursorIndex) curLine--;
         if(rawLines[curLine].StartsWith("\t")) {
           rawLines[curLine] = rawLines[curLine].Substring(1);
           // AAAAAAAAAND, we don't try to unindent the cursor.  Although, truth
           // be told, we should probably preserve the TextMate-esaue edit
           // behavior of having the cursor not move when changing indentation.
-          if(counter > editor.pos) {
-            editor.pos--;
-            editor.selectPos--;
+					if(counter > editor.cursorIndex) {
+						editor.cursorIndex--;
+            editor.selectIndex--;
           }
           codeToProcess = String.Join("\n", rawLines);
         }
@@ -200,8 +200,8 @@ public class Shell : EditorWindow {
     // The user can select from right-to-left and Unity gives us data that's
     // different than if they selected left-to-right.  That can be handy, but
     // here we just want to know substring indexes to slice out.
-    int startAt = Mathf.Min(editor.pos, editor.selectPos);
-    int endAt = Mathf.Max(editor.pos, editor.selectPos);
+		int startAt = Mathf.Min(editor.cursorIndex, editor.selectIndex);
+		int endAt = Mathf.Max(editor.cursorIndex, editor.selectIndex);
     string prefix = "", suffix = "";
     if(startAt > 0)
       prefix = editor.content.text.Substring(0, startAt);
@@ -211,12 +211,12 @@ public class Shell : EditorWindow {
 
     editor.content.text = newCorpus;
     if(continueSelection) {
-      if(editor.pos > editor.selectPos)
-        editor.pos = prefix.Length + textToPaste.Length;
+			if(editor.cursorIndex > editor.selectIndex)
+				editor.cursorIndex = prefix.Length + textToPaste.Length;
       else
-        editor.selectPos = prefix.Length + textToPaste.Length;
+        editor.selectIndex = prefix.Length + textToPaste.Length;
     } else
-      editor.pos = editor.selectPos = prefix.Length + textToPaste.Length;
+			editor.cursorIndex = editor.selectIndex = prefix.Length + textToPaste.Length;
     return newCorpus;
   }
 
@@ -226,8 +226,8 @@ public class Shell : EditorWindow {
     // The user can select from right-to-left and Unity gives us data that's
     // different than if they selected left-to-right.  That can be handy, but
     // here we just want to know substring indexes to slice out.
-    int startAt = Mathf.Min(editor.pos, editor.selectPos);
-    int endAt = Mathf.Max(editor.pos, editor.selectPos);
+		int startAt = Mathf.Min(editor.cursorIndex, editor.selectIndex);
+		int endAt = Mathf.Max(editor.cursorIndex, editor.selectIndex);
     string prefix = "", suffix = "";
     if(startAt > 0)
       prefix = editor.content.text.Substring(0, startAt);
@@ -236,7 +236,7 @@ public class Shell : EditorWindow {
     string newCorpus = prefix + suffix;
 
     editor.content.text = newCorpus;
-    editor.pos = editor.selectPos = prefix.Length;
+		editor.cursorIndex = editor.selectIndex = prefix.Length;
     return newCorpus;
   }
 
@@ -353,13 +353,13 @@ public class Shell : EditorWindow {
         if(selectedControl != desiredControl) {
           int p = 0, sp = 0;
           if(editorState != null) {
-            p = editorState.pos;
-            sp = editorState.selectPos;
+						p = editorState.cursorIndex;
+            sp = editorState.selectIndex;
           }
           GUI.FocusControl(desiredControl);
           if(editorState != null) {
-            editorState.pos = p;
-            editorState.selectPos = sp;
+						editorState.cursorIndex = p;
+            editorState.selectIndex = sp;
           }
         }
       }
@@ -640,7 +640,7 @@ public class Shell : EditorWindow {
   [MenuItem("Window/C# Shell #%r")]
   public static void Init() {
     Shell window = (Shell)EditorWindow.GetWindow(typeof(Shell));
-    window.title = "C# Shell";
+    window.titleContent = new GUIContent("C# Shell");
     window.Show();
   }
 }

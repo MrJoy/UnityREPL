@@ -48,7 +48,7 @@ public class UnityREPLHelper {
             wasRelevantEvent) {
           int editorId = GUIUtility.keyboardControl;
           TextEditor te = GUIUtility.QueryStateObject(typeof(System.Object), editorId) as TextEditor;
-          int pos = te.pos; // TODO: How does this play with keyboard selection?  We want the actual cursor pos, not necessarily the right-end.
+          int pos = te.cursorIndex; // TODO: How does this play with keyboard selection?  We want the actual cursor pos, not necessarily the right-end.
           if(pos != editorState.lastPos) {
             Vector2 cursorPixelPos = NumberedEditorStyles.NumberedEditor.GetCursorPixelPosition(editorRect, txt, pos);
             cursorPixelPos.y -= 1; // 0-align...
