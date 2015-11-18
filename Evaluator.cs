@@ -48,16 +48,16 @@ class EvaluationHelper
 
 		if (!String.IsNullOrEmpty (tmpOut)) {
 			cmdEntry.Add (new LogEntry () {
-        logEntryType = LogEntryType.SystemConsoleOut,
-        error = tmpOut
-      });
+				logEntryType = LogEntryType.SystemConsoleOut,
+				error = tmpOut
+			});
 			status = false;
 		}
 		if (!String.IsNullOrEmpty (tmpErr)) {
 			cmdEntry.Add (new LogEntry () {
-        logEntryType = LogEntryType.SystemConsoleErr,
-        error = tmpErr
-      });
+				logEntryType = LogEntryType.SystemConsoleErr,
+				error = tmpErr
+			});
 			status = false;
 		}
 		return status;
@@ -141,51 +141,51 @@ class EvaluationHelper
 
 		FluffReporter ();
 		/*
-    We need to tell the evaluator to reference stuff we care about.  Since
-    there's a lot of dynamically named stuff that we might want, we just pull
-    the list of loaded assemblies and include them "all" (with the exception of
-    a couple that I have a sneaking suspicion may be bad to reference -- noted
-    below).
+		We need to tell the evaluator to reference stuff we care about.  Since
+		there's a lot of dynamically named stuff that we might want, we just pull
+		the list of loaded assemblies and include them "all" (with the exception of
+		a couple that I have a sneaking suspicion may be bad to reference -- noted
+		below).
 
-    Examples of what we might get when asking the current AppDomain for all
-    assemblies (short names only):
+		Examples of what we might get when asking the current AppDomain for all
+		assemblies (short names only):
 
-    Stuff we avoid:
-      UnityDomainLoad <-- Unity gubbins.  Probably want to avoid this.
-      Mono.CSharp <-- The self-same package used to pull this off.  Probably
-                      safe, but not taking any chances.
-      interactive0 <-- Looks like what Mono.CSharp is making on the fly.  If we
-                       load those, it APPEARS we may wind up holding onto them
-                       'forever', so...  Don't even try.
+		Stuff we avoid:
+		  UnityDomainLoad <-- Unity gubbins.  Probably want to avoid this.
+		  Mono.CSharp <-- The self-same package used to pull this off.  Probably
+		                  safe, but not taking any chances.
+		  interactive0 <-- Looks like what Mono.CSharp is making on the fly.  If we
+		                   load those, it APPEARS we may wind up holding onto them
+		                   'forever', so...  Don't even try.
 
 
-    Mono runtime, which we probably get 'for free', but include just in case:
-      System
-      mscorlib
+		Mono runtime, which we probably get 'for free', but include just in case:
+		  System
+		  mscorlib
 
-    Unity runtime, which we definitely want:
-      UnityEditor
-      UnityEngine
-      UnityScript.Lang
-      Boo.Lang
+		Unity runtime, which we definitely want:
+		  UnityEditor
+		  UnityEngine
+		  UnityScript.Lang
+		  Boo.Lang
 
-    The assemblies Unity generated from our project code, and whose names we
-    can't predict (thus all this headache of doing this dynamically):
-      66e7989537eed4bf0b3da7923cca36a5
-      3355ac06262db4cc485a4df3f5d80f92
-      056b51e0f06e443768d0eec4b9a4e6c0
-      bb4826d22f7064220b2889d64c02fea6
-      5025cb470ec5941b9b5afef2b57be7d4
-      78b446ec0e1c748e3ba1927569415c6a
-    */
+		The assemblies Unity generated from our project code, and whose names we
+		can't predict (thus all this headache of doing this dynamically):
+		  66e7989537eed4bf0b3da7923cca36a5
+		  3355ac06262db4cc485a4df3f5d80f92
+		  056b51e0f06e443768d0eec4b9a4e6c0
+		  bb4826d22f7064220b2889d64c02fea6
+		  5025cb470ec5941b9b5afef2b57be7d4
+		  78b446ec0e1c748e3ba1927569415c6a
+		*/
 		bool retVal = false;
 		if (!isInitialized) {
 			TryLoadingAssemblies ();
 
 			LogEntry cmdEntry = new LogEntry () {
-        logEntryType = LogEntryType.MetaCommand,
-        command = "Attempting to load assemblies..."
-      };
+				logEntryType = LogEntryType.MetaCommand,
+				command = "Attempting to load assemblies..."
+			};
 			retVal = CatchMessages (cmdEntry, true);
 			if (!retVal)
 				isInitialized = true;
@@ -214,9 +214,9 @@ class EvaluationHelper
 		string res = null,
 		tmpCode = code.Trim ();
 		LogEntry cmdEntry = new LogEntry () {
-      logEntryType = LogEntryType.Command,
-      command = tmpCode
-    };
+			logEntryType = LogEntryType.Command,
+			command = tmpCode
+		};
 
 		try {
 			FluffReporter ();
@@ -243,9 +243,9 @@ class EvaluationHelper
 			//  Debug.Log("Unfinished input...");
 		} catch (Exception e) {
 			cmdEntry.Add (new LogEntry () {
-        logEntryType = LogEntryType.EvaluationError,
-        error = e.ToString().Trim() // TODO: Produce a stack trace a la Debug, and put it in stackTrace so we can filter it.
-      });
+				logEntryType = LogEntryType.EvaluationError,
+				error = e.ToString().Trim() // TODO: Produce a stack trace a la Debug, and put it in stackTrace so we can filter it.
+			});
 
 			output = new Evaluator.NoValueSet ();
 			hasOutput = false;
@@ -273,9 +273,9 @@ class EvaluationHelper
 					PrettyPrint.PP (outputBuffer, output, true);
 				} catch (Exception e) {
 					cmdEntry.Add (new LogEntry () {
-            logEntryType = LogEntryType.EvaluationError,
-            error = e.ToString().Trim() // TODO: Produce a stack trace a la Debug, and put it in stackTrace so we can filter it.
-          });
+						logEntryType = LogEntryType.EvaluationError,
+						error = e.ToString().Trim() // TODO: Produce a stack trace a la Debug, and put it in stackTrace so we can filter it.
+					});
 					if (!hasAddedLogToEntries) {
 						logEntries.Add (cmdEntry);
 						hasAddedLogToEntries = true;
@@ -291,9 +291,9 @@ class EvaluationHelper
 				string tmp = outputBuffer.ToString ().Trim ();
 				if (!String.IsNullOrEmpty (tmp)) {
 					cmdEntry.Add (new LogEntry () {
-            logEntryType = LogEntryType.Output,
-            output = outputBuffer.ToString().Trim()
-          });
+						logEntryType = LogEntryType.Output,
+						output = outputBuffer.ToString().Trim()
+					});
 					if (!hasAddedLogToEntries) {
 						logEntries.Add (cmdEntry);
 						hasAddedLogToEntries = true;
@@ -369,10 +369,10 @@ vars;     -- Show the variables you've created this session, and their current v
 			foreach (DictionaryEntry kvp in fields) {
 				FieldInfo field = (FieldInfo)kvp.Value;
 				tmp
-          .Append (TypeManagerProxy.CSharpName (field.FieldType))
-          .Append (" ")
-          .Append (kvp.Key)
-          .Append (" = ");
+					.Append (TypeManagerProxy.CSharpName (field.FieldType))
+					.Append (" ")
+					.Append (kvp.Key)
+					.Append (" = ");
 				PrettyPrint.PP (tmp, field.GetValue (null));
 				tmp.Append (";\n");
 			}
