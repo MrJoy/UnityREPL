@@ -56,7 +56,7 @@ public class LogEntry
 	}
 
 	private static char[] NEWLINE = new char[] { '\n' },
-		COLON = new char[] { ':' };
+						  COLON = new char[] { ':' };
 	public string _filteredStackTrace = null;
 
 	public string filteredStackTrace {
@@ -89,8 +89,7 @@ public class LogEntry
 								(classDesignation == "Mono.CSharp.Evaluator" && methodSignature == "Evaluate(String, Object&, Boolean&)" && position == "") ||
 								(classDesignation == "EvaluationHelper" && methodSignature == "Eval(List`1, String)" && position.IndexOf ("UnityREPL/Evaluator.cs") >= 0) ||
 								(classDesignation == "Shell" && methodSignature == "Update()" && position.IndexOf ("UnityREPL/Shell.cs") >= 0) ||
-								(classDesignation == "UnityEditor.EditorApplication" && methodSignature == "Internal_CallUpdateFunctions()" && position == "")
-                 )
+								(classDesignation == "UnityEditor.EditorApplication" && methodSignature == "Internal_CallUpdateFunctions()" && position == ""))
 								filter = true;
 						} else {
 							// WTF?!
