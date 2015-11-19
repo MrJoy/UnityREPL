@@ -141,7 +141,9 @@ class EvaluationHelper
 		if (hasOutput) {
 			if (status) {
 				try {
-					// PrettyPrint.PP (outputBuffer, output, true);
+					StringBuilder sb = new StringBuilder();
+					PrettyPrint.PP (sb, output, true);
+					Debug.Log (sb.ToString ());
 				} catch (Exception e) {
 					Debug.LogError (e.ToString().Trim());
 				}
