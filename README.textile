@@ -50,9 +50,9 @@ From this window you can enter C# code and run it.  You should have access to al
 
 h1. COMPATIBILITY
 
-Tested on Unity 3.1.0 through 3.5.2, but should work on Unity 3.0.0 as well.
+Tested on Unity 5.2.2, but may work on slightly earlier versions.
 
-Will not work on older versions of Unity (2.5.x, 2.6.x, or Unity/iPhone 1.x).
+Will definitely not work on older versions of Unity (4.x and below).
 
 
 h1. DOCUMENTATION
@@ -62,7 +62,7 @@ Full documentation is available from within UnityREPL by clicking the '?' button
 
 h1. LICENSE
 
-All original/novel code is Copyright (c) 2009-2013 Jon Frisby.  All other code is the property of the respective authors.
+All original/novel code is Copyright (c) 2009-2015 Jon Frisby.  All other code is the property of the respective authors.
 
 Dual licensed under the terms of the MIT X11 or GNU GPL, as per the original code.
 
