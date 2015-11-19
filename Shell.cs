@@ -48,27 +48,25 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   private EvaluationHelper helper = new EvaluationHelper();
 
-  public List<LogEntry> logEntries = new List<LogEntry>();
-
-
   [System.NonSerialized]
   private bool isInitialized = false;
 
   public void Update() {
     if(doProcess) {
-      if(helper.Init(ref isInitialized)) {
-        doProcess = false;
-        bool compiledCorrectly = helper.Eval(logEntries, codeToProcess);
-        if(compiledCorrectly) {
-          resetCommand = true;
-        } else {
-          // Continue with that enter the user pressed...  Yes, this is an ugly
-          // way to handle it.
-          codeToProcess = Paste(editorState, "\n", false);
-        }
+      // Don't be executing code when we're about to reload it.  Not sure this is
+      // actually needed but seems prudent to be wary of it.
+      if (EditorApplication.isCompiling)
+        return;
+
+      helper.Init(ref isInitialized);
+      doProcess = false;
+      bool compiledCorrectly = helper.Eval(codeToProcess);
+      if(compiledCorrectly) {
+        resetCommand = true;
       } else {
-        // For some reason, we weren't ready to run.
-        // TODO: Make sure it's not some sort of permanent error!
+        // Continue with that enter the user pressed...  Yes, this is an ugly
+        // way to handle it.
+        codeToProcess = Paste(editorState, "\n", false);
       }
     }
   }
@@ -426,23 +424,6 @@ public class Shell : EditorWindow {
     EditorGUILayout.EndScrollView();
   }
 
-  public Vector2 logScrollPos;
-  private int numEntriesLastSeen = -1;
-  private void ShowLog() {
-    // TODO: Auto-scroll to the end if a message comes in and we're already at
-    // TODO: the end...
-    logScrollPos = EditorGUILayout.BeginScrollView(logScrollPos);
-    if(numEntriesLastSeen != logEntries.Count) {
-      numEntriesLastSeen = logEntries.Count;
-      logScrollPos.y = float.MaxValue;
-    }
-    foreach(LogEntry le in logEntries) {
-      if(le.OnGUI(filterTraces)) {
-        codeToProcess = le.command;
-      }
-    }
-    EditorGUILayout.EndScrollView();
-  }
   private const string editorControlName = "REPLEditor";
   //----------------------------------------------------------------------------
 
@@ -591,29 +572,12 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   // Tying It All Together...
   //----------------------------------------------------------------------------
-  public bool showVars = true, showLog = true, filterTraces = true, showHelp = false;
-  // TODO: Save pane sizing states...
-  private VerticalPaneState paneConfiguration = new VerticalPaneState() {
-    minPaneHeightTop = 65,
-    minPaneHeightBottom = 100
-  };
+  public bool showVars = true, showHelp = false;
   public void OnGUI() {
     HandleInputFocusAndStateForEditor();
 
     EditorGUILayoutToolbar.Begin();
-      if(GUILayout.Button("Clear Log", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false)))
-        logEntries.Clear();
-
-      EditorGUILayoutToolbar.Space();
-
       showVars = GUILayout.Toggle(showVars, "Locals", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
-      showLog = GUILayout.Toggle(showLog, "Log", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
-
-      if(showLog) {
-        EditorGUILayoutToolbar.Space();
-
-        filterTraces = GUILayout.Toggle(filterTraces, "Filter", EditorStyles.toolbarButton, GUILayout.ExpandWidth(false));
-      }
 
       EditorGUILayoutToolbar.FlexibleSpace();
 
@@ -626,18 +590,8 @@ public class Shell : EditorWindow {
     } else {
       ShowEditor();
 
-      if(showVars && showLog) {
-        EditorGUILayoutVerticalPanes.Begin(paneConfiguration);
-          ShowVars();
-        EditorGUILayoutVerticalPanes.Splitter();
-          ShowLog();
-        EditorGUILayoutVerticalPanes.End();
-      } else {
-        if(showVars)
-          ShowVars();
-        else if(showLog)
-          ShowLog();
-      }
+      if(showVars)
+        ShowVars();
     }
   }
 
