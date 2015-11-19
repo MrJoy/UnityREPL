@@ -1,10 +1,5 @@
 //-----------------------------------------------------------------
-//  Shell
-//  Copyright 2009-2013 Jon Frisby
-//  All rights reserved
-//
-//-----------------------------------------------------------------
-// C#-based REPL tool.
+// Main Unity shell for REPL.
 //
 // TODO: Make sure this plays nice with assembly reloads by:
 //    A) Make sure the newest version of our code is made available after a

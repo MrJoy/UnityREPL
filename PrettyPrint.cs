@@ -1,9 +1,4 @@
 //-----------------------------------------------------------------
-//  PrettyPrint
-//  Copyright 2009-2013 Jon Frisby
-//  All rights reserved
-//
-//-----------------------------------------------------------------
 // Adapted from repl.cs:
 // https://github.com/mono/mono/tree/master/mcs/tools/csharp
 //

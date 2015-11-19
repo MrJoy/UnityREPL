@@ -1,10 +1,5 @@
 //-----------------------------------------------------------------
-//  GUIHelper
-//  Copyright 2009-2013 Jon Frisby
-//  All rights reserved
-//
-//-----------------------------------------------------------------
-// Helper for UnityGUI tasks, particularly editor-related.
+// Helper for editor-related UnityGUI tasks.
 //-----------------------------------------------------------------
 using UnityEngine;
 using UnityEditor;

@@ -1,9 +1,4 @@
 //-----------------------------------------------------------------
-//  Evaluator
-//  Copyright 2009-2013 Jon Frisby
-//  All rights reserved
-//
-//-----------------------------------------------------------------
 // Core evaluation loop, including environment handling for living in the Unity
 // editor and dealing with its code reloading behaviors.
 //-----------------------------------------------------------------
