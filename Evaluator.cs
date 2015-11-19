@@ -101,11 +101,11 @@ class EvaluationHelper {
   public bool Eval(string code) {
     EditorApplication.LockReloadAssemblies();
 
-    bool status = false,
-    hasOutput = false;
+    bool status    = false,
+         hasOutput = false;
     object output = null;
-    string res = null,
-    tmpCode = code.Trim();
+    string res     = null,
+           tmpCode = code.Trim();
     Debug.Log("Evaluating: " + tmpCode);
 
     try {
