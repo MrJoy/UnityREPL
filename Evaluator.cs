@@ -91,14 +91,10 @@ class EvaluationHelper
 		  UnityScript.Lang
 		  Boo.Lang
 
-		The assemblies Unity generated from our project code, and whose names we
-		can't predict (thus all this headache of doing this dynamically):
-		  66e7989537eed4bf0b3da7923cca36a5
-		  3355ac06262db4cc485a4df3f5d80f92
-		  056b51e0f06e443768d0eec4b9a4e6c0
-		  bb4826d22f7064220b2889d64c02fea6
-		  5025cb470ec5941b9b5afef2b57be7d4
-		  78b446ec0e1c748e3ba1927569415c6a
+		The assemblies Unity generated from our project code now all begin with Assembly:
+		  Assembly-CSharp
+		  Assembly-CSharp-Editor
+		  ...
 		*/
 		isInitialized = TryLoadingAssemblies (isInitialized);
 
