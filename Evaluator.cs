@@ -12,10 +12,77 @@ using System.Text;
 using System.IO;
 using Mono.CSharp;
 
+//CompilerSettings()
+//  .AddConditionalSymbol(string)
+//  .AddWarningAsError(int32)
+//  .AddWarningOnly(int32)
+//  .IsConditionalSymbolDefined(string)
+//  .IsWarningAsError(int32)
+//  .IsWarningDisabledGlobally(int32)
+//  .IsWarningEnabled(int32)
+//  .SetIgnoreWarning(int32)
+//  .NeedsEntryPoint
+//  .SourceFiles
+//  .AssemblyReferences
+//  .AssemblyReferencesAliases
+//  .BreakOnInternalError
+//  .Checked
+//  .EnhancedWarnings
+//  .MainClass
+//  .Modules
+//  .ParseOnly
+//  .StatementMode
+//  .TabSize
+//  .TokenizeOnly
+//  .WarningLevel
+//  .WarningsAreErrors
+
+//CompilerContext(CompilerSettings, ReportWriter)
+//  .Report
+
+//CSharpParser(SeekableStreamReader, CompilationSourceFile, Report, ParserSession)
+
+//Report(CompilerContext, ReportPrinter)
+
+//ReportPrinter()
+//  .ErrorsCount
+//  .HasRelatedSymbolSupport
+//  .WarningsCount
+
+//Outline(Type, TextWriter, bool declared_only, bool show_private, bool filter_obsolete)
+//  .OutlineType()
+
+//Evaluator(CompilerContext)
+//  .Compile(string)
+//  .Compile(string, out CompiledMethod)
+//  .Evaluate(string, out Object, out bool)
+//  .GetCompletions(string, out string)
+//  .LoadAssembly(string)
+//  .ReferenceAssembly(Assembly)
+//  .Run(string)
+//  .InteractiveBaseClass
+//  .Terse
+class UnityReportPrinter : ReportPrinter {
+  // public void Print(AbstractMessage msg, bool showFullPath) {
+  //   Debug.Log(msg.ToString());
+  // }
+}
+
 class EvaluationHelper {
-  public EvaluationHelper() {
-    TryLoadingAssemblies(false);
-  }
+  [System.NonSerialized]
+  private static UnityReportPrinter printer = new UnityReportPrinter();
+  [System.NonSerialized]
+  private static CompilerSettings settings = new CompilerSettings();
+  [System.NonSerialized]
+  private static CompilerContext context = new CompilerContext(settings, printer);
+  [System.NonSerialized]
+  private static Evaluator evaluator = new Evaluator(context) {
+    InteractiveBaseClass = typeof(UnityBaseClass)
+  };
+
+  // public EvaluationHelper() {
+  //   TryLoadingAssemblies(false);
+  // }
 
   protected bool TryLoadingAssemblies(bool isInitialized) {
     if(isInitialized)
@@ -27,7 +94,7 @@ class EvaluationHelper {
       string assemblyShortName = b.GetName().Name;
       if(!(assemblyShortName.StartsWith("Mono.CSharp") || assemblyShortName.StartsWith("UnityDomainLoad") || assemblyShortName.StartsWith("interactive"))) {
         //Debug.Log("Giving Mono.CSharp a reference to assembly: " + assemblyShortName);
-        Evaluator.ReferenceAssembly(b);
+        evaluator.ReferenceAssembly(b);
       }
 //      else
 //      {
@@ -41,13 +108,20 @@ class EvaluationHelper {
     // being loaded into our AppDomain asynchronously and just aren't done yet?
     // Regardless, attempting to hit them early and then trying again later
     // seems to work fine.
-    Evaluator.Run("using System;");
-    Evaluator.Run("using System.IO;");
-    Evaluator.Run("using System.Linq;");
-    Evaluator.Run("using System.Collections;");
-    Evaluator.Run("using System.Collections.Generic;");
-    Evaluator.Run("using UnityEditor;");
-    Evaluator.Run("using UnityEngine;");
+    evaluator.LoadAssembly("System");
+    evaluator.LoadAssembly("System.IO");
+    evaluator.LoadAssembly("System.Linq");
+    evaluator.LoadAssembly("System.Collections");
+    evaluator.LoadAssembly("System.Collections.Generic");
+    evaluator.LoadAssembly("UnityEditor");
+    evaluator.LoadAssembly("UnityEngine");
+    // evaluator.Run("using System;");
+    // evaluator.Run("using System.IO;");
+    // evaluator.Run("using System.Linq;");
+    // evaluator.Run("using System.Collections;");
+    // evaluator.Run("using System.Collections.Generic;");
+    // evaluator.Run("using UnityEditor;");
+    // evaluator.Run("using UnityEngine;");
 
     return true;
   }
@@ -89,8 +163,8 @@ class EvaluationHelper {
     */
     isInitialized = TryLoadingAssemblies(isInitialized);
 
-    if(Evaluator.InteractiveBaseClass != typeof(UnityBaseClass))
-      Evaluator.InteractiveBaseClass = typeof(UnityBaseClass);
+    // if(evaluator.InteractiveBaseClass != typeof(UnityBaseClass))
+    //   evaluator.InteractiveBaseClass = typeof(UnityBaseClass);
   }
 
   public bool Eval(string code) {
@@ -110,17 +184,18 @@ class EvaluationHelper {
         // without a var declaration or some other grammatical construct.
         tmpCode = "(" + tmpCode.Substring(1, tmpCode.Length - 1) + ");";
       }
-      res = Evaluator.Evaluate(tmpCode, out output, out hasOutput);
+      res = evaluator.Evaluate(tmpCode, out output, out hasOutput);
       //if(res == tmpCode)
       //  Debug.Log("Unfinished input...");
     } catch(Exception e) {
       Debug.LogError(e);
 
-      output = new Evaluator.NoValueSet();
+      output = null; //new Evaluator.NoValueSet();
       hasOutput = false;
       status = true; // Need this to avoid 'stickiness' where we let user
       // continue editing due to incomplete code.
     } finally {
+      Debug.Log("res==" + res + " (null? " + (res == null) + ")\n\noutput==" + output + "\n\nhasOutput==" + hasOutput);
       status = res == null;
     }
 
@@ -146,7 +221,13 @@ internal class EvaluatorProxy : ReflectionProxy {
   private static readonly Type _Evaluator = typeof(Evaluator);
   private static readonly FieldInfo _fields = _Evaluator.GetField("fields", NONPUBLIC_STATIC);
 
-  internal static Hashtable fields { get { return (Hashtable)_fields.GetValue(null); } }
+  internal static Hashtable fields {
+    get {
+      if(_fields == null)
+        return null;
+      return (Hashtable)_fields.GetValue(null);
+    }
+  }
 }
 
 

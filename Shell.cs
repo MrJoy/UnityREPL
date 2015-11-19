@@ -415,17 +415,19 @@ public class Shell : EditorWindow {
     // TODO: way to handle tabular data, and need a way to track what
     // TODO: has/hasn't changed here.
     StringBuilder tmp = new StringBuilder();
-    foreach(DictionaryEntry kvp in fields) {
-      FieldInfo field = (FieldInfo)kvp.Value;
-      GUILayout.BeginHorizontal();
-      GUILayout.Label(TypeManagerProxy.CSharpName(field.FieldType));
-      GUILayout.Space(10);
-      GUILayout.Label((string)kvp.Key);
-      GUILayout.FlexibleSpace();
-      PrettyPrint.PP(tmp, field.GetValue(null));
-      GUILayout.Label(tmp.ToString());
-      tmp.Length = 0;
-      GUILayout.EndHorizontal();
+    if(fields != null) {
+      foreach(DictionaryEntry kvp in fields) {
+        FieldInfo field = (FieldInfo)kvp.Value;
+        GUILayout.BeginHorizontal();
+        GUILayout.Label(TypeManagerProxy.CSharpName(field.FieldType));
+        GUILayout.Space(10);
+        GUILayout.Label((string)kvp.Key);
+        GUILayout.FlexibleSpace();
+        PrettyPrint.PP(tmp, field.GetValue(null));
+        GUILayout.Label(tmp.ToString());
+        tmp.Length = 0;
+        GUILayout.EndHorizontal();
+      }
     }
     GUILayout.EndVertical();
     GUILayout.EndHorizontal();
