@@ -34,13 +34,13 @@ class EvaluationHelper
 		foreach (Assembly b in AppDomain.CurrentDomain.GetAssemblies()) {
 			string assemblyShortName = b.GetName ().Name;
 			if (!(assemblyShortName.StartsWith ("Mono.CSharp") || assemblyShortName.StartsWith ("UnityDomainLoad") || assemblyShortName.StartsWith ("interactive"))) {
-				Debug.Log("Giving Mono.CSharp a reference to assembly: " + assemblyShortName);
+				//Debug.Log("Giving Mono.CSharp a reference to assembly: " + assemblyShortName);
 				Evaluator.ReferenceAssembly (b);
 			}
-			else
-			{
-				Debug.LogWarning("Ignoring assembly: " + assemblyShortName);
-			}
+//			else
+//			{
+//				Debug.LogWarning("Ignoring assembly: " + assemblyShortName);
+//			}
 		}
 
 
