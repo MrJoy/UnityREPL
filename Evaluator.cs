@@ -25,14 +25,11 @@ class EvaluationHelper {
 
     foreach(Assembly b in AppDomain.CurrentDomain.GetAssemblies()) {
       string assemblyShortName = b.GetName().Name;
-      if(!(assemblyShortName.StartsWith("Mono.CSharp") || assemblyShortName.StartsWith("UnityDomainLoad") || assemblyShortName.StartsWith("interactive"))) {
+      if(!(assemblyShortName.StartsWith("Mono.CSharp") || assemblyShortName.StartsWith("UnityDomainLoad") ||
+           assemblyShortName.StartsWith("interactive"))) {
         //Debug.Log("Giving Mono.CSharp a reference to assembly: " + assemblyShortName);
         Evaluator.ReferenceAssembly(b);
       }
-//      else
-//      {
-//        Debug.LogWarning("Ignoring assembly: " + assemblyShortName);
-//      }
     }
 
 
@@ -96,12 +93,12 @@ class EvaluationHelper {
   public bool Eval(string code) {
     EditorApplication.LockReloadAssemblies();
 
-    bool status    = false,
-         hasOutput = false;
-    object output = null;
-    string res     = null,
-           tmpCode = code.Trim();
-    Debug.Log("Evaluating: " + tmpCode);
+    bool status     = false,
+         hasOutput  = false;
+    object output   = null;
+    string res      = null,
+           tmpCode  = code.Trim();
+//    Debug.Log("Evaluating: " + tmpCode);
 
     try {
       if(tmpCode.StartsWith("=")) {
@@ -111,15 +108,13 @@ class EvaluationHelper {
         tmpCode = "(" + tmpCode.Substring(1, tmpCode.Length - 1) + ");";
       }
       res = Evaluator.Evaluate(tmpCode, out output, out hasOutput);
-      //if(res == tmpCode)
-      //  Debug.Log("Unfinished input...");
     } catch(Exception e) {
       Debug.LogError(e);
 
-      output = new Evaluator.NoValueSet();
+      output    = new Evaluator.NoValueSet();
       hasOutput = false;
-      status = true; // Need this to avoid 'stickiness' where we let user
-      // continue editing due to incomplete code.
+      status    = true; // Need this to avoid 'stickiness' where we let user
+                        // continue editing due to incomplete code.
     } finally {
       status = res == null;
     }
@@ -153,7 +148,11 @@ internal class EvaluatorProxy : ReflectionProxy {
 // WARNING: Absolutely NOT thread-safe!
 internal class TypeManagerProxy : ReflectionProxy {
   private static readonly Type _TypeManager = typeof(Evaluator).Assembly.GetType("Mono.CSharp.TypeManager");
-  private static readonly MethodInfo _CSharpName = _TypeManager.GetMethod("CSharpName", PUBLIC_STATIC, null, Signature(typeof(Type)), null);
+  private static readonly MethodInfo _CSharpName = _TypeManager.GetMethod("CSharpName",
+                                                                          PUBLIC_STATIC,
+                                                                          null,
+                                                                          Signature(typeof(Type)),
+                                                                          null);
 
   // Save an allocation per access here...
   private static readonly object[] _CSharpNameParams = new object[] { null };
@@ -191,7 +190,7 @@ vars;     -- Show the variables you've created this session, and their current v
 
   public static REPLMessage vars {
     get {
-      Hashtable fields = EvaluatorProxy.fields;
+      Hashtable fields  = EvaluatorProxy.fields;
       StringBuilder tmp = new StringBuilder();
       // TODO: Sort this list...
       foreach(DictionaryEntry kvp in fields) {
