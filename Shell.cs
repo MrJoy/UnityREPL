@@ -16,6 +16,10 @@
 // TODO: Suss out undo and wrap editor accordingly.
 // TODO: Make use of EditorWindow.minSize/EditorWindow.maxSize.
 //-----------------------------------------------------------------
+#if UNITY_5_2 || UNITY_5_1 || UNITY_5_0 || UNITY_4_6 || UNITY_4_5 || UNITY_4_4 || UNITY_4_3 || UNITY_4_2 || UNITY_4_1 || UNITY_4_0_1 || UNITY_4_0
+#define UNITY_5_3_PLUS
+#endif
+
 using UnityEditor;
 using UnityEngine;
 using System;
@@ -205,13 +209,24 @@ public class Shell : EditorWindow {
     endAt = Mathf.Max(editor.cursorIndex, editor.selectIndex);
     string prefix = "",
     suffix = "";
+#if UNITY_5_3_PLUS
     if(startAt > 0)
       prefix = editor.content.text.Substring(0, startAt);
     if(endAt < editor.content.text.Length)
       suffix = editor.content.text.Substring(endAt);
+#else
+    if(startAt > 0)
+      prefix = editor.text.Substring(0, startAt);
+    if(endAt < editor.text.Length)
+      suffix = editor.text.Substring(endAt);
+#endif
     string newCorpus = prefix + textToPaste + suffix;
 
+#if UNITY_5_3_PLUS
     editor.content.text = newCorpus;
+#else
+    editor.text = newCorpus;
+#endif
     if(continueSelection) {
       if(editor.cursorIndex > editor.selectIndex)
         editor.cursorIndex = prefix.Length + textToPaste.Length;
@@ -232,13 +247,25 @@ public class Shell : EditorWindow {
     endAt = Mathf.Max(editor.cursorIndex, editor.selectIndex);
     string prefix = "",
     suffix = "";
+
+#if UNITY_5_3_PLUS
     if(startAt > 0)
       prefix = editor.content.text.Substring(0, startAt);
     if(endAt < editor.content.text.Length)
       suffix = editor.content.text.Substring(endAt);
+#else
+    if(startAt > 0)
+      prefix = editor.text.Substring(0, startAt);
+    if(endAt < editor.text.Length)
+      suffix = editor.text.Substring(endAt);
+#endif
     string newCorpus = prefix + suffix;
 
+#if UNITY_5_3_PLUS
     editor.content.text = newCorpus;
+#else
+    editor.text = newCorpus;
+#endif
     editor.cursorIndex = editor.selectIndex = prefix.Length;
     return newCorpus;
   }
