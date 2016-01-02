@@ -9,8 +9,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.IO;
 using Mono.CSharp;
+
+class EvaluationException : Exception {
+}
 
 class EvaluationHelper {
   public EvaluationHelper() {
@@ -105,16 +109,21 @@ class EvaluationHelper {
         // Special case handling of calculator mode.  The problem is that
         // expressions involving multiplication are grammatically ambiguous
         // without a var declaration or some other grammatical construct.
+        // TODO: Change the prompt in calculator mode.  Needs to be done from Shell.
         tmpCode = "(" + tmpCode.Substring(1, tmpCode.Length - 1) + ");";
       }
-      res = Evaluator.Evaluate(tmpCode, out output, out hasOutput);
-    } catch(Exception e) {
-      Debug.LogError(e);
+      res = Evaluate(tmpCode, out output, out hasOutput);
+    } catch(EvaluationException) {
+      Debug.LogError(@"Error compiling/executing code.  Please double-check syntax, method/variable names, etc.
+You can find more information in Unity's `Editor.log` file (*not* the editor console!).");
 
       output    = new Evaluator.NoValueSet();
       hasOutput = false;
-      status    = true; // Need this to avoid 'stickiness' where we let user
-                        // continue editing due to incomplete code.
+      res       = tmpCode; // Enable continued editing on syntax errors, etc.
+    } catch(Exception e) {
+      Debug.LogError(e);
+
+      res       = tmpCode; // Enable continued editing on unexpected errors.
     } finally {
       status = res == null;
     }
@@ -134,16 +143,57 @@ class EvaluationHelper {
     EditorApplication.UnlockReloadAssemblies();
     return status;
   }
+
+  /* Copy-pasta'd from the DLL to try and differentiate between kinds of failure mode. */
+  private string Evaluate(string input, out object result, out bool result_set) {
+    result_set = false;
+    result = null;
+
+    CompiledMethod compiledMethod;
+    string remainder = null;
+    remainder = Evaluator.Compile(input, out compiledMethod);
+    if(remainder != null)
+      return remainder;
+    if(compiledMethod == null)
+      throw new EvaluationException();
+
+    object typeFromHandle = typeof(Evaluator.NoValueSet);
+    try {
+      EvaluatorProxy.invoke_thread = Thread.CurrentThread;
+      EvaluatorProxy.invoking      = true;
+      compiledMethod(ref typeFromHandle);
+    } catch(ThreadAbortException arg) {
+      Thread.ResetAbort();
+      Console.WriteLine("Interrupted!\n{0}", arg);
+      // TODO: How best to handle this?
+    } finally {
+      EvaluatorProxy.invoking = false;
+    }
+    if(typeFromHandle != typeof(Evaluator.NoValueSet)) {
+      result_set  = true;
+      result      = typeFromHandle;
+    }
+    return null;
+  }
 }
 
 // WARNING: Absolutely NOT thread-safe!
 internal class EvaluatorProxy : ReflectionProxy {
   private static readonly Type _Evaluator = typeof(Evaluator);
   private static readonly FieldInfo _fields = _Evaluator.GetField("fields", NONPUBLIC_STATIC);
+  private static readonly FieldInfo _invoke_thread = _Evaluator.GetField("invoke_thread", NONPUBLIC_STATIC);
+  private static readonly FieldInfo _invoking = _Evaluator.GetField("invoking", NONPUBLIC_STATIC);
 
   internal static Hashtable fields { get { return (Hashtable)_fields.GetValue(null); } }
+  internal static Thread invoke_thread {
+    get { return (Thread)_invoke_thread.GetValue(null); }
+    set { _invoke_thread.SetValue(null, value); }
+  }
+  internal static bool invoking {
+    get { return (bool)_invoking.GetValue(false); }
+    set { _invoking.SetValue(null, value); }
+  }
 }
-
 
 // WARNING: Absolutely NOT thread-safe!
 internal class TypeManagerProxy : ReflectionProxy {
