@@ -25,7 +25,7 @@ class EvaluationHelper {
     if(isInitialized)
       return true;
 
-    Debug.Log("Attempting to load assemblies...");
+//    Debug.Log("Attempting to load assemblies...");
 
     foreach(Assembly b in AppDomain.CurrentDomain.GetAssemblies()) {
       string assemblyShortName = b.GetName().Name;
