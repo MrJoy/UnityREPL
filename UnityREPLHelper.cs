@@ -18,7 +18,7 @@ public class UnityREPLHelper {
   public static NumberedEditorState NumberedTextArea(string controlName, NumberedEditorState editorState) {
     // This is a WAG about Unity's box model.  Seems to work though, so... yeah.
     float effectiveWidgetHeight = 7 * GUI.skin.label.lineHeight
-      + GUI.skin.label.padding.top + GUI.skin.label.padding.bottom;
+                                  + GUI.skin.label.padding.top + GUI.skin.label.padding.bottom;
     Rect r = EditorGUILayout.BeginVertical();
     if(r.width > 0) {
       editorState.scrollViewWidth = r.width;
@@ -40,7 +40,7 @@ public class UnityREPLHelper {
     editorState.text = GUI.TextField(editorRect, editorState.text, NumberedEditorStyles.NumberedEditor);
 
     if((GUI.GetNameOfFocusedControl() == controlName) &&
-      wasRelevantEvent) {
+        wasRelevantEvent) {
       int editorId = GUIUtility.keyboardControl;
       TextEditor te = GUIUtility.QueryStateObject(typeof(System.Object), editorId) as TextEditor;
       int pos = te.cursorIndex; // TODO: How does this play with keyboard selection?  We want the actual cursor pos, not necessarily the right-end.
@@ -295,16 +295,15 @@ public class LogEntryStyles {
   public static GUIStyle FoldoutCopyContentStyle {
     get {
       EditorGUIStyleExtensions.InvalidateOnSkinChange(styles);
-      if(styles[_FoldoutCopyContentStyle] == null) {
+      if(styles[_FoldoutCopyContentStyle] == null)
         styles[_FoldoutCopyContentStyle] = new GUIStyle(EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector).GetStyle("OL Plus"));
-      }
       return styles[_FoldoutCopyContentStyle];
     }
   }
 
   private const int PLAIN_TEXT = 0,
-    ERROR_TEXT = 1,
-    WARNING_TEXT = 2;
+                    ERROR_TEXT = 1,
+                    WARNING_TEXT = 2;
   private static Color[,] COLORS = new Color[,] {
     { new Color(0f, 0f, 0f, 1f), new Color(0.75f, 0.75f, 0.75f, 1f) },
     { new Color(0.5f, 0f, 0f, 1f), new Color(1f, 0.25f, 0.25f, 1f) },

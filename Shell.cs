@@ -17,7 +17,7 @@
 // TODO: Make use of EditorWindow.minSize/EditorWindow.maxSize.
 //-----------------------------------------------------------------
 #if UNITY_5_2 || UNITY_5_1 || UNITY_5_0 || UNITY_4_6 || UNITY_4_5 || UNITY_4_4 || UNITY_4_3 || UNITY_4_2 || UNITY_4_1 || UNITY_4_0_1 || UNITY_4_0
-#define UNITY_5_3_PLUS
+  #define UNITY_5_3_PLUS
 #endif
 
 using UnityEditor;
@@ -36,18 +36,17 @@ public class Shell : EditorWindow {
   // Constants, specified here to keep things DRY.
   //----------------------------------------------------------------------------
   public const string VERSION = "2.0.0",
-    COPYRIGHT = "(C) Copyright 2009-2015 Jon Frisby\nAll rights reserved",
+                      COPYRIGHT = "(C) Copyright 2009-2015 Jon Frisby\nAll rights reserved",
 
-    MAIN_PROMPT = "---->",
-    CONTINUATION_PROMPT = "cont>";
+                      MAIN_PROMPT = "---->",
+                      CONTINUATION_PROMPT = "cont>";
 
   //----------------------------------------------------------------------------
   // Code Execution Functionality
   //----------------------------------------------------------------------------
   private EvaluationHelper helper = new EvaluationHelper();
   [System.NonSerialized]
-  private bool
-    isInitialized = false;
+  private bool isInitialized = false;
 
   public void Update() {
     if(doProcess) {
@@ -59,10 +58,10 @@ public class Shell : EditorWindow {
       helper.Init(ref isInitialized);
       doProcess = false;
       bool compiledCorrectly = helper.Eval(codeToProcess);
-      if(compiledCorrectly) {
+      if(compiledCorrectly)
         resetCommand = true;
-      } else {
-        // Continue with that enter the user pressed...  Yes, this is an ugly
+      else {
+        // Continue with what enter the user pressed...  Yes, this is an ugly
         // way to handle it.
         codeToProcess = Paste(editorState, "\n", false);
       }
@@ -74,7 +73,9 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   // Code Editor Functionality
   //----------------------------------------------------------------------------
-  private bool doProcess = false, useContinuationPrompt = false, resetCommand = false;
+  private bool doProcess = false,
+               useContinuationPrompt = false,
+               resetCommand = false;
   private string codeToProcess = "";
 
   // WARNING: Undocumented spookiness from deep within the bowels of Unity!
@@ -115,25 +116,16 @@ public class Shell : EditorWindow {
   // Make our state object go away if we do, or if we lose focus, or whatnot
   // to ensure menu items disable properly regardless of possible dangling
   // references, etc.
-  public void OnDisable() {
-    editorState = null;
-  }
-
-  public void OnLostFocus() {
-    editorState = null;
-  }
-
-  public void OnDestroy() {
-    editorState = null;
-  }
+  public void OnDisable() { editorState = null; }
+  public void OnLostFocus() { editorState = null; }
+  public void OnDestroy() { editorState = null; }
 
   public string Indent(TextEditor editor) {
     if(editor.hasSelection) {
       string codeToIndent = editor.SelectedText;
       string[] rawLines = codeToIndent.Split('\n');
-      for(int i = 0; i < rawLines.Length; i++) {
+      for(int i = 0; i < rawLines.Length; i++)
         rawLines[i] = '\t' + rawLines[i];
-      }
 
       // Eep!  We don't want to indent a trailing empty line because that means
       // the user had a 'perfect' block selection and we're accidentally
@@ -206,9 +198,9 @@ public class Shell : EditorWindow {
     // different than if they selected left-to-right.  That can be handy, but
     // here we just want to know substring indexes to slice out.
     int startAt = Mathf.Min(editor.cursorIndex, editor.selectIndex),
-    endAt = Mathf.Max(editor.cursorIndex, editor.selectIndex);
+        endAt = Mathf.Max(editor.cursorIndex, editor.selectIndex);
     string prefix = "",
-    suffix = "";
+           suffix = "";
 #if UNITY_5_3_PLUS
     if(startAt > 0)
       prefix = editor.content.text.Substring(0, startAt);
@@ -244,9 +236,9 @@ public class Shell : EditorWindow {
     // different than if they selected left-to-right.  That can be handy, but
     // here we just want to know substring indexes to slice out.
     int startAt = Mathf.Min(editor.cursorIndex, editor.selectIndex),
-    endAt = Mathf.Max(editor.cursorIndex, editor.selectIndex);
+        endAt = Mathf.Max(editor.cursorIndex, editor.selectIndex);
     string prefix = "",
-    suffix = "";
+           suffix = "";
 
 #if UNITY_5_3_PLUS
     if(startAt > 0)
@@ -286,9 +278,8 @@ public class Shell : EditorWindow {
       }
       if(editorState == null)
         return;
-    } else {
+    } else
       return;
-    }
 
     if(doProcess) {
       // If we're waiting for a command to run, don't muck with the text!
@@ -468,8 +459,8 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   public Vector2 helpScrollPosition = Vector2.zero;
   private bool showQuickStart = true, showEditing = true, showLogging = true,
-    showShortcuts = true, showLocals = true, showKnownIssues = true,
-    showExpressions = true, showLanguageFeatures = true;
+               showShortcuts = true, showLocals = true, showKnownIssues = true,
+               showExpressions = true, showLanguageFeatures = true;
 
   public void ShowHelp() {
     helpScrollPosition = EditorGUILayout.BeginScrollView(helpScrollPosition);
@@ -481,23 +472,23 @@ public class Shell : EditorWindow {
     showQuickStart = EditorGUILayout.Foldout(showQuickStart, "Quick Start", HelpStyles.SubHeader);
     if(showQuickStart) {
       GUILayout.Label("Type your C# code into the main text area, and press <enter> when you're done." +
-        "  If your code has an error, or is incomplete, the prompt will change from '" + Shell.MAIN_PROMPT +
-        "' to '" + Shell.CONTINUATION_PROMPT + "', and you'll be allowed to continue typing." +
-        "  If there's a logic-error that the C# compiler can detect at compile-time, it will be" +
-        " written to the log pane as well.\n\nIf your code is correct, it will be executed immediately upon" +
-        " pressing <enter>.\n\nPlease see the Known Issues section below, to avoid some frustrating corner-cases!",
-          HelpStyles.Content);
+                      "  If your code has an error, or is incomplete, the prompt will change from '" + Shell.MAIN_PROMPT +
+                      "' to '" + Shell.CONTINUATION_PROMPT + "', and you'll be allowed to continue typing." +
+                      "  If there's a logic-error that the C# compiler can detect at compile-time, it will be" +
+                      " written to the log pane as well.\n\nIf your code is correct, it will be executed immediately upon" +
+                      " pressing <enter>.\n\nPlease see the Known Issues section below, to avoid some frustrating corner-cases!",
+                      HelpStyles.Content);
       GUILayout.Label("", HelpStyles.Content);
     }
 
     showExpressions = EditorGUILayout.Foldout(showExpressions, "Expressions", HelpStyles.SubHeader);
     if(showExpressions) {
       GUILayout.Label("If you begin your code with an '=', and omit a trailing ';', then UnityREPL" +
-        " will behave a little differently than usual, and will evaluate everything after the '=' as" +
-        " an expression.  The log pane will show both the expression you entered, and the result of the" +
-        " evaluation.  This can be handy for a quick calculator, or for peeking at data in detail.  In" +
-        " particular, if an expression evaluates to a Type object, you will be shown a the interface exposed" +
-        " by that type in pseudo-C# syntax.  Try these out:", HelpStyles.Content);
+                      " will behave a little differently than usual, and will evaluate everything after the '=' as" +
+                      " an expression.  The log pane will show both the expression you entered, and the result of the" +
+                      " evaluation.  This can be handy for a quick calculator, or for peeking at data in detail.  In" +
+                      " particular, if an expression evaluates to a Type object, you will be shown a the interface exposed" +
+                      " by that type in pseudo-C# syntax.  Try these out:", HelpStyles.Content);
 
       GUILayout.Label("= 4 * 20", HelpStyles.Code);
       GUILayout.Label("= typeof(EditorApplication)", HelpStyles.Code);
@@ -508,17 +499,17 @@ public class Shell : EditorWindow {
     showLanguageFeatures = EditorGUILayout.Foldout(showLanguageFeatures, "Language Features", HelpStyles.SubHeader);
     if(showLanguageFeatures) {
       GUILayout.Label("UnityREPL implements a newer version of the C# language than Unity itself supports, unless" +
-        " you are using Unity 3.0 or newer.  You get a couple nifty features for code entered into the interactive" +
-        " editor...", HelpStyles.Content);
+                      " you are using Unity 3.0 or newer.  You get a couple nifty features for code entered into the interactive" +
+                      " editor...", HelpStyles.Content);
       GUILayout.Label("", HelpStyles.Content);
       GUILayout.Label("The 'var' keyword:", HelpStyles.Content);
       GUILayout.Label("var i = 3;", HelpStyles.Code);
       GUILayout.Label("", HelpStyles.Content);
       GUILayout.Label("Linq:", HelpStyles.Content);
       GUILayout.Label("= from f in Directory.GetFiles(Application.dataPath)\n" +
-        "  let fi = new FileInfo(f)\n" +
-        "  where fi.LastWriteTime > DateTime.Now - TimeSpan.FromDays(7)\n" +
-        "  select f", HelpStyles.Code);
+                      "  let fi = new FileInfo(f)\n" +
+                      "  where fi.LastWriteTime > DateTime.Now - TimeSpan.FromDays(7)\n" +
+                      "  select f", HelpStyles.Code);
       GUILayout.Label("", HelpStyles.Content);
       GUILayout.Label("Anonymous Types:", HelpStyles.Content);
       GUILayout.Label("var x = new { foo = \"blah\", bar = 123 };", HelpStyles.Code);
@@ -531,35 +522,35 @@ public class Shell : EditorWindow {
     showEditing = EditorGUILayout.Foldout(showEditing, "Editing", HelpStyles.SubHeader);
     if(showEditing) {
       GUILayout.Label("The editor panel works like many familiar text editors, and supports using the <tab>" +
-        " key to indent, unlike normal Unity text fields.  Additionally, there are keyboard shortcuts to" +
-        " indent/unindent a single line or a selected block of lines.  Cut/Copy/Paste are also fully supported.\n\n" +
-        "If you wish to insert a line into your code, but pressing <enter> would execute it, you can press " +
-        "<shift>-<enter> to suppress execution.", HelpStyles.Content);
+                      " key to indent, unlike normal Unity text fields.  Additionally, there are keyboard shortcuts to" +
+                      " indent/unindent a single line or a selected block of lines.  Cut/Copy/Paste are also fully supported.\n\n" +
+                      "If you wish to insert a line into your code, but pressing <enter> would execute it, you can press " +
+                      "<shift>-<enter> to suppress execution.", HelpStyles.Content);
       GUILayout.Label("", HelpStyles.Content);
     }
 
     showLogging = EditorGUILayout.Foldout(showLogging, "Logging", HelpStyles.SubHeader);
     if(showLogging) {
       GUILayout.Label("Any output sent to Debug.Log, Debug.LogWarning, or Debug.LogError during execution of" +
-        " your code is captured and showed in the log pane, as well as the normal Unity console view.  You can" +
-        " disable this view by disabling the 'Log' toggle on the toolbar.  You can also filter certain stack" +
-        " trace elements that are unlikely to be useful by enabling the 'Filter' toggle on the toolbar.  Any" +
-        " code that takes the form of an expression will be evaluated and the result of the expression will" +
-        " appear below it in the log in green.  Any errors or exceptions will appear in red.  Warnings in yellow." +
-        "  Normal log messages will appear in black or white depending on which Unity skin is" +
-        " enabled.\n\nIf your code spans multiple lines, or there is any form of output associated with it, a" +
-        " disclosure triangle will appear next to it, allowing you to collapse the log entry down to a single" +
-        " line.\n\nFinally, a button with a '+' on it appears next to the part of the log entry showing code" +
-        " you've executed.  Pressing this button will replace the contents of the editor field with that code," +
-        " so you can run it again.", HelpStyles.Content);
+                      " your code is captured and showed in the log pane, as well as the normal Unity console view.  You can" +
+                      " disable this view by disabling the 'Log' toggle on the toolbar.  You can also filter certain stack" +
+                      " trace elements that are unlikely to be useful by enabling the 'Filter' toggle on the toolbar.  Any" +
+                      " code that takes the form of an expression will be evaluated and the result of the expression will" +
+                      " appear below it in the log in green.  Any errors or exceptions will appear in red.  Warnings in yellow." +
+                      "  Normal log messages will appear in black or white depending on which Unity skin is" +
+                      " enabled.\n\nIf your code spans multiple lines, or there is any form of output associated with it, a" +
+                      " disclosure triangle will appear next to it, allowing you to collapse the log entry down to a single" +
+                      " line.\n\nFinally, a button with a '+' on it appears next to the part of the log entry showing code" +
+                      " you've executed.  Pressing this button will replace the contents of the editor field with that code," +
+                      " so you can run it again.", HelpStyles.Content);
       GUILayout.Label("", HelpStyles.Content);
     }
 
     showLocals = EditorGUILayout.Foldout(showLocals, "Locals", HelpStyles.SubHeader);
     if(showLocals) {
       GUILayout.Label("The locals pane will show you the type, name, and current value of any variables your" +
-        " code creates.  These variables will persist across multiple snippets of code, which can be very helpful" +
-        " for breaking tasks up into separate steps.", HelpStyles.Content);
+                      " code creates.  These variables will persist across multiple snippets of code, which can be very helpful" +
+                      " for breaking tasks up into separate steps.", HelpStyles.Content);
       GUILayout.Label("", HelpStyles.Content);
     }
 
@@ -623,9 +614,9 @@ public class Shell : EditorWindow {
 
     EditorGUILayoutToolbar.End();
 
-    if(showHelp) {
+    if(showHelp)
       ShowHelp();
-    } else {
+    else {
       ShowEditor();
 
       if(showVars)

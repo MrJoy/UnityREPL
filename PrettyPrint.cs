@@ -81,9 +81,9 @@ public class PrettyPrint {
   }
 
   protected static void InternalPP(StringBuilder output, object result, bool expandTypes = false) {
-    if(result == null) {
+    if(result == null)
       output.Append("null");
-    } else {
+    else {
       if(result is REPLMessage) {
         // Raw, no escaping or quoting.
         output.Append(((REPLMessage)result).msg);
@@ -113,11 +113,11 @@ public class PrettyPrint {
             NextItem(output, top - bottom);
         }
         CloseInline(output, top - bottom);
-      } else if(result is bool) {
+      } else if(result is bool)
         output.Append(((bool)result) ? "true" : "false");
-      } else if(result is string) {
+      else if(result is string)
         output.Append('"').Append(EscapeString((string)result)).Append('"');
-      } else if(result is IDictionary) {
+      else if(result is IDictionary) {
         IDictionary dict = (IDictionary)result;
         int top = dict.Count, count = 0;
         Open(output);
@@ -133,9 +133,8 @@ public class PrettyPrint {
       } else if(result is IEnumerable) {
         int i = 0;
         ArrayList tmp = new ArrayList();
-        foreach(object item in (IEnumerable)result) {
+        foreach(object item in(IEnumerable)result)
           tmp.Add(item);
-        }
         OpenInline(output, tmp.Count);
         foreach(object item in tmp) {
           if(i++ != 0)
@@ -143,16 +142,15 @@ public class PrettyPrint {
           InternalPP(output, item);
         }
         CloseInline(output, tmp.Count);
-      } else if(result is char) {
+      } else if(result is char)
         EscapeChar(output, (char)result);
-      } else if(result is Type || result.GetType().Name == "MonoType") {
+      else if(result is Type || result.GetType().Name == "MonoType") {
         if(_depth > 0 || !expandTypes)
           output.Append("typeof(" + ((Type)result).Namespace + "." + ((Type)result).Name + ")");
         else
           output.Append(InteractiveBase.Describe(result));
-      } else {
+      } else
         output.Append(result.ToString());
-      }
     }
   }
 }
