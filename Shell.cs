@@ -35,7 +35,7 @@ public class Shell : EditorWindow {
   //----------------------------------------------------------------------------
   // Constants, specified here to keep things DRY.
   //----------------------------------------------------------------------------
-  public const string VERSION = "2.0.0",
+  public const string VERSION = "2.0.1",
                       COPYRIGHT = "(C) Copyright 2009-2015 Jon Frisby\nAll rights reserved",
 
                       MAIN_PROMPT = "---->",
