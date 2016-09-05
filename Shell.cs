@@ -14,7 +14,11 @@
 // TODO: Turn editor components into more general, reusable GUI widgets.
 // TODO: Suss out undo and wrap code execution accordingly.
 // TODO: Suss out undo and wrap editor accordingly.
-// TODO: Make use of EditorWindow.minSize/EditorWindow.maxSize.
+// TODO: Make use of `EditorWindow.minSize`/`EditorWindow.maxSize`.
+// TODO: Look at `EditorGUI.FocusTextInControl`.
+// TODO: See about organizing and making code more bulletproof with `HorizontalScope` / `VerticalScope` / `ScrollViewScope`.
+// TODO: See `EditorJsonUtility` for managing history explicitly instead of relying on editor.
+// TODO: See `PopupWindow` for consolidating options on the toolbar, as we add more.
 //-----------------------------------------------------------------
 #if UNITY_5_2 || UNITY_5_1 || UNITY_5_0 || UNITY_4_6 || UNITY_4_5 || UNITY_4_4 || UNITY_4_3 || UNITY_4_2 || UNITY_4_1 || UNITY_4_0_1 || UNITY_4_0
   #define UNITY_5_3_PLUS
